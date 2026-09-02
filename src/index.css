@@ -121,5 +121,5 @@ h3,
 }
 
 .animate-flicker {
-  animation: flicker 10s ease-in-out infinite;
+  animation: flicker 20s ease-in-out infinite;
 }
