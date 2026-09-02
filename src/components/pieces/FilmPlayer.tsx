@@ -51,7 +51,7 @@ export default function FilmPlayer({ glow, videoSrc }: Props) {
             <div className="bg-noise absolute inset-0 opacity-30 mix-blend-overlay" />
             <div className="absolute top-4 left-4 flex items-center gap-2 text-xs font-medium tracking-widest text-white/70 uppercase">
               <motion.span
-                className="h-2 w-2 rounded-full bg-pink"
+                className="bg-green h-2 w-2 rounded-full"
                 animate={{ opacity: [1, 0.2, 1] }}
                 transition={{ duration: 1.1, repeat: Infinity }}
               />

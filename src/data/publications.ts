@@ -1,4 +1,4 @@
-export type GlowColor = "cyan" | "pink" | "violet" | "amber" | "lime" | "blue";
+export type GlowColor = "green";
 
 export type PieceType = "poem" | "film" | "art";
 
@@ -41,14 +41,14 @@ export const publications: Publication[] = [
   {
     id: "pub-1",
     caption: "Untitled Publication — coming soon",
-    glow: "cyan",
+    glow: "green",
     pieces: [
       {
         id: "pub-1-poem-1",
         type: "poem",
         title: "Untitled",
         author: "Anonymous",
-        glow: "cyan",
+        glow: "green",
         lines: [
           "Some nights the ceiling turns into a sky,",
           "and I count the cracks like stars.",
@@ -66,7 +66,7 @@ export const publications: Publication[] = [
         type: "film",
         title: "Untitled",
         author: "Anonymous",
-        glow: "violet",
+        glow: "green",
         logline: "A short film — embed coming soon.",
       },
       {
@@ -74,7 +74,7 @@ export const publications: Publication[] = [
         type: "art",
         title: "Untitled",
         author: "Anonymous",
-        glow: "amber",
+        glow: "green",
         imageCaption: "Artwork placeholder",
         editorNote:
           "Editor's note — a short reflection from our editorial team on this piece will go here.",
@@ -84,7 +84,7 @@ export const publications: Publication[] = [
         type: "poem",
         title: "Untitled",
         author: "Anonymous",
-        glow: "pink",
+        glow: "green",
         lines: [
           "They ask what I'm made of.",
           "I say paper and static,",
@@ -100,7 +100,7 @@ export const publications: Publication[] = [
         type: "film",
         title: "Untitled",
         author: "Anonymous",
-        glow: "blue",
+        glow: "green",
         logline: "A visual poem in motion — embed coming soon.",
       },
     ],

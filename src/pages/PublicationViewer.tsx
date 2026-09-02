@@ -73,7 +73,7 @@ export default function PublicationViewer() {
         </motion.div>
       </AnimatePresence>
 
-      <PieceNav pieces={publication.pieces} currentIndex={index} onSelect={goTo} onNext={() => goTo(index + 1)} />
+      <PieceNav pieces={publication.pieces} currentIndex={index} onSelect={goTo} />
     </main>
   );
 }

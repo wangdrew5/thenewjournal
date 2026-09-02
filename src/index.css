@@ -4,16 +4,12 @@
   --font-display: "Libre Baskerville", Georgia, serif;
   --font-body: "Lato", system-ui, sans-serif;
 
-  --color-ink: #050507;
-  --color-panel: #0d0d13;
-  --color-panel-2: #131320;
+  --color-ink: #020202;
+  --color-panel: #0a0a0a;
+  --color-panel-2: #101010;
 
-  --color-cyan: #4deeea;
-  --color-pink: #ff5fd8;
-  --color-violet: #a06bff;
-  --color-amber: #ffcb57;
-  --color-lime: #9dff6b;
-  --color-blue: #5ea3ff;
+  --color-green: #3cff8a;
+  --color-lantern: #ffb84d;
 }
 
 html,
@@ -38,8 +34,8 @@ h3,
 }
 
 ::selection {
-  background: var(--color-pink);
-  color: #050507;
+  background: var(--color-green);
+  color: #020202;
 }
 
 /* Scrollbar */
@@ -102,4 +98,28 @@ h3,
 
 .animate-pulse-glow {
   animation: pulse-glow 3.2s ease-in-out infinite;
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: scale(1);
+  }
+  40% {
+    opacity: 0.55;
+    transform: scale(0.94);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  80% {
+    opacity: 0.65;
+    transform: scale(0.98);
+  }
+}
+
+.animate-flicker {
+  animation: flicker 4.5s ease-in-out infinite;
 }
