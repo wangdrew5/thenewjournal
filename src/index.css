@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  --color-ink: #050507;
+  --color-panel: #0d0d13;
+  --color-panel-2: #131320;
+
+  --color-cyan: #4deeea;
+  --color-pink: #ff5fd8;
+  --color-violet: #a06bff;
+  --color-amber: #ffcb57;
+  --color-lime: #9dff6b;
+  --color-blue: #5ea3ff;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  background: var(--color-ink);
+  color: #f5f5f7;
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display);
+}
+
+::selection {
+  background: var(--color-pink);
+  color: #050507;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-ink);
+}
+::-webkit-scrollbar-thumb {
+  background: #26263a;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #35354f;
+}
+
+/* Reusable glow utilities */
+.text-glow-white {
+  text-shadow:
+    0 0 6px rgba(255, 255, 255, 0.55),
+    0 0 24px rgba(255, 255, 255, 0.25);
+}
+
+.glow-ring {
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, var(--glow-color, #fff) 40%, transparent),
+    0 0 18px 1px color-mix(in srgb, var(--glow-color, #fff) 55%, transparent),
+    0 0 60px 8px color-mix(in srgb, var(--glow-color, #fff) 20%, transparent);
+}
+
+.bg-noise {
+  background-image: radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.035) 1px, transparent 0);
+  background-size: 22px 22px;
+}
+
+@keyframes drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(2%, -3%) scale(1.05);
+  }
+}
+
+.animate-drift {
+  animation: drift 18s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3.2s ease-in-out infinite;
+}
