@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-display: "Space Grotesk", "Inter", system-ui, sans-serif;
-  --font-body: "Inter", system-ui, sans-serif;
+  --font-display: "Libre Baskerville", Georgia, serif;
+  --font-body: "Lato", system-ui, sans-serif;
 
   --color-ink: #050507;
   --color-panel: #0d0d13;

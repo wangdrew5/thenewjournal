@@ -4,6 +4,7 @@ import NavBar from "./components/NavBar";
 import GlowField from "./components/GlowField";
 import Home from "./pages/Home";
 import About from "./pages/About";
+import PublicationViewer from "./pages/PublicationViewer";
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -20,6 +21,7 @@ function AnimatedRoutes() {
         <Routes location={location}>
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
+          <Route path="/publication/:pubId" element={<PublicationViewer />} />
         </Routes>
       </motion.div>
     </AnimatePresence>
