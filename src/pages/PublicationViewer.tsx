@@ -49,7 +49,10 @@ export default function PublicationViewer() {
   return (
     <main
       className="mx-auto min-h-screen max-w-6xl cursor-pointer px-6 pt-36 pb-40 sm:px-10"
-      onClick={() => goTo(index + 1)}
+      onClick={(e) => {
+        const isLeftHalf = e.clientX < window.innerWidth / 2;
+        goTo(isLeftHalf ? index - 1 : index + 1);
+      }}
     >
       <div className="mb-6 flex justify-end">
         <span className="text-xs font-medium tracking-widest text-white/35">

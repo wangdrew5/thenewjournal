@@ -8,7 +8,7 @@
   --color-panel: #0a0a0a;
   --color-panel-2: #101010;
 
-  --color-green: #3cff8a;
+  --color-green: #22b25c;
   --color-lantern: #ffb84d;
 }
 
@@ -121,5 +121,5 @@ h3,
 }
 
 .animate-flicker {
-  animation: flicker 4.5s ease-in-out infinite;
+  animation: flicker 10s ease-in-out infinite;
 }
