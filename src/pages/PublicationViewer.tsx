@@ -47,36 +47,38 @@ export default function PublicationViewer() {
   const piece = publication.pieces[index];
 
   return (
-    <main
-      className="mx-auto min-h-screen max-w-6xl cursor-pointer px-6 pt-36 pb-40 sm:px-10"
+    <div
+      className="min-h-screen w-full cursor-pointer"
       onClick={(e) => {
         const isLeftHalf = e.clientX < window.innerWidth / 2;
         goTo(isLeftHalf ? index - 1 : index + 1);
       }}
     >
-      <div className="mb-6 flex justify-end">
-        <span className="text-xs font-medium tracking-widest text-white/35">
-          {index + 1} / {total}
-        </span>
-      </div>
+      <main className="mx-auto max-w-6xl px-6 pt-36 pb-40 sm:px-10">
+        <div className="mb-6 flex justify-end">
+          <span className="text-xs font-medium tracking-widest text-white/35">
+            {index + 1} / {total}
+          </span>
+        </div>
 
-      <AnimatePresence mode="wait" custom={direction}>
-        <motion.div
-          key={piece.id}
-          custom={direction}
-          variants={variants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-        >
-          {piece.type === "poem" && <PoemView piece={piece} />}
-          {piece.type === "film" && <FilmView piece={piece} />}
-          {piece.type === "art" && <ArtView piece={piece} />}
-        </motion.div>
-      </AnimatePresence>
+        <AnimatePresence mode="wait" custom={direction}>
+          <motion.div
+            key={piece.id}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          >
+            {piece.type === "poem" && <PoemView piece={piece} />}
+            {piece.type === "film" && <FilmView piece={piece} />}
+            {piece.type === "art" && <ArtView piece={piece} />}
+          </motion.div>
+        </AnimatePresence>
+      </main>
 
       <PieceNav pieces={publication.pieces} currentIndex={index} onSelect={goTo} />
-    </main>
+    </div>
   );
 }
