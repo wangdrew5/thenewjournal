@@ -9,20 +9,29 @@ import PieceNav from "../components/pieces/PieceNav";
 
 const pageVariants: Variants = {
   enter: (dir: number) => ({
-    rotateY: dir >= 0 ? 100 : -100,
+    rotateY: dir >= 0 ? 92 : -92,
     opacity: 0,
+    scale: 0.92,
     originX: dir >= 0 ? 0 : 1,
   }),
   center: (dir: number) => ({
     rotateY: 0,
     opacity: 1,
+    scale: 1,
     originX: dir >= 0 ? 0 : 1,
   }),
   exit: (dir: number) => ({
-    rotateY: dir >= 0 ? -100 : 100,
+    rotateY: dir >= 0 ? -92 : 92,
     opacity: 0,
+    scale: 0.92,
     originX: dir >= 0 ? 0 : 1,
   }),
+};
+
+const pageTransition = {
+  rotateY: { duration: 0.85, ease: [0.22, 1, 0.36, 1] as const },
+  scale: { duration: 0.85, ease: [0.22, 1, 0.36, 1] as const },
+  opacity: { duration: 0.5, ease: "easeOut" as const },
 };
 
 export default function PublicationViewer() {
@@ -82,15 +91,15 @@ export default function PublicationViewer() {
               initial="enter"
               animate="center"
               exit="exit"
-              transition={{ duration: 0.6, ease: [0.45, 0, 0.2, 1] }}
+              transition={pageTransition}
               style={{ backfaceVisibility: "hidden", transformStyle: "preserve-3d" }}
               className="relative"
             >
               <motion.div
                 className="pointer-events-none absolute inset-0 z-10 rounded-3xl bg-black"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: [0, 0.4, 0] }}
-                transition={{ duration: 0.6, times: [0, 0.55, 1], ease: "easeInOut" }}
+                animate={{ opacity: [0, 0.35, 0] }}
+                transition={{ duration: 0.85, times: [0, 0.5, 1], ease: "easeInOut" }}
               />
               {piece.type === "poem" && <PoemView piece={piece} />}
               {piece.type === "film" && <FilmView piece={piece} />}

@@ -6,7 +6,7 @@
 
   --color-ink: #020202;
   --color-panel: #0a0a0a;
-  --color-panel-2: #101010;
+  --color-panel-2: #131313;
 
   --color-green: #22b25c;
   --color-lantern: #ffb84d;
@@ -64,6 +64,15 @@ h3,
   box-shadow:
     0 0 26px 2px color-mix(in srgb, var(--glow-color, #fff) 30%, transparent),
     0 0 70px 14px color-mix(in srgb, var(--glow-color, #fff) 14%, transparent);
+}
+
+/* Fades an element's own silhouette to transparent near its edges, so the
+   shape blends into whatever sits behind it instead of ending in a crisp,
+   die-cut outline. Applied to an inner wrapper, never the glow-ring box
+   itself, since mask-image would also clip the box-shadow glow. */
+.mask-fade {
+  -webkit-mask-image: radial-gradient(ellipse at center, black 58%, transparent 96%);
+  mask-image: radial-gradient(ellipse at center, black 58%, transparent 96%);
 }
 
 .bg-noise {
