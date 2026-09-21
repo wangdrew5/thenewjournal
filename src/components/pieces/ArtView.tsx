@@ -21,7 +21,7 @@ export default function ArtView({ piece }: Props) {
           whileHover={{ scale: 1.015, rotate: -0.4 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           style={{ "--glow-color": glowVar[piece.glow] } as React.CSSProperties}
-          className="glow-ring group relative aspect-4/3 w-full overflow-hidden rounded-3xl border border-white/10 bg-panel"
+          className="glow-ring group relative aspect-4/3 w-full overflow-hidden rounded-3xl bg-panel"
         >
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-panel-2 via-panel to-black/60">
             <svg

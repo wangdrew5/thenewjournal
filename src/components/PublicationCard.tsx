@@ -22,7 +22,7 @@ export default function PublicationCard({ publication, index }: Props) {
       <Link to={`/publication/${publication.id}`}>
         <div
           style={{ "--glow-color": glow } as React.CSSProperties}
-          className="glow-ring relative aspect-[3/4] w-full overflow-hidden rounded-3xl border border-white/10 bg-panel transition-shadow duration-500"
+          className="glow-ring relative aspect-[3/4] w-full overflow-hidden rounded-3xl bg-panel transition-shadow duration-500"
         >
           {/* Placeholder cover */}
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-panel-2 via-panel to-black/60">

@@ -37,7 +37,7 @@ export default function EditorArt({ caption, glow }: Props) {
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
         style={{ rotateX, rotateY, "--glow-color": glowVar[glow] } as React.CSSProperties}
-        className="glow-ring relative aspect-[4/5] w-full overflow-hidden rounded-3xl border border-white/10 bg-panel"
+        className="glow-ring relative aspect-[4/5] w-full overflow-hidden rounded-3xl bg-panel"
       >
         <motion.div
           className="pointer-events-none absolute inset-0 opacity-70"

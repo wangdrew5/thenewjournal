@@ -15,7 +15,7 @@ export default function FilmPlayer({ glow, videoSrc }: Props) {
     return (
       <div
         style={{ "--glow-color": glowVar[glow] } as React.CSSProperties}
-        className="glow-ring aspect-video w-full overflow-hidden rounded-3xl border border-white/10 bg-black"
+        className="glow-ring aspect-video w-full overflow-hidden rounded-3xl bg-black"
       >
         <video src={videoSrc} controls className="h-full w-full" />
       </div>
@@ -25,7 +25,7 @@ export default function FilmPlayer({ glow, videoSrc }: Props) {
   return (
     <div
       style={{ "--glow-color": glowVar[glow] } as React.CSSProperties}
-      className="glow-ring relative aspect-video w-full cursor-pointer overflow-hidden rounded-3xl border border-white/10 bg-black"
+      className="glow-ring relative aspect-video w-full cursor-pointer overflow-hidden rounded-3xl bg-black"
       onClick={(e) => {
         e.stopPropagation();
         setPlaying((p) => !p);
@@ -70,7 +70,7 @@ export default function FilmPlayer({ glow, videoSrc }: Props) {
           animate={playing ? { scale: 1 } : { scale: [1, 1.06, 1] }}
           transition={playing ? { duration: 0.2 } : { duration: 2.4, repeat: Infinity, ease: "easeInOut" }}
           style={{ "--glow-color": glowVar[glow] } as React.CSSProperties}
-          className={`glow-ring flex h-16 w-16 items-center justify-center rounded-full border border-white/20 bg-white/5 backdrop-blur ${glowText[glow]}`}
+          className={`glow-ring flex h-16 w-16 items-center justify-center rounded-full bg-white/5 backdrop-blur ${glowText[glow]}`}
         >
           {playing ? (
             <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">

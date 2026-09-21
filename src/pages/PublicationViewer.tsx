@@ -1,16 +1,28 @@
 import { useEffect, useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
 import { publications } from "../data/publications";
 import PoemView from "../components/pieces/PoemView";
 import FilmView from "../components/pieces/FilmView";
 import ArtView from "../components/pieces/ArtView";
 import PieceNav from "../components/pieces/PieceNav";
 
-const variants = {
-  enter: (dir: number) => ({ opacity: 0, x: dir >= 0 ? 40 : -40 }),
-  center: { opacity: 1, x: 0 },
-  exit: (dir: number) => ({ opacity: 0, x: dir >= 0 ? -40 : 40 }),
+const pageVariants: Variants = {
+  enter: (dir: number) => ({
+    rotateY: dir >= 0 ? 100 : -100,
+    opacity: 0,
+    originX: dir >= 0 ? 0 : 1,
+  }),
+  center: (dir: number) => ({
+    rotateY: 0,
+    opacity: 1,
+    originX: dir >= 0 ? 0 : 1,
+  }),
+  exit: (dir: number) => ({
+    rotateY: dir >= 0 ? -100 : 100,
+    opacity: 0,
+    originX: dir >= 0 ? 0 : 1,
+  }),
 };
 
 export default function PublicationViewer() {
@@ -61,21 +73,31 @@ export default function PublicationViewer() {
           </span>
         </div>
 
-        <AnimatePresence mode="wait" custom={direction}>
-          <motion.div
-            key={piece.id}
-            custom={direction}
-            variants={variants}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          >
-            {piece.type === "poem" && <PoemView piece={piece} />}
-            {piece.type === "film" && <FilmView piece={piece} />}
-            {piece.type === "art" && <ArtView piece={piece} />}
-          </motion.div>
-        </AnimatePresence>
+        <div style={{ perspective: 1800 }}>
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.div
+              key={piece.id}
+              custom={direction}
+              variants={pageVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.6, ease: [0.45, 0, 0.2, 1] }}
+              style={{ backfaceVisibility: "hidden", transformStyle: "preserve-3d" }}
+              className="relative"
+            >
+              <motion.div
+                className="pointer-events-none absolute inset-0 z-10 rounded-3xl bg-black"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0, 0.4, 0] }}
+                transition={{ duration: 0.6, times: [0, 0.55, 1], ease: "easeInOut" }}
+              />
+              {piece.type === "poem" && <PoemView piece={piece} />}
+              {piece.type === "film" && <FilmView piece={piece} />}
+              {piece.type === "art" && <ArtView piece={piece} />}
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </main>
 
       <PieceNav pieces={publication.pieces} currentIndex={index} onSelect={goTo} />
