@@ -2,6 +2,7 @@ import { useRef } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import type { GlowColor } from "../../data/publications";
 import { glowVar, glowText } from "../../lib/glow";
+import GlowBackdrop from "../GlowBackdrop";
 
 interface Props {
   caption: string;
@@ -36,10 +37,12 @@ export default function EditorArt({ caption, glow }: Props) {
         ref={ref}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        style={{ rotateX, rotateY, "--glow-color": glowVar[glow] } as React.CSSProperties}
-        className="glow-ring relative aspect-[4/5] w-full rounded-3xl"
+        style={{ rotateX, rotateY } as React.CSSProperties}
+        className="relative aspect-[4/5] w-full"
       >
-        <div className="mask-fade absolute inset-0 overflow-hidden rounded-3xl bg-panel">
+        <GlowBackdrop glow={glowVar[glow]} />
+
+        <div className="absolute inset-0 overflow-hidden rounded-3xl">
           <motion.div
             className="pointer-events-none absolute inset-0 opacity-70"
             style={{
@@ -49,7 +52,7 @@ export default function EditorArt({ caption, glow }: Props) {
               ),
             }}
           />
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-panel-2 via-panel to-black/60">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
             <svg
               viewBox="0 0 24 24"
               className={`h-9 w-9 opacity-60 ${glowText[glow]}`}

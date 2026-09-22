@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import type { ArtPiece } from "../../data/publications";
 import PieceHeader from "./PieceHeader";
 import { glowVar, glowText } from "../../lib/glow";
+import GlowBackdrop from "../GlowBackdrop";
 
 interface Props {
   piece: ArtPiece;
@@ -20,11 +21,12 @@ export default function ArtView({ piece }: Props) {
           animate={{ opacity: 1, scale: 1 }}
           whileHover={{ scale: 1.015, rotate: -0.4 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          style={{ "--glow-color": glowVar[piece.glow] } as React.CSSProperties}
-          className="glow-ring group relative aspect-4/3 w-full rounded-3xl"
+          className="group relative aspect-4/3 w-full"
         >
-          <div className="mask-fade absolute inset-0 overflow-hidden rounded-3xl bg-panel">
-            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-gradient-to-br from-panel-2 via-panel to-black/60">
+          <GlowBackdrop glow={glowVar[piece.glow]} />
+
+          <div className="absolute inset-0 overflow-hidden rounded-3xl">
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
               <svg
                 viewBox="0 0 24 24"
                 className={`h-12 w-12 opacity-60 transition-transform duration-500 group-hover:scale-110 ${glowText[piece.glow]}`}

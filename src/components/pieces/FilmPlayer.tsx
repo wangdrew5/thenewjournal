@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import type { GlowColor } from "../../data/publications";
 import { glowVar, glowText } from "../../lib/glow";
+import GlowBackdrop from "../GlowBackdrop";
 
 interface Props {
   glow: GlowColor;
@@ -24,16 +25,15 @@ export default function FilmPlayer({ glow, videoSrc }: Props) {
 
   return (
     <div
-      style={{ "--glow-color": glowVar[glow] } as React.CSSProperties}
-      className="glow-ring relative aspect-video w-full cursor-pointer rounded-3xl"
+      className="relative aspect-video w-full cursor-pointer"
       onClick={(e) => {
         e.stopPropagation();
         setPlaying((p) => !p);
       }}
     >
-      <div className="mask-fade absolute inset-0 overflow-hidden rounded-3xl bg-black">
-        <div className="absolute inset-0 bg-gradient-to-br from-panel-2 via-panel to-black" />
+      <GlowBackdrop glow={glowVar[glow]} />
 
+      <div className="absolute inset-0 overflow-hidden rounded-3xl">
         <AnimatePresence>
           {playing && (
             <motion.div
