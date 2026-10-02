@@ -1,64 +1,177 @@
-import { motion } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  useReducedMotion,
+} from "framer-motion";
 import { Link } from "react-router-dom";
+import { useRef, type MouseEvent, type PointerEvent } from "react";
 import type { Publication } from "../data/publications";
-import { glowVar, glowText } from "../lib/glow";
-import GlowBackdrop from "./GlowBackdrop";
+import IssueArtwork from "./magazine/IssueArtwork";
+import { DreamScene } from "./surreal/DreamScape";
+import { startEnter } from "../lib/enterTransition";
+import { themeNames } from "../lib/magazine";
 
-interface Props {
-  publication: Publication;
-  index: number;
+function OpenRow({ label }: { label: string }) {
+  return (
+    <div className="cover-open">
+      <span>{label}</span>
+      <span aria-hidden="true">↗</span>
+    </div>
+  );
 }
 
-export default function PublicationCard({ publication, index }: Props) {
-  const glow = glowVar[publication.glow];
+function SurrealCover({ publication }: { publication: Publication }) {
+  return (
+    <div className="tile-book">
+      <div className="tile-book-page" aria-hidden="true">
+        <span>No. 01 · Poem</span>
+        <i>Turn the page</i>
+        <span className="tile-book-lines">
+          <b />
+          <b />
+          <b />
+          <b />
+          <b />
+        </span>
+      </div>
+      <div className="tile-book-cover">
+        {publication.coverSrc ? (
+          <img className="issue-cover-image" src={publication.coverSrc} alt={publication.coverAlt ?? ""} />
+        ) : (
+          <DreamScene scene={0} className="tile-dream" />
+        )}
+        <div className="tile-book-shade" />
+        <div className="cover-masthead">
+          <span>The New Journal</span>
+          <span>{publication.issueNumber ? `No. ${publication.issueNumber}` : "Your issue"}</span>
+        </div>
+        <div className="cover-title">
+          <span>Writing · Art · Film</span>
+          <h2>{publication.caption}</h2>
+        </div>
+        <OpenRow label="Open the magazine" />
+      </div>
+    </div>
+  );
+}
 
+function GalleryCover({ publication }: { publication: Publication }) {
+  return (
+    <div className="tile-wall">
+      <div className="tile-wall-spot" />
+      <div className="tile-wall-floor" />
+      <div className="tile-wall-track">
+        <span className="tile-wall-peek" aria-hidden="true" />
+        <div className="tile-wall-work">
+          {publication.coverSrc ? (
+            <img src={publication.coverSrc} alt={publication.coverAlt ?? ""} />
+          ) : (
+            <IssueArtwork />
+          )}
+        </div>
+        <span className="tile-wall-peek" aria-hidden="true" />
+      </div>
+      <div className="tile-wall-label">
+        <strong>{publication.caption}</strong>
+        <span>
+          The New Journal, {publication.issueNumber ? `Issue ${publication.issueNumber}` : "your issue"}
+        </span>
+      </div>
+      <div className="tile-wall-mast">
+        <span>The New Journal</span>
+        <span>{publication.issueNumber ?? "—"}</span>
+      </div>
+      <OpenRow label="Enter the gallery" />
+    </div>
+  );
+}
+
+export default function PublicationCard({
+  publication,
+  index,
+}: {
+  publication: Publication;
+  index: number;
+}) {
+  const reduced = useReducedMotion();
+  const theme = publication.theme ?? "surreal";
+  const cover = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0.5);
+  const y = useMotionValue(0.5);
+  const rotateX = useSpring(useTransform(y, [0, 1], [3, -3]), {
+    stiffness: 160,
+    damping: 22,
+  });
+  const rotateY = useSpring(useTransform(x, [0, 1], [-4, 4]), {
+    stiffness: 160,
+    damping: 22,
+  });
+  const to = `/publication/${publication.id}`;
+  function move(event: PointerEvent<HTMLAnchorElement>) {
+    if (reduced || event.pointerType !== "mouse") return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    x.set((event.clientX - rect.left) / rect.width);
+    y.set((event.clientY - rect.top) / rect.height);
+  }
+  function enter(event: MouseEvent<HTMLAnchorElement>) {
+    if (
+      reduced ||
+      !cover.current ||
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    )
+      return;
+    event.preventDefault();
+    startEnter(cover.current, theme, to);
+  }
   return (
     <motion.article
-      initial={{ opacity: 0, y: 24 }}
+      className={`magazine-tile tile-${theme}`}
+      initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 24 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.6, delay: index * 0.08, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={{ y: -6 }}
-      className="group"
+      transition={{
+        duration: reduced ? 0 : 0.6,
+        ease: [0.22, 1, 0.36, 1],
+        delay: reduced ? 0 : Math.min(index * 0.1, 0.3),
+      }}
     >
-      <Link to={`/publication/${publication.id}`}>
-        <div className="relative aspect-[3/4] w-full">
-          <GlowBackdrop glow={glow} />
-
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 overflow-hidden rounded-3xl">
-            <svg
-              viewBox="0 0 24 24"
-              className={`h-10 w-10 opacity-70 transition-transform duration-500 group-hover:scale-110 ${glowText[publication.glow]}`}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <rect x="3" y="4" width="18" height="16" rx="2.2" />
-              <path d="M3 9h18" />
-              <path d="M8 4v5" />
-            </svg>
-            <span className="font-display text-xs font-medium tracking-[0.3em] text-white/35 uppercase">
-              Cover Placeholder
-            </span>
-
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-
-            <motion.span
-              initial={{ opacity: 0, y: 6 }}
-              className="absolute right-4 bottom-4 flex items-center gap-1.5 text-xs font-medium tracking-wide text-white opacity-0 transition-all duration-300 group-hover:opacity-100 group-hover:[transform:translateY(0)]"
-            >
-              Read issue
-              <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M5 12h14" />
-                <path d="M13 6l6 6-6 6" />
-              </svg>
-            </motion.span>
-          </div>
+      <Link
+        to={to}
+        className="magazine-cover-link"
+        aria-label={`Open ${publication.caption}, ${themeNames[theme]} edition`}
+        onClick={enter}
+        onPointerMove={move}
+        onPointerLeave={() => {
+          x.set(0.5);
+          y.set(0.5);
+        }}
+      >
+        <motion.div
+          ref={cover}
+          className="magazine-cover"
+          style={reduced ? {} : { rotateX, rotateY }}
+        >
+          {theme === "museum" ? (
+            <GalleryCover publication={publication} />
+          ) : (
+            <SurrealCover publication={publication} />
+          )}
+        </motion.div>
+        <div className="tile-caption">
+          <span>
+            <b>{themeNames[theme]} edition</b> <span aria-hidden="true">/</span>{" "}
+            {theme === "surreal" ? "Page-turn magazine" : "Carousel exhibition"}
+          </span>
+          <span>
+            {publication.pieces.length} {publication.pieces.length === 1 ? "piece" : "pieces"}
+          </span>
         </div>
       </Link>
-
-      <p className="mt-4 px-1 text-sm font-medium text-white/70 transition-colors duration-300 group-hover:text-white">
-        {publication.caption}
-      </p>
     </motion.article>
   );
 }

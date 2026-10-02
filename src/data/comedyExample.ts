@@ -1,0 +1,46 @@
+import type { Publication } from "./publications";
+
+export const COMEDY_ID = "comedy-example";
+export const comedyExample: Publication = {
+  id: COMEDY_ID,
+  theme: "museum",
+  issueNumber: "02",
+  caption: "A Very Serious Meeting",
+  glow: "green",
+  pieces: [
+    {
+      id: "comedy-chair",
+      type: "poem",
+      title: "Peer Review of a Chair",
+      author: "Fictional example",
+      glow: "green",
+      editorArtCaption: "",
+      lines: [
+        "The philosophy department bought a chair.",
+        "The chair immediately requested proof that the department existed.",
+        "",
+        "“I think, therefore I am,” said the professor.",
+        "“I think you’re a professor,” said the chair. “That’s two opinions. Where’s the evidence?”",
+        "",
+        "They brought in a physicist, who explained that the chair was mostly empty space.",
+        "The chair pointed out that so was the department’s budget.",
+        "",
+        "They brought in a mathematician.",
+        "“Assume a comfortable chair,” she began.",
+        "“Absolutely not,” said the chair.",
+        "",
+        "By lunch, three departments had signed a letter expressing concern. Nobody had sat down.",
+        "A cleaner walked in, sat on the chair, and ate a sandwich.",
+        "",
+        "“You’ve solved it,” said the professor.",
+        "“No,” she said. “I’m on break.”",
+        "",
+        "The chair was removed for refusing to engage with the literature.",
+        "In its place, they installed a beanbag.",
+        "The beanbag asked whether free will was taxable.",
+        "",
+        "The department has been standing ever since.",
+      ],
+    },
+  ],
+};

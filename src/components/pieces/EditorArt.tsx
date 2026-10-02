@@ -1,25 +1,46 @@
 import { useRef } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  useReducedMotion,
+} from "framer-motion";
 import type { GlowColor } from "../../data/publications";
-import { glowVar, glowText } from "../../lib/glow";
+import { glowVar } from "../../lib/glow";
 import GlowBackdrop from "../GlowBackdrop";
 
 interface Props {
   caption: string;
   glow: GlowColor;
+  imageSrc: string;
+  imageAlt?: string;
 }
 
-export default function EditorArt({ caption, glow }: Props) {
+export default function EditorArt({
+  caption,
+  glow,
+  imageSrc,
+  imageAlt,
+}: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [8, -8]), { stiffness: 200, damping: 20 });
-  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-8, 8]), { stiffness: 200, damping: 20 });
+  const rotateX = useSpring(useTransform(y, [-0.5, 0.5], [8, -8]), {
+    stiffness: 200,
+    damping: 20,
+  });
+  const rotateY = useSpring(useTransform(x, [-0.5, 0.5], [-8, 8]), {
+    stiffness: 200,
+    damping: 20,
+  });
   const glowX = useTransform(x, [-0.5, 0.5], ["20%", "80%"]);
   const glowY = useTransform(y, [-0.5, 0.5], ["20%", "80%"]);
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    if (reduced) return;
     const rect = ref.current?.getBoundingClientRect();
     if (!rect) return;
     x.set((e.clientX - rect.left) / rect.width - 0.5);
@@ -37,8 +58,8 @@ export default function EditorArt({ caption, glow }: Props) {
         ref={ref}
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
-        style={{ rotateX, rotateY } as React.CSSProperties}
-        className="relative aspect-[4/5] w-full"
+        style={reduced ? {} : { rotateX, rotateY }}
+        className="editor-art relative aspect-[4/5] w-full"
       >
         <GlowBackdrop glow={glowVar[glow]} />
 
@@ -48,25 +69,17 @@ export default function EditorArt({ caption, glow }: Props) {
             style={{
               background: useTransform(
                 [glowX, glowY],
-                ([gx, gy]) => `radial-gradient(circle at ${gx} ${gy}, color-mix(in srgb, ${glowVar[glow]} 22%, transparent), transparent 60%)`,
+                ([gx, gy]) =>
+                  `radial-gradient(circle at ${gx} ${gy}, color-mix(in srgb, ${glowVar[glow]} 22%, transparent), transparent 60%)`,
               ),
             }}
           />
-          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-            <svg
-              viewBox="0 0 24 24"
-              className={`h-9 w-9 opacity-60 ${glowText[glow]}`}
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.5"
-            >
-              <circle cx="12" cy="8" r="4" />
-              <path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6" />
-            </svg>
-            <span className="font-display px-8 text-center text-xs font-medium tracking-[0.25em] text-white/35 uppercase">
-              {caption}
-            </span>
-          </div>
+          <img
+            src={imageSrc}
+            alt={imageAlt ?? caption}
+            loading="lazy"
+            className="absolute inset-0 h-full w-full object-contain"
+          />
         </div>
       </motion.div>
     </div>

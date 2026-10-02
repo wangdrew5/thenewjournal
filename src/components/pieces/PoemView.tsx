@@ -1,10 +1,11 @@
-import { motion, type Variants } from "framer-motion";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
 import type { PoemPiece } from "../../data/publications";
 import PieceHeader from "./PieceHeader";
 import EditorArt from "./EditorArt";
 
 interface Props {
   piece: PoemPiece;
+  animateLines?: boolean;
 }
 
 const lineVariants: Variants = {
@@ -12,38 +13,62 @@ const lineVariants: Variants = {
   show: (i: number) => ({
     opacity: 1,
     y: 0,
-    transition: { delay: 0.3 + i * 0.09, duration: 0.5, ease: [0.22, 1, 0.36, 1] as const },
+    transition: {
+      delay: 0.06 + Math.min(i * 0.035, 0.55),
+      duration: 0.3,
+      ease: [0.22, 1, 0.36, 1] as const,
+    },
   }),
 };
 
-export default function PoemView({ piece }: Props) {
+export default function PoemView({ piece, animateLines = true }: Props) {
+  const reduced = useReducedMotion();
   return (
     <div>
-      <PieceHeader label="Poem" title={piece.title} author={piece.author} glow={piece.glow} />
+      <PieceHeader
+        label="Poem"
+        title={piece.title}
+        author={piece.author}
+        glow={piece.glow}
+      />
 
-      <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-start">
-        <div className="font-display space-y-3 text-lg leading-relaxed text-white/85 sm:text-xl">
+      <div
+        className={`poem-layout ${piece.editorArtSrc ? "" : "without-illustration"}`}
+      >
+        <div className="poem-text font-display space-y-3 text-white/85">
           {piece.lines.map((line, i) => (
             <motion.p
               key={i}
               custom={i}
               initial="hidden"
               animate="show"
-              variants={lineVariants}
+              variants={
+                reduced || !animateLines
+                  ? { hidden: { opacity: 1 }, show: { opacity: 1 } }
+                  : lineVariants
+              }
               className="transition-colors duration-300 hover:text-white"
             >
-              {line}
+              {line || "\u00a0"}
             </motion.p>
           ))}
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.96 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
-        >
-          <EditorArt caption={piece.editorArtCaption} glow={piece.glow} />
-        </motion.div>
+        {piece.editorArtSrc && (
+          <motion.div
+            className="poem-illustration"
+            initial={{ opacity: 0, scale: 0.96 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <EditorArt
+              caption={piece.editorArtCaption}
+              glow={piece.glow}
+              imageSrc={piece.editorArtSrc}
+              imageAlt={piece.editorArtAlt}
+            />
+          </motion.div>
+        )}
       </div>
     </div>
   );

@@ -10,7 +10,12 @@ interface Props {
 export default function FilmView({ piece }: Props) {
   return (
     <div>
-      <PieceHeader label="Film" title={piece.title} author={piece.author} glow={piece.glow} />
+      <PieceHeader
+        label="Film"
+        title={piece.title}
+        author={piece.author}
+        glow={piece.glow}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 16 }}

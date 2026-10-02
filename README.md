@@ -1,32 +1,41 @@
-# React + TypeScript + Vite
+# The New Journal
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A React publication reader for writing, artwork, and films by incarcerated youth. The original publication data lives in `src/data/publications.ts`.
 
-Currently, two official plugins are available:
+[Shareable preview](https://the-new-journal-preview-oct02.defenestranator.chatgpt.site)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Issue designs
 
-## React Compiler
+Each publication opens from its cover tile on the home page: the cover grows to fill the screen in that issue's palette and hands off to its own reader.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Surreal edition** (`theme: "surreal"`) — a two-page magazine over animated, hand-built SVG dreamscapes (`src/components/surreal/`). Pages turn with a 3D page flip around the spine; the backdrop crossfades to a new scene as you read and leans with the mouse. Phones get a single page that peels away.
+- **Gallery edition** (`theme: "museum"`) — white gallery walls, spotlight and floor (`src/components/gallery/`). Each piece is hung like a work with soft layered shadows and a museum wall label; the carousel slides between works, with neighbours peeking in and drag/swipe support.
 
-## Expanding the Oxlint configuration
+Both readers share URL-based page state (`src/lib/useIssueNav.ts`), so direct links, the contents dialog, arrow keys (plus Home/End), and bookmarks behave the same. The scenes and gallery sculpture are decorative brand artwork, never attributed to contributors.
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+## Try an issue
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+Choose **Try it** to open `/preview`. **Add a piece** lets visitors add writing, artwork, or films to a growing issue (up to 200 pieces). Select any piece in the contents list to edit it, move it up/down, or remove it with an undo option. Open finished pieces in the reader. Existing two-poem drafts migrate automatically without changing their piece IDs.
+
+Changes save in the visitor's browser; they are not shared or published. **Download issue** saves a portable JSON copy including images; **Restore issue** validates and opens downloaded files up to 8 MB, with confirmation before replacing existing work. A cover is optional. JPG, PNG, and WebP images under 1 MB are supported. Films use direct HTTPS MP4/WebM links, not video-platform page links. **Start over** clears the draft after confirmation.
+
+The reader supports arrow keys, a contents panel, direct links to pieces, and bookmarks saved on the current device. Motion follows the visitor's reduced-motion preference. The editor animates piece arrivals, removals, reordering, selection, preview changes, save confirmation, image arrivals, and control feedback. Writing appears immediately while typing; reader line reveals have a capped delay.
+
+## Local development
+
+```sh
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+```sh
+npm run build
+npm run lint
+npm run check:preview
+```
+
+## Shared preview deployment
+
+The separate `../journal-share-preview` checkout contains the published static export and Sites identity in `.openai/hosting.json`. The export uses SPA fallback so reader and editor links survive reloads. Source work stays in this repository; rebuild and refresh that export before publishing changes through the Sites workflow.
+
+Build, lint, legacy draft migration, portable issue files, reordering, undo, validation, and server-render integration checks passed for the editor. Browser access blocked the final editor interaction and visual inspection; those checks should be completed when browser access is available.

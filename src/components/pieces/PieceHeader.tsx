@@ -11,20 +11,20 @@ interface Props {
 
 export default function PieceHeader({ label, title, author, glow }: Props) {
   return (
-    <div className="mb-10">
+    <div className="piece-header mb-10">
       <motion.h1
         initial={{ opacity: 0, x: -16 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-        className="font-display text-glow-white text-3xl font-bold tracking-tight text-white sm:text-4xl"
+        className="piece-heading font-display text-glow-white text-3xl font-bold tracking-tight text-white sm:text-4xl"
       >
-        <span className={glowText[glow]}>{label}:</span> {title}
+        <span className={`piece-kind ${glowText[glow]}`}>{label}:</span> {title}
       </motion.h1>
       <motion.p
         initial={{ opacity: 0, x: -16 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-        className="mt-2 text-sm tracking-wide text-white/50 italic"
+        className="piece-byline mt-2 text-sm tracking-wide text-white/50 italic"
       >
         By {author}
       </motion.p>

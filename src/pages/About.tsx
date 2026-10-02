@@ -12,8 +12,8 @@ export default function About() {
           About
         </h1>
         <p className="mt-6 text-lg leading-relaxed text-white/70">
-          The New Journal is an online publication by and for incarcerated youth. This page is a
-          placeholder — the full story, mission, and team will go here.
+          The New Journal is an online publication by and for incarcerated
+          youth.
         </p>
       </motion.div>
     </main>

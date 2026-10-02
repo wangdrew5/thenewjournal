@@ -1,5 +1,11 @@
 import { useEffect, useRef } from "react";
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  useReducedMotion,
+} from "framer-motion";
 
 interface Props {
   style: React.CSSProperties;
@@ -8,14 +14,31 @@ interface Props {
   delay?: number;
 }
 
-export default function Lantern({ style, size, radius = 380, delay = 0 }: Props) {
+export default function Lantern({
+  style,
+  size,
+  radius = 380,
+  delay = 0,
+}: Props) {
   const ref = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
   const proximity = useMotionValue(0);
 
-  const scale = useSpring(useTransform(proximity, [0, 1], [1, 1.5]), { stiffness: 90, damping: 16 });
-  const boost = useSpring(useTransform(proximity, [0, 1], [0, 0.55]), { stiffness: 90, damping: 18 });
+  const scale = useSpring(useTransform(proximity, [0, 1], [1, 1.5]), {
+    stiffness: 90,
+    damping: 16,
+  });
+  const boost = useSpring(useTransform(proximity, [0, 1], [0, 0.55]), {
+    stiffness: 90,
+    damping: 18,
+  });
 
   useEffect(() => {
+    if (
+      reduced ||
+      !window.matchMedia("(hover: hover) and (pointer: fine)").matches
+    )
+      return;
     function handleMove(e: MouseEvent) {
       const rect = ref.current?.getBoundingClientRect();
       if (!rect) return;
@@ -26,15 +49,25 @@ export default function Lantern({ style, size, radius = 380, delay = 0 }: Props)
     }
     window.addEventListener("mousemove", handleMove);
     return () => window.removeEventListener("mousemove", handleMove);
-  }, [proximity, radius]);
+  }, [proximity, radius, reduced]);
 
   return (
     <motion.div
       ref={ref}
       className="animate-flicker bg-lantern pointer-events-none absolute rounded-full opacity-[0.14]"
-      style={{ ...style, width: size, height: size, filter: "blur(90px)", scale, animationDelay: `${delay}s` }}
+      style={{
+        ...style,
+        width: size,
+        height: size,
+        filter: "blur(90px)",
+        scale: reduced ? 1 : scale,
+        animationDelay: `${delay}s`,
+      }}
     >
-      <motion.div className="bg-lantern absolute inset-0 rounded-full" style={{ filter: "blur(60px)", opacity: boost }} />
+      <motion.div
+        className="bg-lantern absolute inset-0 rounded-full"
+        style={{ filter: "blur(60px)", opacity: boost }}
+      />
     </motion.div>
   );
 }

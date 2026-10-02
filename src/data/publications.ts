@@ -1,3 +1,5 @@
+export type IssueTheme = "surreal" | "museum";
+
 export type GlowColor = "green";
 
 export type PieceType = "poem" | "film" | "art";
@@ -14,6 +16,8 @@ export interface PoemPiece extends PieceBase {
   type: "poem";
   lines: string[];
   editorArtCaption: string;
+  editorArtSrc?: string;
+  editorArtAlt?: string;
 }
 
 export interface FilmPiece extends PieceBase {
@@ -25,6 +29,8 @@ export interface FilmPiece extends PieceBase {
 export interface ArtPiece extends PieceBase {
   type: "art";
   imageCaption: string;
+  imageSrc?: string;
+  imageAlt?: string;
   editorNote?: string;
 }
 
@@ -33,6 +39,10 @@ export type Piece = PoemPiece | FilmPiece | ArtPiece;
 export interface Publication {
   id: string;
   caption: string;
+  theme?: IssueTheme;
+  issueNumber?: string;
+  coverSrc?: string;
+  coverAlt?: string;
   glow: GlowColor;
   pieces: Piece[];
 }
@@ -40,6 +50,8 @@ export interface Publication {
 export const publications: Publication[] = [
   {
     id: "pub-1",
+    theme: "surreal",
+    issueNumber: "01",
     caption: "Untitled Publication — coming soon",
     glow: "green",
     pieces: [
