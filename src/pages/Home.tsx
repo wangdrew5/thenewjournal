@@ -5,10 +5,15 @@ import { useJournal } from "../lib/useJournal";
 import { COMEDY_ID } from "../data/comedyExample";
 import { PREVIEW_ID } from "../lib/preview";
 import PublicationCard from "../components/PublicationCard";
+import { readingPosition, READING_KEY } from "../lib/readingPosition";
 
 export default function Home() {
   const reduced = useReducedMotion();
   const { publications } = useJournal();
+  const [recent] = useState(() => {
+    try { return readingPosition(localStorage.getItem(READING_KEY), publications); }
+    catch { return null; }
+  });
   const [savedPieces] = useState(() =>
     publications.flatMap((publication) =>
       publication.pieces
@@ -23,29 +28,41 @@ export default function Home() {
     ),
   );
   return (
-    <main className="home-page mx-auto max-w-6xl px-6 pb-24 sm:px-10">
+    <main className="home-page journal-home mx-auto max-w-6xl px-6 pb-24 sm:px-10">
       <motion.header
-        className="home-heading"
-        initial={{ opacity: 0, y: 12 }}
+        className="journal-masthead"
+        initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: reduced ? 0 : 0.4 }}
       >
-        <h1 className="font-display text-glow-white text-4xl font-semibold tracking-tight text-white sm:text-5xl">
-          Publications
-        </h1>
-        <p>
-          Writing, art, and voices from incarcerated youth — published one issue
-          at a time.
-        </p>
+        <div className="masthead-rule"><span>Writing / Art / Film</span><span>An online publication</span></div>
+        <h1>The <i>New</i> Journal<span aria-hidden="true">.</span></h1>
+        <div className="masthead-intro">
+          <span className="journal-mark" aria-hidden="true">✳</span>
+          <p>Writing, art, and films by incarcerated youth.<br />Published one issue at a time.</p>
+          <a href="#issues" className="archive-jump">Explore the issues <span aria-hidden="true">↓</span></a>
+        </div>
       </motion.header>
-      <div className="magazine-grid">
+      {recent && <Link className="continue-reading" to={recent.to}>
+        <span className="continue-marker" aria-hidden="true">↳</span>
+        <span><small>Pick up where you left off</small><strong>{recent.page.piece!.title}</strong><em>{recent.publication.caption} · Page {recent.index} of {recent.total}</em></span>
+        <span className="continue-arrow" aria-hidden="true">→</span>
+      </Link>}
+      <div className="archive-heading" id="issues"><h2>Publications</h2><span>{String(publications.length).padStart(2, "0")} issues / Two ways to read</span></div>
+      <div className="magazine-grid journal-shelf">
         {publications.map((publication, i) => (
-          <section
+          <motion.section
             key={publication.id}
             className="publication-tile-group"
             aria-label={publication.caption}
+            initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.12 }}
+            transition={{ duration: reduced ? 0 : 0.65 }}
           >
+            <div className="edition-heading"><span>{publication.issueNumber ?? "Yours"}</span><h3>{publication.theme === "museum" ? "The gallery edition" : "The surreal edition"}</h3><span aria-hidden="true">↗</span></div>
             <PublicationCard publication={publication} index={i} />
+            <p className="edition-description">{publication.theme === "museum" ? "A white room. Works on the wall. Move through at your own pace." : "An illustrated world, paper pages, and a little room to get lost."}</p>
             {publication.id === COMEDY_ID && (
               <p className="tile-note">
                 Fictional example · Try the gallery edition
@@ -82,20 +99,21 @@ export default function Home() {
                 ))}
               </ol>
             </details>
-          </section>
+          </motion.section>
         ))}
       </div>
-      <section className="try-issue" aria-labelledby="try-heading">
-        <div>
+      <motion.section className="journal-desk" aria-labelledby="try-heading" initial={{ opacity: reduced ? 1 : 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
+        <div className="desk-paper" aria-hidden="true"><span>The New Journal / Your issue</span><i>It starts<br />with a page.</i><div className="desk-lines"><b /><b /><b /><b /></div><span>01</span></div>
+        <div className="desk-copy">
+          <span className="desk-kicker">The editor’s desk</span>
           <h2 id="try-heading" className="font-display">
-            Try your own issue
+            Make something<br /><i>of your own.</i>
           </h2>
-          <p>Add your writing and images, then open it as a reader.</p>
+          <p>Add writing, images, or film. Choose your edition and see your work become a magazine.</p>
+          <Link to="/preview" className="desk-link">Open the editor <span aria-hidden="true">↗</span></Link>
+          <small>Your draft stays in this browser. Download a copy to keep or share it.</small>
         </div>
-        <Link to="/preview" className="issue-entry">
-          Try it out <span aria-hidden="true">→</span>
-        </Link>
-      </section>
+      </motion.section>
       {savedPieces.length > 0 && (
         <section aria-labelledby="saved-heading" className="saved-section">
           <h2 id="saved-heading" className="font-display text-xl text-white/80">
@@ -121,6 +139,7 @@ export default function Home() {
           </div>
         </section>
       )}
+      <footer className="journal-colophon"><Link to="/">The New Journal</Link><span>Writing. Art. Film.</span><Link to="/about">About the journal ↗</Link></footer>
     </main>
   );
 }

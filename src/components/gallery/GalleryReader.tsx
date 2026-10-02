@@ -93,7 +93,7 @@ function PieceWork({ page, index }: { page: MagazinePage; index: number }) {
           </span>
         )}
       </div>
-      <div className="gal-text-body">
+      <div className="gal-text-body" tabIndex={0} role="region" aria-label={`${piece.title}, scroll to read`}>
         <h2>{piece.title}</h2>
         <p className="gal-text-author">{piece.author}</p>
         <div className="gal-poem">
@@ -293,7 +293,7 @@ export default function GalleryReader({ publication }: { publication: Publicatio
                   key={p.id}
                   type="button"
                   className={n === index ? "is-on" : ""}
-                  aria-label={n === 0 ? "Entrance" : `Work ${n}: ${p.piece?.title}`}
+                  aria-label={n === 0 ? "Entrance" : `${p.piece?.title}${p.parts > 1 ? `, sheet ${p.part + 1} of ${p.parts}` : ""}`}
                   aria-current={n === index ? "step" : undefined}
                   onClick={() => goTo(n)}
                 />

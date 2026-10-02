@@ -733,3 +733,8 @@ body:has(.gal-reader) {
     animation: none;
   }
 }
+.gal-text-body { padding-bottom: 48px; scrollbar-width: thin; scrollbar-color: #8885 transparent; }
+.gal-text-body::-webkit-scrollbar { display: block; width: 3px; }
+.gal-text-body::-webkit-scrollbar-thumb { background: #8885; }
+.gal-text-body::-webkit-scrollbar-track { background: transparent; }
+.gal-text-body:focus-visible { outline: 1px solid #8888; outline-offset: 5px; }

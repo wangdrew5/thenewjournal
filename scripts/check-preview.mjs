@@ -161,6 +161,19 @@ try {
   const comedy = m.createComedyDraft();
   assert.equal(comedy.pieces.length, 1);
   assert.match(comedy.pieces[0].text, /chair/i);
+  const { magazinePages, pageFromQuery } = await server.ssrLoadModule("/src/lib/magazine.ts");
+  const { readingPosition } = await server.ssrLoadModule("/src/lib/readingPosition.ts");
+  const comedyPublication = m.previewPublication(comedy);
+  const split = magazinePages(comedyPublication);
+  assert.ok(split.length > 2, "Long writing should span multiple sheets");
+  assert.deepEqual(split.filter((p) => p.piece).flatMap((p) => p.piece.lines), comedy.pieces[0].text.split("\n"), "Pagination preserves all lines and stanza breaks");
+  const position = JSON.stringify({ version: 1, publicationId: comedyPublication.id, pieceId: split[2].piece.id, part: split[2].part });
+  const restored = readingPosition(position, [comedyPublication]);
+  assert.equal(restored.index, 2);
+  const query = new URLSearchParams(restored.to.split("?")[1]);
+  assert.equal(pageFromQuery(split, query.get("piece"), query.get("page")), 2, "Continue reading restores the exact sheet");
+  for (const raw of ["{", "null", JSON.stringify({ version: 1, publicationId: "gone", pieceId: "gone", part: 0 }), position.replace('"part":1', '"part":999')])
+    assert.equal(readingPosition(raw, [comedyPublication]), null, "Invalid reading positions are ignored");
   const { JournalContext } = await server.ssrLoadModule(
     "/src/lib/useJournal.ts",
   );
@@ -212,6 +225,8 @@ try {
     "Restore issue",
   ])
     assert.ok(editor.includes(label), label);
+  for (const theme of ["surreal", "museum"]) {
+  journal.publications = [{ ...m.previewPublication(state.draft), theme }];
   for (const [id, expected] of [
     ["preview-one", "First line"],
     ["preview-two", "A lit window"],
@@ -229,8 +244,9 @@ try {
       `Reader should render ${id}`,
     );
   }
+  }
   console.log(
-    "Passed: legacy migration, portable files, validation, multi-piece editing, order, undo, size protection, editor render, reader routes for writing/art/film.",
+    "Passed: migration, portable files, validation, editing, order, undo, size protection, pagination, exact reading-position restoration, editor render, both reader editions for writing/art/film.",
   );
 } finally {
   await server.close();

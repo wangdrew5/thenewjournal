@@ -40,6 +40,7 @@ export function useEnterState() {
       return () => listeners.delete(notify);
     },
     () => state,
+    () => null,
   );
 }
 export function useFinishEnterOnMount() {

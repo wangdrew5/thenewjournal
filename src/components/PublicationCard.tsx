@@ -26,7 +26,7 @@ function SurrealCover({ publication }: { publication: Publication }) {
   return (
     <div className="tile-book">
       <div className="tile-book-page" aria-hidden="true">
-        <span>No. 01 · Poem</span>
+        <span>{publication.issueNumber ? `No. ${publication.issueNumber}` : "Your issue"} · Writing</span>
         <i>Turn the page</i>
         <span className="tile-book-lines">
           <b />
@@ -40,7 +40,7 @@ function SurrealCover({ publication }: { publication: Publication }) {
         {publication.coverSrc ? (
           <img className="issue-cover-image" src={publication.coverSrc} alt={publication.coverAlt ?? ""} />
         ) : (
-          <DreamScene scene={0} className="tile-dream" />
+          <DreamScene scene={publication.issueNumber === "01" ? 1 : 0} className="tile-dream" />
         )}
         <div className="tile-book-shade" />
         <div className="cover-masthead">

@@ -13,6 +13,8 @@ Each publication opens from its cover tile on the home page: the cover grows to 
 
 Both readers share URL-based page state (`src/lib/useIssueNav.ts`), so direct links, the contents dialog, arrow keys (plus Home/End), and bookmarks behave the same. The scenes and gallery sculpture are decorative brand artwork, never attributed to contributors.
 
+The home page has an editorial masthead, staged issue covers, an illustrated editor's desk, and a device-local **Pick up where you left off** link. Reading positions preserve the exact sheet of longer writing; stale or malformed positions are ignored. Text panels can be focused and scrolled with the keyboard independently of page navigation.
+
 ## Try an issue
 
 Choose **Try it** to open `/preview`. **Add a piece** lets visitors add writing, artwork, or films to a growing issue (up to 200 pieces). Select any piece in the contents list to edit it, move it up/down, or remove it with an undo option. Open finished pieces in the reader. Existing two-poem drafts migrate automatically without changing their piece IDs.
@@ -38,4 +40,4 @@ npm run check:preview
 
 The separate `../journal-share-preview` checkout contains the published static export and Sites identity in `.openai/hosting.json`. The export uses SPA fallback so reader and editor links survive reloads. Source work stays in this repository; rebuild and refresh that export before publishing changes through the Sites workflow.
 
-Build, lint, legacy draft migration, portable issue files, reordering, undo, validation, and server-render integration checks passed for the editor. Browser access blocked the final editor interaction and visual inspection; those checks should be completed when browser access is available.
+On October 2, 2026, desktop and 390px phone views were inspected in the browser. Cover entry, page navigation, contents jumps, gallery sheets, keyboard text scrolling, and the continue-reading link were exercised. Build, lint, draft migration, portable files, reordering, undo, validation, pagination preservation, reading-position restoration, and both reader render checks passed. Real contributor artwork and film remain forthcoming.

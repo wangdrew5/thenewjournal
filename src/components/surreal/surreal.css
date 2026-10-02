@@ -1063,3 +1063,9 @@
     transition: none;
   }
 }
+/* Keep every final line visible and make the paper's scroll area discoverable. */
+.sr-body { padding-bottom: 46px; scrollbar-width: thin; scrollbar-color: #8b4f3a66 transparent; }
+.sr-body::-webkit-scrollbar { display: block; width: 3px; }
+.sr-body::-webkit-scrollbar-thumb { background: #8b4f3a66; }
+.sr-body::-webkit-scrollbar-track { background: transparent; }
+.sr-body:focus-visible { outline: 1px solid #8b4f3a66; outline-offset: 5px; }

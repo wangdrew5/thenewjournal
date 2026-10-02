@@ -168,7 +168,7 @@ function TextFace({
   return (
     <div className="sr-paper">
       <Folio publication={publication} index={index} />
-      <div className="sr-body">
+      <div className="sr-body" tabIndex={0} role="region" aria-label={`${piece.title}, scroll to read`}>
         <p className="sr-kicker">
           {pieceKind[piece.type]}
           {page.parts > 1 && (
@@ -343,7 +343,9 @@ export default function SurrealReader({ publication }: { publication: Publicatio
   }
 
   const touch = useRef<{ x: number; y: number; at: number } | null>(null);
+  const skipTouchClick = useRef(false);
   function onClick(event: React.MouseEvent<HTMLDivElement>) {
+    if (skipTouchClick.current) { skipTouchClick.current = false; return; }
     if (
       (event.target instanceof HTMLElement && event.target.closest(CONTROLS)) ||
       window.getSelection()?.toString()
@@ -390,6 +392,7 @@ export default function SurrealReader({ publication }: { publication: Publicatio
           transition={{ duration: reduced ? 0 : FLIP_SECONDS, ease: [0.45, 0.05, 0.2, 1] }}
           onClick={onClick}
           onPointerDown={(e) => {
+            skipTouchClick.current = false;
             if (e.pointerType === "touch" && !(e.target as HTMLElement).closest(CONTROLS))
               touch.current = { x: e.clientX, y: e.clientY, at: e.timeStamp };
           }}
@@ -398,9 +401,12 @@ export default function SurrealReader({ publication }: { publication: Publicatio
             touch.current = null;
             if (!start || e.pointerType !== "touch") return;
             const dx = e.clientX - start.x;
-            if (Math.abs(dx) > 60 && Math.abs(e.clientY - start.y) < 50 && e.timeStamp - start.at < 700)
+            if (Math.abs(dx) > 60 && Math.abs(e.clientY - start.y) < 50 && e.timeStamp - start.at < 700) {
+              skipTouchClick.current = true;
               goTo(index + (dx < 0 ? 1 : -1));
+            }
           }}
+          onPointerCancel={() => { touch.current = null; }}
         >
           {spread && (
             <div className={`sr-half sr-left ${left ? "" : "is-empty"}`}>
