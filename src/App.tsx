@@ -46,7 +46,7 @@ export default function App() {
   return (
     <MotionConfig reducedMotion="user">
       <JournalProvider>
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, "") || undefined}>
           <GlowField />
           <NavBar />
           <AnimatedRoutes />

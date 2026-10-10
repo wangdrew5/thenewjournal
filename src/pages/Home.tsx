@@ -139,7 +139,7 @@ export default function Home() {
           </div>
         </section>
       )}
-      <footer className="journal-colophon"><Link to="/">The New Journal</Link><span>Writing. Art. Film.</span><Link to="/about">About the journal ↗</Link></footer>
+      <footer className="journal-colophon"><Link to="/">The New Journal</Link><span>Writing. Art. Film.</span><Link to="/about">About the journal ↗</Link><small className="site-credit">Site design by Ethan</small></footer>
     </main>
   );
 }
