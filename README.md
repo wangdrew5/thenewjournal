@@ -13,11 +13,13 @@ Each publication opens from its cover tile on the home page: the cover grows to 
 
 Both readers share URL-based page state (`src/lib/useIssueNav.ts`), so direct links, the contents dialog, arrow keys (plus Home/End), and bookmarks behave the same. The scenes and gallery sculpture are decorative brand artwork, never attributed to contributors.
 
-The home page has an editorial masthead, staged issue covers, an illustrated editor's desk, and a device-local **Pick up where you left off** link. Reading positions preserve the exact sheet of longer writing; stale or malformed positions are ignored. Text panels can be focused and scrolled with the keyboard independently of page navigation.
+The home page has the masthead title and the staged issue covers; in development it also shows the editor's desk. Reading positions preserve the exact sheet of longer writing; stale or malformed positions are ignored. Text panels can be focused and scrolled with the keyboard independently of page navigation.
 
-## Try an issue
+## Editor (development only)
 
-Choose **Try it** to open `/preview`. **Add a piece** lets visitors add writing, artwork, or films to a growing issue (up to 200 pieces). Select any piece in the contents list to edit it, move it up/down, or remove it with an undo option. Open finished pieces in the reader. Existing two-poem drafts migrate automatically without changing their piece IDs.
+The editor is a developer tool. It exists only under `npm run dev`: open it from the editor's desk on the home page or at `/preview`. Production builds leave out the desk, the editor code, and local drafts, and `/preview` redirects home. Publishing a draft means exporting it and adding it to `src/data/` as a built-in issue.
+
+**Add a piece** lets you add writing, artwork, or films to a growing issue (up to 200 pieces). Select any piece in the contents list to edit it, move it up/down, or remove it with an undo option. Open finished pieces in the reader. Existing two-poem drafts migrate automatically without changing their piece IDs.
 
 Changes save in the visitor's browser; they are not shared or published. **Download issue** saves a portable JSON copy including images; **Restore issue** validates and opens downloaded files up to 8 MB, with confirmation before replacing existing work. A cover is optional. JPG, PNG, and WebP images under 1 MB are supported. Films use direct HTTPS MP4/WebM links, not video-platform page links. **Start over** clears the draft after confirmation.
 

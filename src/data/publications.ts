@@ -45,6 +45,8 @@ export interface Publication {
   coverAlt?: string;
   glow: GlowColor;
   pieces: Piece[];
+  /** Kept in the codebase but left off the site until it is ready. */
+  hidden?: boolean;
 }
 
 export const publications: Publication[] = [
@@ -52,7 +54,7 @@ export const publications: Publication[] = [
     id: "pub-1",
     theme: "surreal",
     issueNumber: "01",
-    caption: "Untitled Publication — coming soon",
+    caption: "Incarceration",
     glow: "green",
     pieces: [
       {

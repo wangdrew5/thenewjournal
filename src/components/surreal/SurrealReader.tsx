@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import {
   animate,
@@ -35,19 +35,13 @@ interface Flip {
 
 /* ---------- Page faces ---------- */
 
-function Lines({ lines, dropCap, still }: { lines: string[]; dropCap: boolean; still: boolean }) {
-  const reduced = useReducedMotion();
+// Plain on purpose: the turning leaf and the page beneath it each render their own copy of
+// the text, and any per-copy reveal made them differ (and pop) at every handoff.
+function Lines({ lines, dropCap }: { lines: string[]; dropCap: boolean }) {
   return (
     <div className={`sr-poem ${dropCap ? "has-dropcap" : ""}`}>
       {lines.map((line, i) => (
-        <motion.p
-          key={i}
-          initial={still || reduced ? false : { opacity: 0, y: 6, filter: "blur(3px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ delay: 0.35 + Math.min(i * 0.05, 0.8), duration: 0.6 }}
-        >
-          {line || " "}
-        </motion.p>
+        <p key={i}>{line || " "}</p>
       ))}
     </div>
   );
@@ -81,7 +75,6 @@ function CoverFace({ publication }: { publication: Publication }) {
         </span>
       </div>
       <div className="sr-cover-title">
-        <span>Writing · Art · Film</span>
         <h1>{publication.caption}</h1>
         <p>
           {publication.pieces.length} {publication.pieces.length === 1 ? "piece" : "pieces"} ·
@@ -154,14 +147,12 @@ function TextFace({
   page,
   index,
   last,
-  still,
   onRestart,
 }: {
   publication: Publication;
   page: MagazinePage;
   index: number;
   last: boolean;
-  still: boolean;
   onRestart: () => void;
 }) {
   const piece = page.piece!;
@@ -190,7 +181,7 @@ function TextFace({
           <h2 className="sr-title is-small">{piece.title}</h2>
         )}
         {piece.type === "poem" && (
-          <Lines lines={piece.lines} dropCap={page.part === 0} still={still} />
+          <Lines lines={piece.lines} dropCap={page.part === 0} />
         )}
         {piece.type === "film" && (
           <div className="sr-film">
@@ -248,23 +239,27 @@ export default function SurrealReader({ publication }: { publication: Publicatio
   const spread = useMediaQuery("(min-width: 900px)");
   const last = pages.length - 1;
 
-  // `shown` is the page at rest; a flip animates from it towards the URL page.
-  const [view, setView] = useState<{ shown: number; flip: Flip | null; seen: number; n: number }>(
-    { shown: index, flip: null, seen: index, n: 0 },
+  // `shown` is the page at rest and the URL `index` is the latest page asked for. A flip
+  // runs to completion untouched; whatever was asked for meanwhile is simply the newest
+  // `index`, so any number of quick requests collapse into one follow-up flip. Replacing a
+  // flip mid-turn made the leaf jump, and the faster you paged the worse it got.
+  const [view, setView] = useState<{ shown: number; flip: Flip | null; n: number }>(
+    { shown: index, flip: null, n: 0 },
   );
-  if (view.seen !== index) {
-    const from = view.flip ? view.flip.to : view.shown;
+  if (!view.flip && view.shown !== index) {
     setView(
-      reduced || from === index
-        ? { shown: index, flip: null, seen: index, n: view.n }
-        : { shown: from, flip: { id: view.n + 1, from, to: index }, seen: index, n: view.n + 1 },
+      reduced
+        ? { shown: index, flip: null, n: view.n }
+        : { shown: view.shown, flip: { id: view.n + 1, from: view.shown, to: index }, n: view.n + 1 },
     );
   }
   const { shown, flip } = view;
 
   const rot = useMotionValue(0);
   const forward = flip ? flip.to > flip.from : true;
-  useEffect(() => {
+  // Layout effect, not useEffect: the new leaf mounts in this commit, and `rot` still holds
+  // the last flip's end angle. Resetting after paint showed it backwards for one frame.
+  useLayoutEffect(() => {
     if (!flip) return;
     const fwd = flip.to > flip.from;
     const singleBack = !spread && !fwd;
@@ -288,7 +283,7 @@ export default function SurrealReader({ publication }: { publication: Publicatio
   const closed = spread && settledIndex === 0;
 
   const restart = () => goTo(0);
-  const face = (i: number, side: "L" | "R" | "P", still = false): ReactNode => {
+  const face = (i: number, side: "L" | "R" | "P"): ReactNode => {
     const p = pages[i];
     if (!p) return <BlankFace />;
     if (!p.piece) return side === "L" ? null : <CoverFace publication={publication} />;
@@ -299,7 +294,6 @@ export default function SurrealReader({ publication }: { publication: Publicatio
         page={p}
         index={i}
         last={i === last}
-        still={still}
         onRestart={restart}
       />
     );
@@ -316,18 +310,18 @@ export default function SurrealReader({ publication }: { publication: Publicatio
     } else if (forward) {
       left = face(flip.from, "L");
       right = face(flip.to, "R");
-      leaf = { side: "right", front: face(flip.from, "R", true), back: face(flip.to, "L", true) };
+      leaf = { side: "right", front: face(flip.from, "R"), back: face(flip.to, "L") };
     } else {
       left = face(flip.to, "L");
       right = face(flip.from, "R");
-      leaf = { side: "left", front: face(flip.from, "L", true), back: face(flip.to, "R", true) };
+      leaf = { side: "left", front: face(flip.from, "L"), back: face(flip.to, "R") };
     }
   } else {
-    const single = (i: number, still = false) =>
+    const single = (i: number) =>
       pages[i]?.piece ? (
         <div className="sr-single">
-          <div className="sr-single-plate">{face(i, "L", true)}</div>
-          {face(i, "R", still)}
+          <div className="sr-single-plate">{face(i, "L")}</div>
+          {face(i, "R")}
         </div>
       ) : (
         face(i, "R")
@@ -335,10 +329,10 @@ export default function SurrealReader({ publication }: { publication: Publicatio
     if (!flip) right = single(shown);
     else if (forward) {
       right = single(flip.to);
-      leaf = { side: "single", front: single(flip.from, true), back: <BlankFace /> };
+      leaf = { side: "single", front: single(flip.from), back: <BlankFace /> };
     } else {
       right = single(flip.from);
-      leaf = { side: "single", front: single(flip.to, true), back: <BlankFace /> };
+      leaf = { side: "single", front: single(flip.to), back: <BlankFace /> };
     }
   }
 
@@ -370,7 +364,7 @@ export default function SurrealReader({ publication }: { publication: Publicatio
           <i>{publication.issueNumber ? `Issue ${publication.issueNumber}` : "Your issue"} · Surreal edition</i>
         </p>
         <div className="sr-actions reader-actions">
-          {publication.id === PREVIEW_ID && (
+          {import.meta.env.DEV && publication.id === PREVIEW_ID && (
             <Link className="contents-trigger micro-button sr-pill" to="/preview">
               Edit issue
             </Link>
@@ -388,6 +382,7 @@ export default function SurrealReader({ publication }: { publication: Publicatio
       <main className="sr-stage">
         <motion.div
           className={`sr-book ${spread ? "is-spread" : "is-single"} ${closed ? "is-closed" : ""}`}
+          initial={false}
           animate={{ x: closed ? "-25%" : "0%" }}
           transition={{ duration: reduced ? 0 : FLIP_SECONDS, ease: [0.45, 0.05, 0.2, 1] }}
           onClick={onClick}
@@ -428,7 +423,7 @@ export default function SurrealReader({ publication }: { publication: Publicatio
               />
             )}
           </div>
-          {spread && !closed && <div className="sr-gutter" aria-hidden="true" />}
+          {spread && <div className="sr-gutter" aria-hidden="true" />}
           {leaf && (
             <motion.div
               key={flip!.id}

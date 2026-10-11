@@ -48,7 +48,6 @@ function SurrealCover({ publication }: { publication: Publication }) {
           <span>{publication.issueNumber ? `No. ${publication.issueNumber}` : "Your issue"}</span>
         </div>
         <div className="cover-title">
-          <span>Writing · Art · Film</span>
           <h2>{publication.caption}</h2>
         </div>
         <OpenRow label="Open the magazine" />
@@ -162,15 +161,6 @@ export default function PublicationCard({
             <SurrealCover publication={publication} />
           )}
         </motion.div>
-        <div className="tile-caption">
-          <span>
-            <b>{themeNames[theme]} edition</b> <span aria-hidden="true">/</span>{" "}
-            {theme === "surreal" ? "Page-turn magazine" : "Carousel exhibition"}
-          </span>
-          <span>
-            {publication.pieces.length} {publication.pieces.length === 1 ? "piece" : "pieces"}
-          </span>
-        </div>
       </Link>
     </motion.article>
   );

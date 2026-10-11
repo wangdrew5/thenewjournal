@@ -17,10 +17,13 @@ function useJournalState() {
     undefined,
     () => {
       let draft: PreviewDraft | null = null;
-      try {
-        draft = parsePreviewDraft(localStorage.getItem(PREVIEW_KEY));
-      } catch {
-        /* New or unavailable storage. */
+      // Drafts belong to the dev-only editor; the public site never shows them.
+      if (import.meta.env.DEV) {
+        try {
+          draft = parsePreviewDraft(localStorage.getItem(PREVIEW_KEY));
+        } catch {
+          /* New or unavailable storage. */
+        }
       }
       return {
         draft,
@@ -59,9 +62,10 @@ function useJournalState() {
   }, [draft]);
   const publications = useMemo(
     () =>
-      draft
-        ? [...originals, comedyExample, previewPublication(draft)]
-        : [...originals, comedyExample],
+      [
+        ...[...originals, comedyExample].filter((publication) => !publication.hidden),
+        ...(draft ? [previewPublication(draft)] : []),
+      ],
     [draft],
   );
   function updateDraft(update: Partial<PreviewDraft>) {

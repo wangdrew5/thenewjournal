@@ -198,7 +198,7 @@ export default function GalleryReader({ publication }: { publication: Publicatio
           {publication.issueNumber ? `Issue ${publication.issueNumber}` : "Your issue"}
         </p>
         <div className="gal-actions reader-actions">
-          {publication.id === PREVIEW_ID && (
+          {import.meta.env.DEV && publication.id === PREVIEW_ID && (
             <Link className="contents-trigger micro-button" to="/preview">
               Edit issue
             </Link>

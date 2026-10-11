@@ -398,8 +398,6 @@
   display: grid;
   place-items: center;
   padding: 6px 16px;
-  perspective: 2800px;
-  perspective-origin: 50% 40%;
 }
 .sr-book {
   --pw: min(560px, 44vw, calc((100dvh - 220px) * 0.74));
@@ -407,7 +405,10 @@
   display: flex;
   width: calc(var(--pw) * 2);
   height: calc(var(--pw) / 0.74);
-  transform-style: preserve-3d;
+  /* Flat on purpose: the leaf turns in its own 3D space and is painted above the
+     pages by z-index. Sharing one 3D space made coplanar pages z-fight (flicker). */
+  perspective: 2800px;
+  perspective-origin: 50% 40%;
   cursor: pointer;
   user-select: none;
   -webkit-user-select: none;
@@ -425,8 +426,14 @@
 .sr-half.is-single {
   width: 100%;
 }
-.sr-left:not(.is-empty) {
+.sr-left {
   border-radius: 6px 0 0 6px;
+  /* Transparent stand-in with the same shadow count, so the page edge fades in and out
+     with the book instead of popping when the left page appears or goes. */
+  box-shadow: 0 0 0 transparent;
+  transition: box-shadow 0.5s ease;
+}
+.sr-left:not(.is-empty) {
   box-shadow:
     -1px 1px 0 var(--sr-paper-edge),
     -2px 2px 0 #f6eedf,
@@ -460,6 +467,7 @@
   width: 70px;
   transform: translateX(-50%);
   pointer-events: none;
+  transition: opacity 0.5s ease;
   background: linear-gradient(
     90deg,
     transparent,
@@ -468,6 +476,9 @@
     rgba(40, 24, 10, 0.12) 65%,
     transparent
   );
+}
+.sr-book.is-closed .sr-gutter {
+  opacity: 0;
 }
 /* Corner curl invites a turn */
 .sr-right::after {
@@ -937,12 +948,6 @@
   left: clamp(22px, 3vw, 40px);
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
 }
-.sr-cover-title span {
-  font-size: 10px;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  opacity: 0.85;
-}
 .sr-cover-title h1 {
   margin: 12px 0 10px;
   font: italic 500 clamp(34px, 3.8vw, 58px) / 1 var(--sr-serif);
@@ -1059,7 +1064,9 @@
   .window-glow {
     animation: none;
   }
-  .dl {
+  .dl,
+  .sr-left,
+  .sr-gutter {
     transition: none;
   }
 }

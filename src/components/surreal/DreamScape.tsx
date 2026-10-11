@@ -1,5 +1,5 @@
-import { useEffect, useId, useMemo, useRef, type CSSProperties } from "react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { SCENE_COUNT } from "./scenes";
 
 // Decorative, hand-built surreal scenes for the Surreal edition. They are
@@ -670,9 +670,19 @@ export function DreamScene({
   className?: string;
 }) {
   const id = useId().replace(/:/g, "");
+  const svg = useRef<SVGSVGElement>(null);
   const Scene = scenes[((scene % SCENE_COUNT) + SCENE_COUNT) % SCENE_COUNT];
+  // Pin the scene's looping animations to the page clock, so a copy mounted later
+  // (the page left behind after a flip) continues the motion instead of restarting.
+  // Only CSS animations: getAnimations() also returns transitions, which must not jump.
+  useLayoutEffect(() => {
+    for (const animation of svg.current?.getAnimations?.({ subtree: true }) ?? []) {
+      if (animation instanceof CSSAnimation) animation.startTime = 0;
+    }
+  }, [scene]);
   return (
     <svg
+      ref={svg}
       className={`dream-svg ${className}`}
       viewBox="0 0 1600 1000"
       preserveAspectRatio="xMidYMid slice"
@@ -688,6 +698,14 @@ export function DreamScene({
 export default function DreamScape({ scene }: { scene: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
+  // A new scene fades in over the old one, which stays opaque until it is fully in; fading
+  // both at once let the dark backdrop flash through. At most two scenes exist at a time:
+  // a change asked for mid-crossfade waits, and only the latest one is ever started.
+  const [layers, setLayers] = useState([{ key: 0, scene }]);
+  const top = layers[layers.length - 1];
+  if (layers.length === 1 && top.scene !== scene) {
+    setLayers([...layers, { key: top.key + 1, scene }]);
+  }
   useEffect(() => {
     if (
       reduced ||
@@ -712,18 +730,20 @@ export default function DreamScape({ scene }: { scene: number }) {
   }, [reduced]);
   return (
     <div ref={ref} className="dreamscape" aria-hidden="true">
-      <AnimatePresence initial={false}>
+      {layers.map((layer) => (
         <motion.div
-          key={scene % SCENE_COUNT}
+          key={layer.key}
           className="dreamscape-layer"
-          initial={{ opacity: 0, scale: 1.04 }}
+          initial={layer.key === 0 ? false : { opacity: 0, scale: 1.04 }}
           animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
           transition={{ duration: reduced ? 0 : 1.6, ease: [0.22, 1, 0.36, 1] }}
+          onAnimationComplete={() =>
+            setLayers((current) => current.slice(current.findIndex((l) => l.key === layer.key)))
+          }
         >
-          <DreamScene scene={scene} />
+          <DreamScene scene={layer.scene} />
         </motion.div>
-      </AnimatePresence>
+      ))}
       <div className="dreamscape-grain" />
       <div className="dreamscape-vignette" />
     </div>

@@ -7,6 +7,7 @@ export const comedyExample: Publication = {
   issueNumber: "02",
   caption: "A Very Serious Meeting",
   glow: "green",
+  hidden: true,
   pieces: [
     {
       id: "comedy-chair",

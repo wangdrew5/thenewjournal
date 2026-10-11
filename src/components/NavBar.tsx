@@ -1,8 +1,15 @@
 import { useEffect, useState } from "react";
-import { Link, NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 
-const INSTAGRAM_URL: string = "";
+const INSTAGRAM_URL = "https://www.instagram.com/thenewjournalwa/";
+
+const navLinkClass = ({ isActive }: { isActive: boolean }) =>
+  `nav-link flex min-h-11 items-center rounded-full px-2 py-1 text-base font-medium tracking-wide transition-all duration-300 ${
+    isActive
+      ? "is-active text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]"
+      : "text-white/80 hover:text-white hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]"
+  }`;
 
 function InstagramIcon() {
   return (
@@ -36,58 +43,28 @@ export default function NavBar() {
       className={`site-header fixed inset-x-0 top-0 z-50 ${scrolled ? "is-scrolled" : ""}`}
     >
       <nav className="mx-auto flex max-w-6xl items-center justify-between px-6 py-7 sm:px-10">
-        <Link
-          to="/"
-          className="brand-link font-display text-glow-white text-xl font-bold tracking-tight text-white sm:text-2xl"
-        >
-          The New Journal
-        </Link>
+        <NavLink to="/" end aria-label="The New Journal home" className={navLinkClass}>
+          tnj
+        </NavLink>
 
         <div className="flex items-center gap-3 sm:gap-7">
-          <NavLink
-            to="/about"
-            className={({ isActive }) =>
-              `nav-link flex min-h-11 items-center rounded-full px-2 py-1 text-base font-medium tracking-wide transition-all duration-300 ${
-                isActive
-                  ? "is-active text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]"
-                  : "text-white/80 hover:text-white hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]"
-              }`
-            }
-          >
+          <NavLink to="/about" className={navLinkClass}>
             About
           </NavLink>
-
-          <NavLink
-            to="/preview"
-            className={({ isActive }) =>
-              `nav-link flex min-h-11 items-center px-2 py-1 text-sm text-white/80 ${isActive ? "is-active" : ""}`
-            }
-          >
-            Try it
+          <NavLink to="/partners" className={navLinkClass}>
+            Our partners
           </NavLink>
-
-          <NavLink
-            to="/"
-            end
-            className={({ isActive }) =>
-              `nav-link hidden min-h-11 items-center px-2 py-1 text-base text-white/80 sm:flex ${isActive ? "is-active" : ""}`
-            }
+          <motion.a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noreferrer"
+            whileHover={{ scale: 1.08 }}
+            whileTap={{ scale: 0.95 }}
+            aria-label="The New Journal on Instagram"
+            className="social-link flex h-11 w-11 items-center justify-center rounded-full text-white/80 transition-colors duration-300 hover:text-white hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]"
           >
-            Publications
-          </NavLink>
-          {INSTAGRAM_URL && (
-            <motion.a
-              href={INSTAGRAM_URL}
-              target="_blank"
-              rel="noreferrer"
-              whileHover={{ scale: 1.08 }}
-              whileTap={{ scale: 0.95 }}
-              aria-label="Instagram"
-              className="social-link flex h-11 w-11 items-center justify-center rounded-full text-white/80 transition-colors duration-300 hover:text-white hover:drop-shadow-[0_0_10px_rgba(255,255,255,0.9)]"
-            >
-              <InstagramIcon />
-            </motion.a>
-          )}
+            <InstagramIcon />
+          </motion.a>
         </div>
       </nav>
     </header>
