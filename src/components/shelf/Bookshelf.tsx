@@ -70,7 +70,7 @@ function shelfRows(publications: Publication[], perRow: number, compact: boolean
 
 /* ---------- Books ---------- */
 
-// A stable jewel tone per surreal issue so each spine looks like its own volume.
+// A stable cloth colour per surreal issue so each spine looks like its own volume.
 const SURREAL_TONES = ["#123c46", "#262b61", "#5a1f2c", "#1d3f2d", "#3d2a5c"];
 function toneFor(publication: Publication, index: number) {
   const number = Number.parseInt(publication.issueNumber ?? "", 10);
@@ -91,48 +91,70 @@ function Spine({ publication }: { publication: Publication }) {
 }
 
 function Cover({ publication }: { publication: Publication }) {
-  const museum = publication.theme === "museum";
+  if (publication.theme === "museum")
+    return (
+      <div className="bk-face bk-cover">
+        <div className="bk-cover-mast">
+          <span>The New Journal</span>
+          <span>{publication.issueNumber ?? ""}</span>
+        </div>
+        <div className="bk-cover-work">
+          {publication.coverSrc ? <img src={publication.coverSrc} alt="" /> : <IssueArtwork />}
+        </div>
+        <h3 className="bk-cover-title">{publication.caption}</h3>
+      </div>
+    );
   return (
     <div className="bk-face bk-cover">
-      {museum ? (
-        <>
-          <div className="bk-cover-mast">
-            <span>The New Journal</span>
-            <span>{publication.issueNumber ?? ""}</span>
-          </div>
-          <div className="bk-cover-work">
-            {publication.coverSrc ? (
-              <img src={publication.coverSrc} alt="" />
-            ) : (
-              <IssueArtwork />
-            )}
-          </div>
-          <div className="bk-cover-title">
-            <h3>{publication.caption}</h3>
-            <span>Gallery edition</span>
-          </div>
-        </>
+      {publication.coverSrc ? (
+        <img className="bk-cover-art" src={publication.coverSrc} alt="" />
       ) : (
-        <>
-          {publication.coverSrc ? (
-            <img className="bk-cover-art" src={publication.coverSrc} alt="" />
-          ) : (
-            <DreamScene scene={publication.issueNumber === "01" ? 1 : 0} className="bk-cover-art" />
-          )}
-          <div className="bk-cover-shade" />
-          <div className="bk-cover-mast">
-            <span>The New Journal</span>
-            <span>{issueName(publication, "No.")}</span>
-          </div>
-          <div className="bk-cover-title">
-            <h3>{publication.caption}</h3>
-            <span>Surreal edition</span>
-          </div>
-        </>
+        <DreamScene scene={publication.issueNumber === "01" ? 1 : 0} className="bk-cover-art" />
       )}
-      <span className="bk-cover-open">
-        {museum ? "Enter the gallery" : "Open the magazine"} <b aria-hidden="true">↗</b>
-      </span>
+      <div className="bk-cover-shade" />
+      <div className="bk-cover-mast">
+        <span>The New Journal</span>
+        <span>{issueName(publication, "No.")}</span>
+      </div>
+      <h3 className="bk-cover-title">{publication.caption}</h3>
+    </div>
+  );
+}
+
+// The inside of the front cover, seen once the book is open.
+function Endpaper({ publication }: { publication: Publication }) {
+  return (
+    <div className="bk-face bk-inside">
+      {publication.theme !== "museum" && <DreamScene scene={3} className="bk-inside-art" />}
+      <div className="bk-plate">
+        <i>Ex libris</i>
+        <span>The New Journal</span>
+        <small>{issueName(publication)}</small>
+      </div>
+    </div>
+  );
+}
+
+// The first page: what is inside this issue.
+function ContentsPage({ publication }: { publication: Publication }) {
+  const shown = publication.pieces.slice(0, 6);
+  const more = publication.pieces.length - shown.length;
+  return (
+    <div className="bk-face bk-page">
+      <p className="bk-page-issue">{issueName(publication)}</p>
+      <h4>{publication.caption}</h4>
+      <ol>
+        {shown.map((piece) => (
+          <li key={piece.id}>
+            <span>{piece.title}</span>
+            <i>{piece.author}</i>
+          </li>
+        ))}
+      </ol>
+      {more > 0 && <p className="bk-page-more">and {more} more</p>}
+      <p className="bk-page-read">
+        {publication.theme === "museum" ? "Enter the gallery" : "Open the issue"}
+      </p>
     </div>
   );
 }
@@ -140,58 +162,84 @@ function Cover({ publication }: { publication: Publication }) {
 function IssueBook({
   publication,
   index,
-  out,
-  onPull,
-  onHover,
-  covers,
+  open,
+  onOpen,
+  pages,
 }: {
   publication: Publication;
   index: number;
-  out: boolean;
-  onPull: (id: string | null) => void;
-  onHover: (publication: Publication | null) => void;
-  covers: Map<string, Element>;
+  open: boolean;
+  onOpen: (id: string | null) => void;
+  pages: Map<string, Element>;
 }) {
   const reduced = useReducedMotion();
   const theme = publication.theme ?? "surreal";
   const pointer = useRef<string>("mouse");
+  const intent = useRef(0);
+  const slot = useRef<HTMLAnchorElement>(null);
   const book = useRef<HTMLDivElement>(null);
+  const [shift, setShift] = useState(0);
   const thickness = Math.min(70, 40 + publication.pieces.length * 4);
   const to = `/publication/${publication.id}`;
-  // The shelf measures this cover when a reader returns to it.
+
+  // The shelf measures this page when a reader returns to the book.
   useLayoutEffect(() => {
-    const cover = book.current?.querySelector(".bk-cover");
-    if (cover) covers.set(publication.id, cover);
+    const page = book.current?.querySelector(".bk-page");
+    if (page) pages.set(publication.id, page);
     return () => {
-      covers.delete(publication.id);
+      pages.delete(publication.id);
     };
-  }, [covers, publication.id]);
+  }, [pages, publication.id]);
+  useEffect(() => () => window.clearTimeout(intent.current), []);
+  // An open book is a two-page spread: keep it inside the shelf instead of
+  // letting books near the ends open off the edge (or off a phone screen).
+  useLayoutEffect(() => {
+    if (!open) return;
+    const link = slot.current;
+    const row = link?.closest(".shelf-row");
+    if (!link || !row || !book.current) return;
+    const s = link.getBoundingClientRect();
+    const r = row.getBoundingClientRect();
+    const styles = getComputedStyle(row);
+    const pull = Number.parseFloat(styles.getPropertyValue("--pull")) || 0;
+    const depth = Number.parseFloat(styles.perspective) || 1700;
+    const scale = depth / (depth - pull);
+    const half = book.current.offsetWidth * scale + 10;
+    const centre = s.left + s.width / 2;
+    const target =
+      r.width < half * 2
+        ? r.left + r.width / 2
+        : Math.min(r.right - half, Math.max(r.left + half, centre));
+    setShift((target - centre) / scale);
+  }, [open]);
 
   function click(event: MouseEvent<HTMLAnchorElement>) {
     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
       return;
-    // On touch screens the first tap pulls the book out; the second opens it.
-    if (pointer.current === "touch" && !out) {
+    // On touch screens the first tap opens the book on the shelf; the second reads it.
+    if (pointer.current === "touch" && !open) {
       event.preventDefault();
-      onPull(publication.id);
+      onOpen(publication.id);
       return;
     }
     if (reduced) return;
-    const cover = book.current?.querySelector(".bk-cover");
-    if (!cover) return;
+    const page = book.current?.querySelector(open ? ".bk-page" : ".bk-cover");
+    if (!page) return;
     event.preventDefault();
-    startEnter(cover, theme, to);
+    startEnter(page, theme, to);
   }
   return (
     <Link
+      ref={slot}
       to={to}
-      className={`bk-slot bk-issue bk-${theme} ${out ? "is-out" : ""}`}
+      className={`bk-slot bk-issue bk-${theme} ${open ? "is-open" : ""}`}
       style={
         {
           "--t": `${thickness}px`,
           "--hf": 1 - (index % 3) * 0.035,
           "--tone": theme === "museum" ? undefined : toneFor(publication, index),
           "--hang": `${18 + (index % 2) * 10}px`,
+          "--shift": `${open ? shift : 0}px`,
         } as CSSProperties
       }
       aria-label={`Open ${publication.caption}, ${issueName(publication)}, ${themeNames[theme]} edition`}
@@ -200,14 +248,29 @@ function IssueBook({
         pointer.current = event.pointerType;
       }}
       onPointerEnter={(event: PointerEvent) => {
-        if (event.pointerType === "mouse") onHover(publication);
+        if (event.pointerType !== "mouse") return;
+        // A short pause, so sweeping across the shelf doesn't open every book.
+        window.clearTimeout(intent.current);
+        intent.current = window.setTimeout(() => onOpen(publication.id), 110);
       }}
-      onPointerLeave={() => onHover(null)}
-      onFocus={() => onHover(publication)}
-      onBlur={() => onHover(null)}
+      onPointerLeave={(event: PointerEvent) => {
+        if (event.pointerType !== "mouse") return;
+        window.clearTimeout(intent.current);
+        // A moment's grace, so slipping off the edge doesn't snap it shut.
+        if (open) intent.current = window.setTimeout(() => onOpen(null), 160);
+      }}
+      onFocus={() => onOpen(publication.id)}
+      onBlur={() => {
+        if (open) onOpen(null);
+      }}
     >
+      <span className="bk-ground" aria-hidden="true" />
       <div className="bk" ref={book}>
-        <Cover publication={publication} />
+        <ContentsPage publication={publication} />
+        <div className="bk-lid">
+          <Cover publication={publication} />
+          <Endpaper publication={publication} />
+        </div>
         <Spine publication={publication} />
         <div className="bk-face bk-back" />
         <div className="bk-face bk-edge" />
@@ -247,10 +310,7 @@ function Decor({ kind }: { kind: "bookend" | "candle" | "plant" | "note" }) {
         <span className="shelf-dish" />
       </div>
     );
-  if (kind === "note")
-    return (
-      <p className="shelf-note">The first issue is on its way.</p>
-    );
+  if (kind === "note") return <p className="shelf-note">The first issue is on its way.</p>;
   return (
     <svg className="shelf-plant" viewBox="0 0 120 210" aria-hidden="true" focusable="false">
       <g fill="none" stroke="#4f7a4a" strokeWidth="2.4" strokeLinecap="round">
@@ -281,53 +341,61 @@ function Decor({ kind }: { kind: "bookend" | "candle" | "plant" | "note" }) {
 export default function Bookshelf({ publications }: { publications: Publication[] }) {
   const wide = useMediaQuery("(min-width: 1000px)");
   const medium = useMediaQuery("(min-width: 640px)");
+  const finePointer = useMediaQuery("(hover: hover) and (pointer: fine)");
+  const reduced = useReducedMotion();
   const rows = shelfRows(publications, wide ? 9 : medium ? 6 : 3, !medium);
   const transition = useEnterState();
   const returning = transition?.kind === "return" ? transition.id : null;
 
-  // The book that is out of the shelf: pulled by a tap, or coming back from a read.
-  const [out, setOut] = useState<string | null>(returning);
-  const [hovered, setHovered] = useState<Publication | null>(null);
-  const [covers] = useState(() => new Map<string, Element>());
+  // The open book: hovered, focused, tapped, or coming back from a read.
+  const [open, setOpen] = useState<string | null>(returning);
+  const [pages] = useState(() => new Map<string, Element>());
+  const caseRef = useRef<HTMLDivElement>(null);
 
-  // Coming back from an issue: hand the overlay the book's cover to shrink onto.
+  // Coming back from an issue: hand the overlay the open book's first page.
   const returnId = useRef(returning);
   useLayoutEffect(() => {
     const id = returnId.current;
     if (!id) return;
-    const cover = covers.get(id);
-    if (!cover) return finishReturn();
-    const rect = cover.getBoundingClientRect();
+    const page = pages.get(id);
+    if (!page) return finishReturn();
+    const rect = page.getBoundingClientRect();
     if (rect.top < 0 || rect.bottom > window.innerHeight)
-      cover.scrollIntoView({ block: "center", behavior: "instant" });
-    setReturnTarget(cover);
-  }, [covers]);
-  // Once the overlay has gone, slide the book back into its place.
+      page.scrollIntoView({ block: "center", behavior: "instant" });
+    setReturnTarget(page);
+  }, [pages]);
+  // Once the overlay has gone, close the book and slide it back into place.
   useEffect(() => {
     if (returning || !returnId.current) return;
     returnId.current = null;
-    const timer = window.setTimeout(() => setOut(null), 260);
+    const timer = window.setTimeout(() => setOpen(null), 380);
     return () => window.clearTimeout(timer);
   }, [returning]);
-  // A tap anywhere else puts a pulled book back.
+  // A tap or click anywhere else puts an open book back.
   useEffect(() => {
-    if (!out || returnId.current) return;
+    if (!open || returnId.current) return;
     function away(event: globalThis.PointerEvent) {
-      if (!(event.target as HTMLElement).closest(".bk-issue")) setOut(null);
+      if (!(event.target as HTMLElement).closest(".bk-issue")) setOpen(null);
     }
     window.addEventListener("pointerdown", away);
     return () => window.removeEventListener("pointerdown", away);
-  }, [out]);
+  }, [open]);
 
-  const featured =
-    hovered ?? publications.find((publication) => publication.id === out) ?? null;
+  // The lamp follows the pointer along the shelf.
+  function moveLight(event: PointerEvent<HTMLDivElement>) {
+    if (reduced || event.pointerType !== "mouse") return;
+    const rect = event.currentTarget.getBoundingClientRect();
+    caseRef.current?.style.setProperty(
+      "--lx",
+      `${(((event.clientX - rect.left) / rect.width) * 100).toFixed(1)}%`,
+    );
+  }
+
+  const featured = publications.find((publication) => publication.id === open) ?? null;
   return (
     <section className="bookshelf" aria-label="Issues">
-      <div className="bookcase">
-        <div className="bookcase-plate">
-          <span>The New Journal</span>
-          <i>Collected issues</i>
-        </div>
+      <div className="bookcase" ref={caseRef} onPointerMove={moveLight}>
+        <div className="bookcase-plate">The New Journal</div>
         {rows.map((row, r) => (
           <div className="shelf-row" key={r}>
             <div className="shelf-light" aria-hidden="true" />
@@ -340,10 +408,9 @@ export default function Bookshelf({ publications }: { publications: Publication[
                         key={prop.publication.id}
                         publication={prop.publication}
                         index={prop.index}
-                        out={out === prop.publication.id}
-                        onPull={setOut}
-                        onHover={setHovered}
-                        covers={covers}
+                        open={open === prop.publication.id}
+                        onOpen={setOpen}
+                        pages={pages}
                       />
                     );
                   if (prop.kind === "volume") return <Volume key={`v${i}`} prop={prop} />;
@@ -361,16 +428,15 @@ export default function Bookshelf({ publications }: { publications: Publication[
       <p className="shelf-caption" aria-live="polite">
         {featured ? (
           <>
-            <span>{issueName(featured)}</span>
             <strong>{featured.caption}</strong>
             <span>
-              {themeNames[featured.theme ?? "surreal"]} edition · {featured.pieces.length}{" "}
-              {featured.pieces.length === 1 ? "piece" : "pieces"}
+              {themeNames[featured.theme ?? "surreal"]} edition, {featured.pieces.length}{" "}
+              {featured.pieces.length === 1 ? "piece" : "pieces"}.{" "}
+              {finePointer ? "Click to read." : "Tap again to read."}
             </span>
-            <em>{hovered ? "Click to open" : "Tap again to open"}</em>
           </>
         ) : publications.length ? (
-          <em>Hover over a book to see its cover · tap on a phone · click to open</em>
+          <span>{finePointer ? "Hover over a book to open it." : "Tap a book to open it."}</span>
         ) : null}
       </p>
     </section>
