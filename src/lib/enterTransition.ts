@@ -1,38 +1,75 @@
 import { useEffect, useSyncExternalStore } from "react";
 import type { IssueTheme } from "../data/publications";
 
-// A cover clicked on the home page grows to fill the screen in the issue's
-// own palette, then hands off to the reader. The overlay lives outside the
-// routes so it survives the route change; the reader dismisses it on mount.
+// Opening an issue: the book's cover grows to fill the screen in the issue's
+// own palette, then hands off to the reader. Leaving an issue runs it in
+// reverse: the screen shrinks back onto the book, which then slides back into
+// the shelf. The overlay lives outside the routes so it survives route changes.
+export interface Rect {
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+}
 export interface EnterState {
-  rect: { top: number; left: number; width: number; height: number };
+  kind: "enter";
+  rect: Rect;
   theme: IssueTheme;
   to: string;
   phase: "growing" | "waiting";
 }
-let state: EnterState | null = null;
+export interface ReturnState {
+  kind: "return";
+  id: string;
+  theme: IssueTheme;
+  /** The book cover to shrink onto, once the shelf has measured it. */
+  target: Rect | null;
+}
+type State = EnterState | ReturnState | null;
+
+let state: State = null;
 const listeners = new Set<() => void>();
 let token = 0;
-function emit(next: EnterState | null) {
+function emit(next: State) {
   state = next;
   listeners.forEach((listener) => listener());
 }
-export function startEnter(element: Element, theme: IssueTheme, to: string) {
+function measure(element: Element): Rect {
   const { top, left, width, height } = element.getBoundingClientRect();
-  emit({ rect: { top, left, width, height }, theme, to, phase: "growing" });
-  // Safety net in case the reader never mounts (e.g. a bad link).
+  return { top, left, width, height };
+}
+// Clears the overlay if nothing else does (e.g. a bad link or a missing book).
+function safetyNet(finish: () => void) {
   const mine = ++token;
-  window.setTimeout(() => mine === token && finishEnter(), 2600);
+  window.setTimeout(() => mine === token && finish(), 2600);
+}
+
+export function startEnter(element: Element, theme: IssueTheme, to: string) {
+  emit({ kind: "enter", rect: measure(element), theme, to, phase: "growing" });
+  safetyNet(finishEnter);
 }
 export function finishEnter() {
-  if (state) emit(null);
+  if (state?.kind === "enter") emit(null);
 }
 // Returns the destination once, the first time the cover finishes growing.
 export function takeGrownDestination() {
-  if (state?.phase !== "growing") return null;
+  if (state?.kind !== "enter" || state.phase !== "growing") return null;
   state = { ...state, phase: "waiting" };
   return state.to;
 }
+
+export function startReturn(id: string, theme: IssueTheme) {
+  emit({ kind: "return", id, theme, target: null });
+  safetyNet(finishReturn);
+}
+export function setReturnTarget(element: Element) {
+  if (state?.kind === "return" && !state.target)
+    emit({ ...state, target: measure(element) });
+}
+export function finishReturn() {
+  if (state?.kind === "return") emit(null);
+}
+
 export function useEnterState() {
   return useSyncExternalStore(
     (notify) => {

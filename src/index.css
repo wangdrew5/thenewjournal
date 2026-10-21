@@ -1411,290 +1411,6 @@ body:has(dialog[open]) {
 }
 
 /* Publications are objects to enter, each with its own reading space. */
-/* ---------- Home: issue tiles ---------- */
-.magazine-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 64px;
-  margin-top: 56px;
-}
-.publication-tile-group {
-  min-width: 0;
-}
-.magazine-cover-link {
-  display: block;
-  perspective: 1600px;
-  outline-offset: 10px;
-}
-.magazine-cover {
-  position: relative;
-  aspect-ratio: 4 / 5;
-  transform-style: preserve-3d;
-}
-.issue-artwork {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-.issue-cover-image {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.cover-masthead,
-.cover-title,
-.cover-open {
-  position: absolute;
-  z-index: 2;
-}
-.cover-open {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  inset: auto 28px 22px;
-  padding-top: 14px;
-  border-top: 1px solid #fff5;
-  font-size: 11px;
-  letter-spacing: 0.06em;
-  color: #f8ebd7;
-}
-.cover-open > span:last-child {
-  font-size: 20px;
-  transition: transform 250ms;
-}
-.magazine-cover-link:hover .cover-open > span:last-child,
-.magazine-cover-link:focus-visible .cover-open > span:last-child {
-  transform: translate(3px, -3px);
-}
-
-/* Surreal tile: a closed magazine whose cover swings open on hover */
-.tile-book {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-}
-.tile-book-page {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 14px;
-  padding: 34px 34px 34px 42%;
-  border-radius: 2px 6px 6px 2px;
-  background:
-    linear-gradient(90deg, rgba(90, 60, 30, 0.22), transparent 10%),
-    #f3ead8;
-  color: #3a2f27;
-  box-shadow:
-    1px 1px 0 #d9ccb2,
-    2px 2px 0 #f6eedf,
-    3px 3px 0 #d9ccb2,
-    4px 4px 0 #f6eedf,
-    5px 5px 0 #c9b997,
-    18px 34px 60px rgba(0, 0, 0, 0.6);
-}
-.tile-book-page > span:first-child {
-  font-size: 9px;
-  letter-spacing: 0.28em;
-  text-transform: uppercase;
-  color: #a0603f;
-}
-.tile-book-page i {
-  font: italic 500 28px/1 "Cormorant Garamond", Georgia, serif;
-}
-.tile-book-lines {
-  display: flex;
-  flex-direction: column;
-  gap: 9px;
-}
-.tile-book-lines b {
-  height: 2px;
-  background: rgba(60, 40, 20, 0.18);
-}
-.tile-book-lines b:nth-child(2n) {
-  width: 80%;
-}
-.tile-book-lines b:nth-child(3) {
-  width: 62%;
-}
-.tile-book-cover {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  border-radius: 2px 6px 6px 2px;
-  background: #0c1f30;
-  transform-origin: 0 50%;
-  box-shadow: inset 5px 0 12px rgba(0, 0, 0, 0.35);
-  transition:
-    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1),
-    box-shadow 0.9s;
-}
-.magazine-cover-link:hover .tile-book-cover,
-.magazine-cover-link:focus-visible .tile-book-cover {
-  transform: rotateY(-34deg);
-  box-shadow:
-    inset 5px 0 12px rgba(0, 0, 0, 0.35),
-    24px 10px 40px rgba(0, 0, 0, 0.35);
-}
-.tile-dream {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-.tile-book-shade {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(5, 10, 20, 0.55),
-    transparent 26%,
-    transparent 50%,
-    rgba(5, 10, 20, 0.8)
-  );
-}
-.tile-surreal .cover-masthead {
-  top: 24px;
-  left: 28px;
-  right: 28px;
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  color: #fff6e6;
-  text-shadow: 0 2px 16px #0008;
-}
-.tile-surreal .cover-masthead > span:first-child {
-  font: italic 500 30px/1 "Cormorant Garamond", Georgia, serif;
-}
-.tile-surreal .cover-masthead > span:last-child,
-.tile-wall-mast > span {
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-}
-.tile-surreal .cover-title {
-  right: 28px;
-  bottom: 78px;
-  left: 28px;
-  color: #fff5e8;
-  text-shadow: 0 2px 18px #0b1a24;
-}
-.tile-surreal .cover-title h2 {
-  font: italic 500 36px/1.02 "Cormorant Garamond", Georgia, serif;
-  text-wrap: balance;
-}
-
-/* Gallery tile: a white wall with the issue hung like a work */
-.tile-wall {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  border-radius: 3px;
-  background: linear-gradient(180deg, #f8f7f4, #efede8 78%);
-  color: #1b1b19;
-  font-family: "Inter", "Helvetica Neue", Arial, sans-serif;
-  box-shadow: 0 34px 60px rgba(0, 0, 0, 0.5);
-}
-.tile-wall-spot {
-  position: absolute;
-  inset: -20% 10% 20%;
-  background: radial-gradient(ellipse at 50% 30%, #fffdf8, transparent 65%);
-  opacity: 0.7;
-  transition: opacity 0.6s;
-}
-.magazine-cover-link:hover .tile-wall-spot {
-  opacity: 1;
-}
-.tile-wall-floor {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  height: 22%;
-  border-top: 6px solid #e9e7e2;
-  background: linear-gradient(180deg, #dcd8cf, #cbc6bb);
-  box-shadow: 0 -1px 0 #d4d1c9;
-}
-.tile-wall-track {
-  position: absolute;
-  top: 15%;
-  right: 0;
-  bottom: 32%;
-  left: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 9%;
-  transition: transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
-}
-.magazine-cover-link:hover .tile-wall-track {
-  transform: translateX(-5%);
-}
-.tile-wall-work {
-  position: relative;
-  flex: 0 0 60%;
-  height: 100%;
-  overflow: hidden;
-  background: #fff;
-  box-shadow:
-    0 2px 4px rgba(30, 25, 15, 0.05),
-    0 16px 30px rgba(30, 25, 15, 0.1),
-    0 40px 60px -20px rgba(30, 25, 15, 0.25);
-}
-.tile-wall-work > * {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.tile-wall-peek {
-  flex: 0 0 26%;
-  height: 76%;
-  background: #fff;
-  opacity: 0.75;
-  box-shadow: 0 16px 30px rgba(30, 25, 15, 0.08);
-}
-.tile-wall-label {
-  position: absolute;
-  right: 20%;
-  bottom: calc(22% + 14px);
-  max-width: 48%;
-  padding: 8px 10px;
-  background: #fff;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
-  font-size: 9px;
-  line-height: 1.4;
-}
-.tile-wall-label strong {
-  display: block;
-  overflow: hidden;
-  font-size: 10px;
-  font-weight: 600;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.tile-wall-label span {
-  color: #8a8880;
-}
-.tile-wall-mast {
-  position: absolute;
-  top: 22px;
-  right: 26px;
-  left: 26px;
-  display: flex;
-  justify-content: space-between;
-  font-weight: 500;
-}
-.tile-museum .cover-open {
-  border-color: #1b1b1926;
-  color: #1b1b19;
-}
-
-
 /* Cover-to-reader hand-off */
 .enter-overlay {
   position: fixed;
@@ -1796,38 +1512,6 @@ body:has(dialog[open]) {
 .preview-theme-museum .poem-text p:hover {
   color: #111;
 }
-@media (max-width: 850px) {
-  .magazine-grid {
-    gap: 32px;
-  }
-  .tile-surreal .cover-title h2 {
-    font-size: 28px;
-  }
-  .tile-surreal .cover-masthead > span:first-child {
-    font-size: 24px;
-  }
-}
-@media (max-width: 600px) {
-  .magazine-grid {
-    grid-template-columns: 1fr;
-    gap: 48px;
-    margin-top: 32px;
-  }
-  .tile-surreal .cover-title h2 {
-    font-size: 34px;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  .tile-book-cover,
-  .tile-wall-track {
-    transition: none;
-  }
-  .magazine-cover-link:hover .tile-book-cover,
-  .magazine-cover-link:hover .tile-wall-track,
-  .magazine-cover-link:hover .cover-open > span:last-child {
-    transform: none;
-  }
-}
 
 /* Editorial front page: a masthead, a shelf, and an editor's desk. */
 body:has(.journal-home) { background: #0c0d0b; }
@@ -1838,28 +1522,6 @@ body:has(.journal-home) .nav-link { font-size: 12px; letter-spacing: .02em; text
 .journal-masthead h1 { margin: 24px -5px 28px; font: 500 clamp(58px, 8.5vw, 116px)/1.03 'Cormorant Garamond', Georgia, serif; letter-spacing: -.065em; white-space: nowrap; }
 .journal-masthead h1 i { font-weight: 400; }
 .journal-masthead h1 > span { color: #c68d66; }
-.journal-shelf { margin-top: 28px; gap: 60px; }
-.edition-heading { display: flex; gap: 13px; align-items: baseline; margin-bottom: 20px; }
-.edition-heading > span:first-child { font: 11px Inter, sans-serif; color: #c68d66; }
-.edition-heading h3 { flex: 1; font: 400 20px/1.2 'Cormorant Garamond', Georgia, serif; }
-.edition-heading > span:last-child { color: #b4a892; font-size: 18px; }
-.journal-shelf .magazine-cover-link { perspective: 1400px; }
-.journal-shelf .magazine-cover { aspect-ratio: 1.12; }
-.journal-shelf .tile-surreal .magazine-cover { background: radial-gradient(ellipse at 50% 58%, #283540, #111a21 65%); border: 1px solid #71839022; }
-.journal-shelf .tile-book { inset: 6% 18% 7%; transform: rotate(-5deg); transition: rotate .6s; }
-.journal-shelf .magazine-cover-link:hover .tile-book { rotate: 3deg; }
-.journal-shelf .tile-book-page { padding: 25px 20px 25px 40%; }
-.journal-shelf .tile-surreal .cover-masthead { top: 18px; left: 20px; right: 20px; }
-.journal-shelf .tile-surreal .cover-masthead > span:first-child { font-size: 24px; }
-.journal-shelf .tile-surreal .cover-masthead > span:last-child { font-size: 8px; letter-spacing: .1em; }
-.journal-shelf .tile-surreal .cover-title { left: 20px; right: 20px; bottom: 63px; }
-.journal-shelf .tile-surreal .cover-title h2 { font-size: clamp(24px, 2.6vw, 34px); }
-.journal-shelf .tile-surreal .cover-open { left: 20px; right: 20px; bottom: 17px; font-size: 9px; }
-.journal-shelf .tile-wall { border-radius: 0; }
-.journal-shelf .tile-wall-track { top: 16%; bottom: 27%; }
-.journal-shelf .tile-wall-floor { height: 15%; }
-.journal-shelf .tile-wall-label { bottom: calc(15% + 15px); }
-.journal-shelf .tile-museum .cover-open { bottom: 14px; padding-top: 10px; }
 .journal-desk { margin-top: 90px; border-block: 1px solid #d8cbb633; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 70px; padding: 64px 50px; background: #b6906506; overflow: hidden; }
 .desk-paper { position: relative; max-width: 285px; width: 100%; min-height: 345px; margin-inline: auto; padding: 28px; color: #2f2b25; background: #e7dfce; transform: rotate(-7deg); box-shadow: 3px 3px #cabfa8, 6px 6px #e7dfce, 22px 26px 50px #0008; transition: transform .7s cubic-bezier(.2,.8,.2,1); }
 .journal-desk:hover .desk-paper { transform: rotate(-3deg) translateY(-8px); }
@@ -1880,20 +1542,12 @@ body:has(.journal-home) .nav-link { font-size: 12px; letter-spacing: .02em; text
 .desk-copy small { display: block; max-width: 290px; margin-top: 20px; font-size: 10px; line-height: 1.7; color: #918879; }
 .journal-home :where(a, summary):focus-visible { outline: 2px solid #d9a77f; outline-offset: 5px; }
 @media (max-width: 850px) {
-  .journal-shelf { gap: 28px; }
-  .journal-shelf .tile-book { inset: 5% 12% 6%; }
-  .journal-shelf .tile-surreal .cover-masthead > span:first-child { font-size: 18px; }
-  .journal-shelf .tile-surreal .cover-masthead > span:last-child { display: none; }
   .journal-desk { gap: 36px; padding: 48px 26px; }
 }
 @media (max-width: 600px) {
   .journal-home { padding-top: 100px; }
   .journal-masthead { margin-bottom: 40px; }
   .journal-masthead h1 { font-size: clamp(38px, 10.3vw, 64px); margin: 25px 0; }
-  .journal-shelf { gap: 40px; margin-top: 24px; }
-  .journal-shelf .tile-book { inset: 5% 18% 6%; }
-  .journal-shelf .tile-surreal .cover-title h2 { font-size: 27px; }
-  .journal-shelf .tile-surreal .cover-masthead > span:first-child { font-size: 20px; }
   .journal-desk { margin-top: 56px; grid-template-columns: 1fr; gap: 46px; padding: 40px 24px; }
   .desk-paper { width: 230px; min-height: 295px; }
   .desk-paper i { font-size: 36px; }
@@ -1901,7 +1555,7 @@ body:has(.journal-home) .nav-link { font-size: 12px; letter-spacing: .02em; text
 }
 @media (prefers-reduced-motion: reduce) {
   .journal-home *, .journal-home *::before, .journal-home *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
-  .journal-desk:hover .desk-paper, .journal-shelf .magazine-cover-link:hover .tile-book, .desk-link:hover span { transform: none; rotate: none; }
+  .journal-desk:hover .desk-paper, .desk-link:hover span { transform: none; rotate: none; }
 }
 
 .site-credit {
@@ -2191,8 +1845,3 @@ body:has(.journal-home) .nav-link { font-size: 12px; letter-spacing: .02em; text
 }
 
 /* Home: no published issue yet */
-.journal-empty {
-  padding: 48px 0 24px;
-  color: #b1a795;
-  font: italic 22px/1.4 'Cormorant Garamond', Georgia, serif;
-}

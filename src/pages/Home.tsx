@@ -2,10 +2,9 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { useJournal } from "../lib/useJournal";
-import PublicationCard from "../components/PublicationCard";
+import Bookshelf from "../components/shelf/Bookshelf";
 import { matchesPublished } from "../data/publishedIssues";
 import { PREVIEW_ID } from "../lib/preview";
-import { issueMark } from "../lib/issueLabel";
 
 export default function Home() {
   const reduced = useReducedMotion();
@@ -37,25 +36,7 @@ export default function Home() {
       >
         <h1>The <i>New</i> Journal<span aria-hidden="true">.</span></h1>
       </motion.header>
-      {publications.length === 0 && (
-        <p className="journal-empty">The first issue is on its way.</p>
-      )}
-      <div className="magazine-grid journal-shelf">
-        {publications.map((publication, i) => (
-          <motion.section
-            key={publication.id}
-            className="publication-tile-group"
-            aria-label={publication.caption}
-            initial={{ opacity: reduced ? 1 : 0, y: reduced ? 0 : 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.12 }}
-            transition={{ duration: reduced ? 0 : 0.65 }}
-          >
-            <div className="edition-heading"><span>{issueMark(publication)}</span><h3>{publication.theme === "museum" ? "The gallery edition" : publication.caption}</h3><span aria-hidden="true">↗</span></div>
-            <PublicationCard publication={publication} index={i} />
-          </motion.section>
-        ))}
-      </div>
+      <Bookshelf publications={publications} />
       {import.meta.env.DEV && <motion.section className="journal-desk" aria-labelledby="try-heading" initial={{ opacity: reduced ? 1 : 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
         <div className="desk-paper" aria-hidden="true"><span>The New Journal / Your issue</span><i>It starts<br />with a page.</i><div className="desk-lines"><b /><b /><b /><b /></div><span>01</span></div>
         <div className="desk-copy">

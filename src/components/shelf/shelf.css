@@ -1,0 +1,639 @@
+/* ==========================================================================
+   Home bookshelf — issues stand spine-out; hover pulls one out to its cover
+   ========================================================================== */
+
+.bookshelf {
+  --bh: clamp(240px, 25vw, 330px);
+  --front: 34px;
+  --pull: 170px;
+  margin-top: 8px;
+}
+
+/* ---------- Case ---------- */
+.bookcase {
+  position: relative;
+  padding: 50px 34px 34px;
+  border-radius: 6px;
+  background:
+    repeating-linear-gradient(
+      92deg,
+      rgba(255, 220, 170, 0.025) 0 2px,
+      transparent 2px 11px
+    ),
+    linear-gradient(180deg, #2e1c11, #1e130b 60%, #170e08);
+  box-shadow:
+    0 50px 90px rgba(0, 0, 0, 0.65),
+    inset 0 1px 0 rgba(255, 220, 170, 0.1),
+    inset 0 0 0 1px rgba(0, 0, 0, 0.6);
+}
+.bookcase-plate {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  display: flex;
+  gap: 10px;
+  align-items: baseline;
+  padding: 5px 16px 6px;
+  transform: translateX(-50%);
+  border-radius: 2px;
+  background: linear-gradient(180deg, #e2c27f, #a98143 60%, #8a6630);
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 245, 210, 0.6);
+  color: #2b1b09;
+  white-space: nowrap;
+}
+.bookcase-plate span {
+  font: 600 9px Inter, sans-serif;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+.bookcase-plate i {
+  font: italic 500 13px "Cormorant Garamond", Georgia, serif;
+}
+
+/* ---------- One shelf ---------- */
+.shelf-row {
+  position: relative;
+  height: calc(var(--bh) + 60px);
+  margin-bottom: 34px;
+  perspective: 1700px;
+  perspective-origin: 50% -10%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 230, 190, 0.018) 0 2px,
+      transparent 2px 13px
+    ),
+    linear-gradient(180deg, #120b07, #24160d 72%, #160d08);
+  box-shadow:
+    inset 0 22px 34px rgba(0, 0, 0, 0.7),
+    inset 14px 0 24px rgba(0, 0, 0, 0.5),
+    inset -14px 0 24px rgba(0, 0, 0, 0.5);
+}
+.shelf-row:last-of-type {
+  margin-bottom: 26px;
+}
+.shelf-light {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 48% 80% at 50% 0%,
+    rgba(255, 186, 104, 0.2),
+    transparent 72%
+  );
+}
+.shelf-stage {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+}
+.shelf-books {
+  position: absolute;
+  right: 28px;
+  bottom: 0;
+  left: 28px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 3px;
+  height: var(--bh);
+  transform-style: preserve-3d;
+}
+
+/* ---------- Plank (drawn in 3D so books stand on it) ---------- */
+.shelf-plank {
+  position: absolute;
+  right: -34px;
+  bottom: 0;
+  left: -34px;
+  height: 0;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+.shelf-plank-top {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: calc(var(--bh) * 0.8 + 60px);
+  transform-origin: 50% 100%;
+  transform: translateZ(var(--front)) rotateX(90deg);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 220, 170, 0.04) 0 3px,
+      transparent 3px 17px
+    ),
+    linear-gradient(0deg, #6e4628, #4a2e19 55%, #2c1a0e);
+}
+.shelf-plank-front {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 26px;
+  transform: translateZ(var(--front));
+  border-top: 1px solid rgba(255, 220, 170, 0.28);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 220, 170, 0.05) 0 2px,
+      transparent 2px 23px
+    ),
+    linear-gradient(180deg, #8b5b37, #5c3a21 45%, #3b2414);
+  box-shadow: 0 16px 26px rgba(0, 0, 0, 0.6);
+}
+
+/* ---------- Books ---------- */
+.bk-slot {
+  --h: calc(var(--bh) * var(--hf));
+  --w: calc(var(--h) * 0.72);
+  position: relative;
+  flex: none;
+  display: block;
+  width: var(--t);
+  height: var(--h);
+  transform-style: preserve-3d;
+  outline: none;
+}
+.bk {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: var(--w);
+  height: var(--h);
+  margin-left: calc(var(--w) / -2);
+  transform-style: preserve-3d;
+  transform-origin: 50% 100%;
+  transform: translateZ(calc(var(--hang) - var(--w) / 2)) rotateY(90deg);
+  transition: transform 0.85s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.bk-issue {
+  cursor: pointer;
+}
+.bk-issue .bk {
+  will-change: transform;
+}
+/* Out of the shelf: forward, up, and turned to show the cover */
+@media (hover: hover) {
+  .bk-issue:hover .bk {
+    transform: translateZ(var(--pull)) translateY(calc(var(--h) * -0.3)) rotateY(14deg);
+  }
+}
+.bk-issue:focus-visible .bk,
+.bk-issue.is-out .bk {
+  transform: translateZ(var(--pull)) translateY(calc(var(--h) * -0.3)) rotateY(14deg);
+}
+.bk-issue:focus-visible .bk-cover {
+  outline: 2px solid #c68d66;
+  outline-offset: 5px;
+}
+/* Untitled volumes only nudge, so the issues read as the ones to pick */
+@media (hover: hover) {
+  .bk-volume:hover .bk {
+    transform: translateZ(calc(6px - var(--w) / 2)) rotateY(90deg);
+  }
+}
+.bk-volume.is-leaning {
+  margin: 0 calc(var(--h) * 0.12) 0 calc(var(--h) * 0.06);
+}
+.bk-volume.is-leaning .bk {
+  transform: translateZ(calc(var(--hang) - var(--w) / 2)) rotateZ(-7deg) rotateY(90deg);
+}
+
+.bk-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.bk-cover {
+  width: var(--w);
+  height: var(--h);
+  overflow: hidden;
+  transform: translateZ(calc(var(--t) / 2));
+  border-radius: 2px 5px 5px 2px;
+}
+.bk-cover::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.38), rgba(0, 0, 0, 0.08) 5%, transparent 9%);
+}
+.bk-back {
+  width: var(--w);
+  height: var(--h);
+  transform: rotateY(180deg) translateZ(calc(var(--t) / 2));
+  border-radius: 5px 2px 2px 5px;
+  background: var(--tone, #e7e5de);
+}
+.bk-spine {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: var(--t);
+  height: var(--h);
+  left: calc(var(--w) / 2 - var(--t) / 2);
+  padding: 16px 0 14px;
+  overflow: hidden;
+  border-radius: 3px;
+  transform: rotateY(-90deg) translateZ(calc(var(--w) / 2));
+}
+.bk-edge {
+  top: 3px;
+  left: calc(var(--w) / 2 - var(--t) / 2 + 2px);
+  width: calc(var(--t) - 4px);
+  height: calc(var(--h) - 6px);
+  transform: rotateY(90deg) translateZ(calc(var(--w) / 2 - 4px));
+  background: repeating-linear-gradient(90deg, #f1e8d4 0 1.5px, #d6c9ae 1.5px 3px);
+}
+.bk-top {
+  top: calc(var(--t) / -2 + 2px);
+  left: 3px;
+  width: calc(var(--w) - 7px);
+  height: calc(var(--t) - 4px);
+  transform: rotateX(90deg);
+  background: repeating-linear-gradient(0deg, #efe5cf 0 1.5px, #d5c8ac 1.5px 3px);
+}
+
+/* Spines */
+.bk-spine-no {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+  font: 600 9px Inter, sans-serif;
+  letter-spacing: 0.06em;
+}
+.bk-spine-title {
+  flex: 1;
+  min-height: 0;
+  max-width: 100%;
+  overflow: hidden;
+  padding: 12px 0;
+  writing-mode: vertical-rl;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: center;
+}
+.bk-spine-mark {
+  font-size: 15px;
+  line-height: 1;
+}
+.bk-surreal .bk-spine {
+  color: #e3bf7c;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.42), transparent 28%, rgba(255, 255, 255, 0.08) 55%, rgba(0, 0, 0, 0.45)),
+    var(--tone);
+  box-shadow:
+    inset 0 30px 0 -27px #c9a35f,
+    inset 0 36px 0 -34px #c9a35f,
+    inset 0 -30px 0 -27px #c9a35f,
+    inset 0 -36px 0 -34px #c9a35f;
+}
+.bk-surreal .bk-spine-title {
+  font: italic 500 clamp(15px, 1.35vw, 19px) / 1 "Cormorant Garamond", Georgia, serif;
+  letter-spacing: 0.02em;
+}
+.bk-museum .bk-spine {
+  color: #1b1b19;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.14), transparent 28%, rgba(255, 255, 255, 0.6) 55%, rgba(0, 0, 0, 0.16)),
+    #eceae4;
+}
+.bk-museum .bk-spine-no {
+  border: 0;
+  font: 300 17px Inter, sans-serif;
+  letter-spacing: -0.04em;
+}
+.bk-museum .bk-spine-title {
+  font: 500 10px Inter, sans-serif;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+.bk-museum .bk-spine-mark {
+  font: 600 8px Inter, sans-serif;
+  letter-spacing: 0.22em;
+  writing-mode: vertical-rl;
+}
+
+/* Covers */
+.bk-surreal .bk-cover {
+  background: #0c1f30;
+  color: #fff6e6;
+}
+.bk-cover-art {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.bk-cover-shade {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(5, 10, 20, 0.6), transparent 28%, transparent 50%, rgba(5, 10, 20, 0.85));
+}
+.bk-cover-mast,
+.bk-cover-title,
+.bk-cover-open {
+  position: absolute;
+  right: 16px;
+  left: 18px;
+  z-index: 1;
+}
+.bk-cover-mast {
+  top: 15px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+.bk-surreal .bk-cover-mast span:first-child {
+  font: italic 500 clamp(18px, 1.7vw, 22px) / 1 "Cormorant Garamond", Georgia, serif;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
+}
+.bk-cover-mast span:last-child,
+.bk-cover-title span {
+  font-size: 8px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+.bk-cover-title {
+  bottom: 48px;
+}
+.bk-cover-title h3 {
+  text-wrap: balance;
+}
+.bk-surreal .bk-cover-title h3 {
+  font: italic 500 clamp(22px, 2.2vw, 30px) / 1.02 "Cormorant Garamond", Georgia, serif;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
+}
+.bk-cover-title span {
+  display: block;
+  margin-top: 8px;
+  opacity: 0.8;
+}
+.bk-cover-open {
+  bottom: 13px;
+  display: flex;
+  justify-content: space-between;
+  padding-top: 9px;
+  border-top: 1px solid rgba(255, 246, 230, 0.35);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+}
+.bk-cover-open b {
+  font-weight: 400;
+  transition: transform 0.3s;
+}
+.bk-issue:hover .bk-cover-open b {
+  transform: translate(2px, -2px);
+}
+.bk-museum .bk-cover {
+  background: linear-gradient(180deg, #f8f7f4, #ecebe6);
+  color: #1b1b19;
+  font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+}
+.bk-museum .bk-cover-mast span {
+  font-weight: 500;
+}
+.bk-museum .bk-cover-mast span:first-child {
+  font-size: 8px;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+}
+.bk-museum .bk-cover-mast span:last-child {
+  font: 300 22px Inter, sans-serif;
+  letter-spacing: -0.04em;
+}
+.bk-cover-work {
+  position: absolute;
+  top: 19%;
+  right: 17%;
+  left: 17%;
+  height: 44%;
+  overflow: hidden;
+  background: #fff;
+  box-shadow:
+    0 2px 4px rgba(30, 25, 15, 0.06),
+    0 14px 26px rgba(30, 25, 15, 0.14);
+}
+.bk-cover-work > * {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.bk-museum .bk-cover-title h3 {
+  font-family: Inter, "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(15px, 1.4vw, 19px);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+.bk-museum .bk-cover-title span {
+  color: #8a8880;
+  opacity: 1;
+}
+.bk-museum .bk-cover-open {
+  border-color: rgba(27, 27, 25, 0.15);
+}
+
+/* Untitled volumes */
+.bk-volume .bk-spine {
+  justify-content: space-between;
+  padding: 22px 0;
+}
+.bk-volume .bk-spine i {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: rgba(214, 176, 108, 0.32);
+  box-shadow: 0 6px 0 rgba(214, 176, 108, 0.2);
+}
+.bk-volume.tone-0 {
+  --tone: #3b2519;
+}
+.bk-volume.tone-1 {
+  --tone: #24312c;
+}
+.bk-volume.tone-2 {
+  --tone: #4a3823;
+}
+.bk-volume.tone-3 {
+  --tone: #272d39;
+}
+.bk-volume .bk-spine,
+.bk-volume .bk-cover {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.45), transparent 30%, rgba(255, 255, 255, 0.05) 55%, rgba(0, 0, 0, 0.5)),
+    var(--tone);
+}
+.bk-volume .bk-edge,
+.bk-volume .bk-top {
+  filter: sepia(0.4) brightness(0.8);
+}
+
+/* ---------- Objects on the shelf ---------- */
+.shelf-bookend {
+  position: relative;
+  flex: none;
+  width: 10px;
+  height: calc(var(--bh) * 0.55);
+  margin: 0 16px 0 2px;
+  border-radius: 2px 2px 0 0;
+  transform: translateZ(14px);
+  background: linear-gradient(90deg, #8d6a33, #e0bf78 45%, #7a5a2a);
+  box-shadow: 8px 0 16px rgba(0, 0, 0, 0.5);
+}
+.shelf-bookend::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: -38px;
+  width: 48px;
+  height: 5px;
+  border-radius: 1px;
+  background: linear-gradient(180deg, #e0bf78, #7a5a2a);
+}
+.shelf-candle {
+  position: relative;
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  width: 46px;
+  height: calc(var(--bh) * 0.42);
+  margin: 0 22px 0 4px;
+  transform: translateZ(28px);
+}
+.shelf-flame {
+  width: 10px;
+  height: 18px;
+  margin-bottom: 3px;
+  border-radius: 50% 50% 50% 50% / 62% 62% 38% 38%;
+  background: radial-gradient(ellipse at 50% 72%, #fff8de, #ffc65a 48%, #ff8b2b 78%, transparent 82%);
+  box-shadow:
+    0 0 22px 10px rgba(255, 170, 70, 0.32),
+    0 0 80px 34px rgba(255, 150, 60, 0.14);
+  transform-origin: 50% 100%;
+  animation: shelf-flicker 3.4s ease-in-out infinite;
+}
+.shelf-wax {
+  width: 22px;
+  height: 58%;
+  border-radius: 3px 3px 2px 2px;
+  background: linear-gradient(90deg, #d4c7ad, #f6eedd 45%, #c6b799);
+}
+.shelf-dish {
+  width: 46px;
+  height: 8px;
+  border-radius: 50% / 100% 100% 40% 40%;
+  background: linear-gradient(180deg, #c09650, #6d5126);
+}
+@keyframes shelf-flicker {
+  0%,
+  100% {
+    transform: scale(1, 1);
+    opacity: 1;
+  }
+  30% {
+    transform: scale(0.94, 1.08) rotate(-2deg);
+  }
+  55% {
+    transform: scale(1.04, 0.95) rotate(2deg);
+    opacity: 0.9;
+  }
+  80% {
+    transform: scale(0.97, 1.04);
+  }
+}
+.shelf-plant {
+  flex: none;
+  width: calc(var(--bh) * 0.36);
+  height: calc(var(--bh) * 0.63);
+  margin: 0 0 calc(var(--bh) * -0.24) 6px;
+  overflow: visible;
+  transform: translateZ(44px);
+}
+.shelf-note {
+  flex: none;
+  width: 150px;
+  margin: 0 10px 18px 18px;
+  padding: 18px 16px;
+  transform: translateZ(26px) rotate(-4deg);
+  background: #f2e9d6;
+  box-shadow: 4px 10px 20px rgba(0, 0, 0, 0.5);
+  color: #3a2f27;
+  font: italic 19px/1.25 "Cormorant Garamond", Georgia, serif;
+  text-align: center;
+}
+
+/* ---------- Caption under the case ---------- */
+.shelf-caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px 14px;
+  min-height: 30px;
+  margin-top: 22px;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 12px;
+  text-align: center;
+}
+.shelf-caption strong {
+  color: #fff;
+  font: italic 500 21px "Cormorant Garamond", Georgia, serif;
+}
+.shelf-caption span:first-child {
+  color: #c68d66;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.shelf-caption em {
+  color: #b4a892;
+  font-style: normal;
+  letter-spacing: 0.06em;
+}
+
+@media (max-width: 640px) {
+  .bookshelf {
+    --bh: 230px;
+    --pull: 120px;
+  }
+  .bookcase {
+    padding: 46px 12px 22px;
+  }
+  .shelf-books {
+    right: 8px;
+    left: 8px;
+  }
+  .shelf-plank {
+    right: -12px;
+    left: -12px;
+  }
+  .shelf-candle {
+    margin-right: 10px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bk {
+    transition: none;
+  }
+  .shelf-flame {
+    animation: none;
+  }
+}
