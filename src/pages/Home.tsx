@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { useJournal } from "../lib/useJournal";
-import Bookshelf from "../components/shelf/Bookshelf";
+import CoverTable from "../components/table/CoverTable";
 import { matchesPublished } from "../data/publishedIssues";
 import { PREVIEW_ID } from "../lib/preview";
 
@@ -36,7 +36,7 @@ export default function Home() {
       >
         <h1>The <i>New</i> Journal<span aria-hidden="true">.</span></h1>
       </motion.header>
-      <Bookshelf publications={publications} />
+      <CoverTable publications={publications} />
       {import.meta.env.DEV && <motion.section className="journal-desk" aria-labelledby="try-heading" initial={{ opacity: reduced ? 1 : 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
         <div className="desk-paper" aria-hidden="true"><span>The New Journal / Your issue</span><i>It starts<br />with a page.</i><div className="desk-lines"><b /><b /><b /><b /></div><span>01</span></div>
         <div className="desk-copy">
