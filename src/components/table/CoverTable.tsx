@@ -133,6 +133,30 @@ function TableCover({
   );
 }
 
+// A cup of coffee seen from above, left at the edge of the spread.
+function Mug() {
+  return (
+    <svg className="table-mug" viewBox="0 0 220 180" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id="mug-rim" cx="45%" cy="40%" r="60%">
+          <stop offset="0" stopColor="#fbf8f2" />
+          <stop offset="1" stopColor="#ddd5c8" />
+        </radialGradient>
+        <radialGradient id="mug-coffee" cx="40%" cy="38%" r="65%">
+          <stop offset="0" stopColor="#6b4022" />
+          <stop offset="0.7" stopColor="#3d2312" />
+          <stop offset="1" stopColor="#2a170b" />
+        </radialGradient>
+      </defs>
+      <path d="M150 74c34-6 52 6 52 22s-18 28-52 22" fill="none" stroke="#e8e1d6" strokeWidth="16" strokeLinecap="round" />
+      <circle cx="90" cy="90" r="78" fill="url(#mug-rim)" />
+      <circle cx="90" cy="90" r="64" fill="url(#mug-coffee)" />
+      <ellipse cx="70" cy="66" rx="22" ry="9" fill="#fff" opacity="0.16" transform="rotate(-30 70 66)" />
+      <circle cx="90" cy="90" r="64" fill="none" stroke="#c9a27a" strokeOpacity="0.35" strokeWidth="2" />
+    </svg>
+  );
+}
+
 function Pencil() {
   return (
     <svg className="table-pencil" viewBox="0 0 300 16" aria-hidden="true" focusable="false">
@@ -149,14 +173,12 @@ function Pencil() {
 
 export default function CoverTable({ publications }: { publications: Publication[] }) {
   const finePointer = useMediaQuery("(hover: hover) and (pointer: fine)");
-  const reduced = useReducedMotion();
   const transition = useEnterState();
   const returning = transition?.kind === "return" ? transition.id : null;
 
   // The lifted copy: hovered, focused, or coming back from a read.
   const [lifted, setLifted] = useState<string | null>(returning);
   const [covers] = useState(() => new Map<string, Element>());
-  const tableRef = useRef<HTMLDivElement>(null);
 
   // Coming back from an issue: hand the overlay the cover it shrinks onto.
   const returnId = useRef(returning);
@@ -178,21 +200,12 @@ export default function CoverTable({ publications }: { publications: Publication
     return () => window.clearTimeout(timer);
   }, [returning]);
 
-  // The desk lamp follows the pointer across the table.
-  function moveLight(event: PointerEvent<HTMLDivElement>) {
-    if (reduced || event.pointerType !== "mouse") return;
-    const rect = event.currentTarget.getBoundingClientRect();
-    const table = tableRef.current;
-    table?.style.setProperty("--lx", `${(((event.clientX - rect.left) / rect.width) * 100).toFixed(1)}%`);
-    table?.style.setProperty("--ly", `${(((event.clientY - rect.top) / rect.height) * 100).toFixed(1)}%`);
-  }
-
   const liftedAt = publications.findIndex((publication) => publication.id === lifted);
   const featured = liftedAt >= 0 ? publications[liftedAt] : null;
   return (
     <section className="cover-table" aria-label="Issues">
-      <div className="table-top" ref={tableRef} onPointerMove={moveLight}>
-        <div className="table-light" aria-hidden="true" />
+      <div className="table-spread">
+        <Mug />
         <Pencil />
         {publications.length ? (
           <div className="table-covers">

@@ -3,53 +3,32 @@
    ========================================================================== */
 
 .cover-table {
-  --cw: clamp(176px, 17vw, 236px);
+  --cw: clamp(190px, 21vw, 280px);
   --paper: #f1e8d4;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   margin-top: 8px;
 }
 
-/* ---------- The table ---------- */
-.table-top {
-  --lx: 50%;
-  --ly: 38%;
+/* ---------- The spread of issues ---------- */
+.table-spread {
   position: relative;
-  overflow: hidden;
-  padding: clamp(56px, 7vw, 92px) clamp(20px, 5vw, 72px) clamp(64px, 8vw, 104px);
-  border-radius: 6px;
-  background:
-    /* walnut grain, long and slightly wavy */
-    repeating-linear-gradient(178deg, rgba(255, 214, 160, 0.035) 0 1px, transparent 1px 7px),
-    repeating-linear-gradient(181deg, rgba(0, 0, 0, 0.12) 0 2px, transparent 2px 23px),
-    linear-gradient(170deg, #3a2516, #26170d 55%, #1c110a);
-  box-shadow:
-    0 50px 90px rgba(0, 0, 0, 0.6),
-    inset 0 1px 0 rgba(255, 220, 170, 0.12),
-    inset 0 0 0 1px rgba(0, 0, 0, 0.55),
-    inset 0 0 120px rgba(0, 0, 0, 0.55);
+  padding: 30px 0 70px;
 }
-/* The lamp's pool of light, following the pointer */
-.table-light {
+.table-mug {
   position: absolute;
-  inset: 0;
+  top: -40px;
+  right: -4%;
+  width: clamp(130px, 13vw, 180px);
+  filter: drop-shadow(10px 16px 14px rgba(60, 35, 15, 0.35));
   pointer-events: none;
-  background: radial-gradient(
-    ellipse 46% 60% at var(--lx) var(--ly),
-    rgba(255, 210, 150, 0.2),
-    rgba(255, 190, 120, 0.06) 55%,
-    transparent 80%
-  );
-  transition: background-position 0.2s;
-  mix-blend-mode: screen;
 }
-
 .table-pencil {
   position: absolute;
-  right: 6%;
-  bottom: 9%;
+  bottom: 10px;
+  left: 2%;
   width: clamp(150px, 16vw, 210px);
-  transform: rotate(-14deg);
-  filter: drop-shadow(3px 6px 4px rgba(0, 0, 0, 0.55));
+  transform: rotate(-9deg);
+  filter: drop-shadow(5px 8px 4px rgba(60, 35, 15, 0.4));
   pointer-events: none;
 }
 
@@ -91,8 +70,8 @@
     1px 1px 0 rgba(236, 228, 210, 0.9),
     2px 2px 0 rgba(200, 190, 170, 0.9),
     3px 3px 0 rgba(160, 150, 130, 0.8),
-    6px 12px 18px rgba(0, 0, 0, 0.5),
-    2px 4px 4px rgba(0, 0, 0, 0.35);
+    10px 14px 18px rgba(60, 35, 15, 0.32),
+    2px 4px 4px rgba(60, 35, 15, 0.28);
   transition: box-shadow 0.45s var(--ease-out);
 }
 .tc.is-lifted .tc-copy {
@@ -100,8 +79,8 @@
     1px 1px 0 rgba(236, 228, 210, 0.9),
     2px 2px 0 rgba(200, 190, 170, 0.9),
     3px 3px 0 rgba(160, 150, 130, 0.8),
-    18px 40px 50px rgba(0, 0, 0, 0.55),
-    6px 14px 16px rgba(0, 0, 0, 0.3);
+    28px 44px 46px rgba(60, 35, 15, 0.36),
+    8px 14px 14px rgba(60, 35, 15, 0.22);
 }
 /* Gloss that slides across as the copy tilts up to the lamp */
 .tc-copy::after {
@@ -221,7 +200,7 @@
   padding: 26px 20px;
   transform: rotate(-4deg);
   background: var(--paper);
-  box-shadow: 4px 12px 22px rgba(0, 0, 0, 0.5);
+  box-shadow: 8px 14px 22px rgba(60, 35, 15, 0.3);
   color: #3a2f27;
   font: italic 22px/1.25 "Cormorant Garamond", Georgia, serif;
   text-align: center;
@@ -236,12 +215,12 @@
   gap: 4px 14px;
   min-height: 32px;
   margin-top: 28px;
-  color: rgba(255, 255, 255, 0.6);
+  color: rgba(43, 26, 14, 0.72);
   font-size: 13px;
   text-align: center;
 }
 .table-caption strong {
-  color: #fff;
+  color: #24150a;
   font: italic 500 22px "Cormorant Garamond", Georgia, serif;
 }
 
@@ -249,8 +228,13 @@
   .cover-table {
     --cw: min(40vw, 190px);
   }
-  .table-top {
-    padding: 36px 6px 70px;
+  .table-spread {
+    padding: 70px 0 80px;
+  }
+  .table-mug {
+    top: -20px;
+    right: -14%;
+    width: 120px;
   }
   .table-covers {
     gap: 22px 0;
@@ -263,8 +247,8 @@
     --side: 0 !important;
   }
   .table-pencil {
-    bottom: 3%;
-    width: 130px;
+    bottom: 14px;
+    width: 140px;
   }
 }
 
@@ -274,4 +258,149 @@
   .tc-copy::after {
     transition: none;
   }
+}
+
+/* ==========================================================================
+   The table scene behind every page outside the issues
+   ========================================================================== */
+:root[data-scene="table"] body {
+  background: #b98c5f;
+  color: #2b1a0e;
+}
+.table-scene {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(115deg, #d2a877, #c0915f 45%, #a87a4c);
+}
+.table-grain {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: multiply;
+}
+/* Seams between the boards */
+.table-boards {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0 calc(33.4vh - 2px),
+    rgba(70, 40, 18, 0.35) calc(33.4vh - 2px) calc(33.4vh - 1px),
+    rgba(255, 230, 190, 0.18) calc(33.4vh - 1px) 33.4vh
+  );
+}
+/* Daylight through a four-pane window, falling across the table */
+.table-window {
+  position: absolute;
+  top: -20vh;
+  left: -10vw;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3vw;
+  width: 70vw;
+  height: 90vh;
+  transform: rotate(-14deg) skewX(-18deg);
+  filter: blur(26px);
+  mix-blend-mode: soft-light;
+  opacity: 0.9;
+}
+.table-window i {
+  background: rgba(255, 246, 225, 0.95);
+}
+.table-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 70% at 35% 30%, rgba(255, 240, 210, 0.16), transparent 60%),
+    radial-gradient(ellipse 120% 100% at 50% 50%, transparent 55%, rgba(60, 32, 12, 0.45));
+}
+
+/* Ink on wood: the shared chrome and pages that sit on the table */
+:root[data-scene="table"] .site-header .nav-link {
+  color: #2b1a0e;
+  filter: none;
+}
+:root[data-scene="table"] .site-header .nav-link::after {
+  background: #2b1a0e;
+}
+:root[data-scene="table"] .site-header a:not(.nav-link) {
+  color: #2b1a0e;
+}
+:root[data-scene="table"] body .site-header {
+  background: transparent;
+}
+:root[data-scene="table"] body .site-header.is-scrolled {
+  background: rgba(196, 152, 104, 0.72);
+  box-shadow: 0 1px 0 rgba(70, 40, 18, 0.2);
+  backdrop-filter: blur(18px);
+}
+:root[data-scene="table"] :where(a, button):focus-visible {
+  outline-color: #5a2a10;
+}
+:root[data-scene="table"] .journal-home {
+  color: #2b1a0e;
+}
+:root[data-scene="table"] .journal-masthead h1 {
+  color: #2a180b;
+  text-shadow: 0 1px 0 rgba(255, 230, 190, 0.35);
+}
+:root[data-scene="table"] .journal-masthead h1 > span {
+  color: #8c3a1c;
+}
+:root[data-scene="table"] .journal-desk {
+  border-color: rgba(70, 40, 18, 0.2);
+  background: rgba(255, 240, 215, 0.12);
+}
+:root[data-scene="table"] .desk-copy p {
+  color: #4a3322;
+}
+:root[data-scene="table"] .desk-copy small {
+  color: #6a4f3a;
+}
+:root[data-scene="table"] .desk-kicker,
+:root[data-scene="table"] .desk-copy h2 i {
+  color: #8c3a1c;
+}
+:root[data-scene="table"] .desk-link {
+  border-color: #8c3a1c;
+}
+:root[data-scene="table"] .saved-section h2 {
+  color: #2b1a0e;
+}
+:root[data-scene="table"] .saved-link {
+  border-color: rgba(70, 40, 18, 0.25);
+  background: rgba(250, 242, 228, 0.7);
+  color: #2b1a0e;
+}
+:root[data-scene="table"] .saved-link .text-green {
+  color: #8c3a1c;
+}
+:root[data-scene="table"] .site-credit {
+  color: rgba(43, 26, 14, 0.55);
+}
+
+/* About and Partners: a sheet of paper on the table */
+.paper-sheet {
+  position: relative;
+  padding: clamp(36px, 6vw, 64px) clamp(26px, 6vw, 70px) clamp(44px, 7vw, 76px);
+  transform: rotate(-1.2deg);
+  background: linear-gradient(180deg, #fbf6ec, #f2e9d8);
+  box-shadow:
+    1px 1px 0 #e4d8c2,
+    16px 22px 34px rgba(60, 35, 15, 0.3),
+    3px 5px 6px rgba(60, 35, 15, 0.2);
+  color: #2b1a0e;
+}
+.paper-sheet h1 {
+  font: 500 clamp(40px, 6vw, 60px) / 1 "Cormorant Garamond", Georgia, serif;
+  letter-spacing: -0.03em;
+}
+.paper-sheet p {
+  margin-top: 22px;
+  max-width: 34em;
+  color: #4a3322;
+  font-size: 18px;
+  line-height: 1.7;
 }

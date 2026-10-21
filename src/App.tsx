@@ -8,6 +8,7 @@ import {
 } from "framer-motion";
 import NavBar from "./components/NavBar";
 import GlowField from "./components/GlowField";
+import TableScene from "./components/table/TableScene";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Partners from "./pages/Partners";
@@ -18,10 +19,19 @@ import EnterOverlay from "./components/EnterOverlay";
 // The editor is a developer tool: it is only bundled and routed under `npm run dev`.
 const Preview = import.meta.env.DEV ? lazy(() => import("./pages/Preview")) : null;
 
-// Issue readers bring their own full-screen backdrop, so the lanterns would only
-// burn blur and flicker work out of sight behind them.
+// The public pages sit on a table in daylight; the editor keeps its dark lanterns.
+// Issue readers bring their own full-screen backdrop, so neither is drawn there.
+const TABLE_PAGES = ["/", "/about", "/partners"];
+
 function Backdrop() {
-  return useLocation().pathname.startsWith("/publication/") ? null : <GlowField />;
+  const { pathname } = useLocation();
+  const table = TABLE_PAGES.includes(pathname);
+  useEffect(() => {
+    if (table) document.documentElement.dataset.scene = "table";
+    else delete document.documentElement.dataset.scene;
+  }, [table]);
+  if (pathname.startsWith("/publication/")) return null;
+  return table ? <TableScene /> : <GlowField />;
 }
 
 function AnimatedRoutes() {
