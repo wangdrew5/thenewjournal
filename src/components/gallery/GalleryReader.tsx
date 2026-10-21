@@ -7,8 +7,11 @@ import { useFinishEnterOnMount } from "../../lib/enterTransition";
 import { PREVIEW_ID } from "../../lib/preview";
 import IssueContents from "../pieces/IssueContents";
 import SavePieceButton from "../pieces/SavePieceButton";
+import SongPlayer from "../pieces/SongPlayer";
+import { useCurrentSong } from "../../lib/useSongAudio";
 import IssueArtwork from "../magazine/IssueArtwork";
 import "./gallery.css";
+import { issueName } from "../../lib/issueLabel";
 
 const WINDOW = 2;
 
@@ -49,7 +52,20 @@ function CoverWork({
   );
 }
 
-function PieceWork({ page, index }: { page: MagazinePage; index: number }) {
+function Verses({ lines }: { lines: string[] }) {
+  return (
+    <div className="gal-poem">
+      {lines.map((line, i) => (
+        <p key={i} style={{ "--l": Math.min(i, 18) } as CSSProperties}>
+          {line || "\u00a0"}
+        </p>
+      ))}
+    </div>
+  );
+}
+
+// `live` is true only for the work in front of the visitor; neighbours on the wall are inert.
+function PieceWork({ page, index, live }: { page: MagazinePage; index: number; live: boolean }) {
   const piece = page.piece!;
   if (piece.type === "art")
     return (
@@ -82,27 +98,45 @@ function PieceWork({ page, index }: { page: MagazinePage; index: number }) {
         <p>{piece.logline}</p>
       </div>
     );
+  if (piece.type === "song")
+    return (
+      <div className="gal-work gal-text gal-song">
+        <div className="gal-text-meta">
+          <span>{pad(index)}</span>
+          <span>{pieceKind.song}</span>
+        </div>
+        <div className="gal-song-main">
+          <div className="gal-song-head">
+            <h2>{piece.title}</h2>
+            <p className="gal-text-author">{piece.author}</p>
+          </div>
+          <SongPlayer song={piece} live={live} tone="light" />
+          <div
+            className="gal-text-body"
+            tabIndex={0}
+            role="region"
+            aria-label={`Transcript of ${piece.title}, scroll to read`}
+          >
+            <p className="gal-transcript-label">Transcript</p>
+            {piece.transcript.length ? (
+              <Verses lines={piece.transcript} />
+            ) : (
+              <p className="gal-transcript-empty">No transcript has been added for this song.</p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
   return (
     <div className="gal-work gal-text">
       <div className="gal-text-meta">
         <span>{pad(index)}</span>
         <span>{pieceKind[piece.type]}</span>
-        {page.parts > 1 && (
-          <span>
-            Sheet {page.part + 1} / {page.parts}
-          </span>
-        )}
       </div>
       <div className="gal-text-body" tabIndex={0} role="region" aria-label={`${piece.title}, scroll to read`}>
         <h2>{piece.title}</h2>
         <p className="gal-text-author">{piece.author}</p>
-        <div className="gal-poem">
-          {piece.lines.map((line, i) => (
-            <p key={i} style={{ "--l": Math.min(i, 18) } as CSSProperties}>
-              {line || " "}
-            </p>
-          ))}
-        </div>
+        <Verses lines={piece.lines} />
       </div>
     </div>
   );
@@ -110,7 +144,7 @@ function PieceWork({ page, index }: { page: MagazinePage; index: number }) {
 
 function WallLabel({ page, publication }: { page: MagazinePage; publication: Publication }) {
   const piece = page.piece;
-  const issue = publication.issueNumber ? `Issue ${publication.issueNumber}` : "Your issue";
+  const issue = issueName(publication);
   if (!piece)
     return (
       <aside className="gal-label">
@@ -119,8 +153,12 @@ function WallLabel({ page, publication }: { page: MagazinePage; publication: Pub
         <em>Use ← → or drag to walk through</em>
       </aside>
     );
-  const medium =
-    piece.type === "poem" ? "Writing on paper" : piece.type === "art" ? "Artwork" : "Moving image";
+  const medium = {
+    poem: "Writing on paper",
+    art: "Artwork",
+    film: "Moving image",
+    song: "Song, recorded audio",
+  }[piece.type];
   return (
     <aside className="gal-label">
       <strong>{piece.title}</strong>
@@ -138,6 +176,7 @@ function WallLabel({ page, publication }: { page: MagazinePage; publication: Pub
 export default function GalleryReader({ publication }: { publication: Publication }) {
   useFinishEnterOnMount();
   const { pages, index, page, goTo, goToPiece } = useIssueNav(publication);
+  useCurrentSong(page.piece);
   const last = pages.length - 1;
   const [drag, setDrag] = useState(0);
   const dragging = useRef<{ x: number; y: number; id: number; moved: boolean } | null>(null);
@@ -195,7 +234,7 @@ export default function GalleryReader({ publication }: { publication: Publicatio
         </Link>
         <p className="gal-title">
           The New Journal <i>—</i>{" "}
-          {publication.issueNumber ? `Issue ${publication.issueNumber}` : "Your issue"}
+          {issueName(publication)}
         </p>
         <div className="gal-actions reader-actions">
           {import.meta.env.DEV && publication.id === PREVIEW_ID && (
@@ -236,7 +275,7 @@ export default function GalleryReader({ publication }: { publication: Publicatio
             >
               <div className="gal-hang" inert={!current}>
                 {p.piece ? (
-                  <PieceWork page={p} index={n} />
+                  <PieceWork page={p} index={n} live={current} />
                 ) : (
                   <CoverWork publication={publication} onEnter={() => goTo(1)} />
                 )}
@@ -293,7 +332,7 @@ export default function GalleryReader({ publication }: { publication: Publicatio
                   key={p.id}
                   type="button"
                   className={n === index ? "is-on" : ""}
-                  aria-label={n === 0 ? "Entrance" : `${p.piece?.title}${p.parts > 1 ? `, sheet ${p.part + 1} of ${p.parts}` : ""}`}
+                  aria-label={n === 0 ? "Entrance" : p.piece?.title}
                   aria-current={n === index ? "step" : undefined}
                   onClick={() => goTo(n)}
                 />

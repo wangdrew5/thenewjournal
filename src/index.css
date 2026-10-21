@@ -880,6 +880,13 @@ body:has(dialog[open]) {
   max-height: 100px;
   object-fit: contain;
 }
+.preview-image-control > img.preview-signature {
+  width: 120px;
+  max-height: 48px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: #fffaf0;
+}
 .preview-file {
   position: relative;
   display: inline-flex;
@@ -1905,4 +1912,287 @@ body:has(.journal-home) .nav-link { font-size: 12px; letter-spacing: .02em; text
   letter-spacing: 0.08em;
   color: #ffffff50;
   text-align: center;
+}
+
+/* Song player: one shared audio element, drawn wherever a song's page appears.
+   Dark tone sits on the book's illustrated plate; light tone on the gallery wall. */
+.song-player {
+  --sp-ink: #fff8ec;
+  --sp-mute: rgba(255, 248, 236, 0.68);
+  --sp-line: rgba(255, 248, 236, 0.28);
+  --sp-fill: #ffd9a0;
+  --sp-panel: rgba(8, 10, 20, 0.52);
+  margin-top: 18px;
+  color: var(--sp-ink);
+  font-family: var(--font-body);
+  text-shadow: none;
+  cursor: auto;
+}
+.song-player.is-light {
+  --sp-ink: #1b1b19;
+  --sp-mute: #6f6d66;
+  --sp-line: #d9d7d0;
+  --sp-fill: #1b1b19;
+  --sp-panel: #fff;
+}
+.song-controls {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px 8px 8px;
+  border: 1px solid var(--sp-line);
+  border-radius: 999px;
+  background: var(--sp-panel);
+}
+.song-player.is-light .song-controls {
+  border-radius: 2px;
+}
+.song-play,
+.song-mute {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: inherit;
+  transition: background 200ms, transform 200ms;
+}
+.song-play {
+  background: var(--sp-ink);
+  color: #10131c;
+}
+.song-player.is-light .song-play {
+  color: #fff;
+}
+.song-play svg,
+.song-mute svg {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+  pointer-events: none;
+}
+.song-mute .song-stroke {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+.song-play:not(:disabled):hover {
+  transform: scale(1.05);
+}
+.song-mute:not(:disabled):hover {
+  background: color-mix(in srgb, var(--sp-ink) 12%, transparent);
+}
+.song-play:disabled,
+.song-mute:disabled {
+  cursor: default;
+}
+.song-track {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.song-times {
+  display: flex;
+  justify-content: space-between;
+  color: var(--sp-mute);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.song-volume {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.song-seek,
+.song-level {
+  --progress: 0%;
+  width: 100%;
+  height: 24px;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+.song-level {
+  width: 72px;
+}
+.song-seek:disabled,
+.song-level:disabled {
+  cursor: default;
+}
+.song-seek::-webkit-slider-runnable-track,
+.song-level::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--sp-fill) var(--progress), var(--sp-line) var(--progress));
+}
+.song-seek::-moz-range-track,
+.song-level::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--sp-fill) var(--progress), var(--sp-line) var(--progress));
+}
+.song-seek::-webkit-slider-thumb,
+.song-level::-webkit-slider-thumb {
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--sp-ink);
+  appearance: none;
+  -webkit-appearance: none;
+}
+.song-seek::-moz-range-thumb,
+.song-level::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--sp-ink);
+}
+.song-player :focus-visible {
+  outline: 2px solid var(--sp-fill);
+  outline-offset: 3px;
+}
+.song-status:empty {
+  display: none;
+}
+.song-status,
+.song-error,
+.song-unavailable {
+  margin-top: 10px;
+  color: var(--sp-mute);
+  font: 400 12px/1.5 var(--font-body);
+}
+.song-error {
+  color: #ffcf8a;
+}
+.song-player.is-light .song-error {
+  color: #9a3b1f;
+}
+.song-unavailable {
+  font: italic 17px var(--sr-serif, Georgia, serif);
+}
+@media (max-width: 420px) {
+  .song-level {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .song-play,
+  .song-mute {
+    transition: none;
+  }
+}
+
+/* Editor preview of a song */
+.song-view-audio {
+  display: block;
+  width: 100%;
+}
+.song-view-transcript {
+  margin-top: 32px;
+}
+.song-view-transcript h2 {
+  margin-bottom: 14px;
+  color: #ffffff80;
+  font-size: 11px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+/* Editor: publishing (dev only) */
+.preview-publish {
+  display: grid;
+  gap: 14px;
+  padding-top: 20px;
+  border-top: 1px solid #ffffff15;
+}
+.preview-publish h2,
+.preview-published > p {
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #ffffffa6;
+}
+.preview-publish-state {
+  font-size: 11px;
+  color: #ffffff80;
+}
+.preview-publish-state.is-unpublished {
+  color: #ffcf8a;
+}
+.preview-publish-state.is-published {
+  color: #b8efcc;
+}
+.preview-omitted,
+.preview-report ul,
+.preview-published ul {
+  display: grid;
+  gap: 6px;
+  margin: 8px 0 12px;
+  font-size: 12px;
+}
+.preview-omitted li {
+  padding-left: 12px;
+  border-left: 2px solid #ffb84d80;
+}
+.preview-report,
+.preview-git {
+  padding: 14px 16px;
+  border: 1px solid #22b25c40;
+  border-radius: 6px;
+  font-size: 12px;
+  color: #ffffffb3;
+  overflow-wrap: anywhere;
+}
+.preview-report li {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 11px;
+  color: #ffffff99;
+}
+.preview-git.is-error {
+  border-color: #ffb84d66;
+}
+.preview-git pre {
+  max-height: 260px;
+  margin-top: 8px;
+  overflow: auto;
+  font: 11px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: pre-wrap;
+  color: #ffffff99;
+}
+.preview-published li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 14px;
+}
+.preview-published li > span {
+  display: grid;
+  flex: 1 1 160px;
+  color: #ffffffcc;
+}
+.preview-published small {
+  font-size: 11px;
+  color: #ffffff70;
+}
+.preview-published button {
+  min-height: 44px;
+  font-size: 12px;
+  color: #ffffffa6;
+}
+.preview-published button:hover {
+  color: #b8efcc;
+}
+
+/* Home: no published issue yet */
+.journal-empty {
+  padding: 48px 0 24px;
+  color: #b1a795;
+  font: italic 22px/1.4 'Cormorant Garamond', Georgia, serif;
 }

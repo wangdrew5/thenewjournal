@@ -2,7 +2,7 @@ export type IssueTheme = "surreal" | "museum";
 
 export type GlowColor = "green";
 
-export type PieceType = "poem" | "film" | "art";
+export type PieceType = "poem" | "film" | "art" | "song";
 
 interface PieceBase {
   id: string;
@@ -28,13 +28,26 @@ export interface FilmPiece extends PieceBase {
 
 export interface ArtPiece extends PieceBase {
   type: "art";
+  /** The caption printed beneath the artwork on the left page. */
   imageCaption: string;
+  /** Text on the right page; reads as `imageCaption` where absent. */
+  pageText?: string;
+  /** An SVG signature shown below the right-page text. */
+  signatureSrc?: string;
   imageSrc?: string;
   imageAlt?: string;
   editorNote?: string;
 }
 
-export type Piece = PoemPiece | FilmPiece | ArtPiece;
+export interface SongPiece extends PieceBase {
+  type: "song";
+  /** A direct link to a playable audio file (not a streaming-service page). */
+  audioSrc?: string;
+  /** Transcript lines; empty strings are the blank lines between verses. */
+  transcript: string[];
+}
+
+export type Piece = PoemPiece | FilmPiece | ArtPiece | SongPiece;
 
 export interface Publication {
   id: string;
@@ -48,75 +61,3 @@ export interface Publication {
   /** Kept in the codebase but left off the site until it is ready. */
   hidden?: boolean;
 }
-
-export const publications: Publication[] = [
-  {
-    id: "pub-1",
-    theme: "surreal",
-    issueNumber: "01",
-    caption: "Incarceration",
-    glow: "green",
-    pieces: [
-      {
-        id: "pub-1-poem-1",
-        type: "poem",
-        title: "Untitled",
-        author: "Anonymous",
-        glow: "green",
-        lines: [
-          "Some nights the ceiling turns into a sky,",
-          "and I count the cracks like stars.",
-          "I am learning the language of waiting,",
-          "how patience can sound like a held breath.",
-          "Somewhere outside these walls,",
-          "a season is changing without me,",
-          "but I am changing too,",
-          "quietly, in ways no one has named yet.",
-        ],
-        editorArtCaption: "Editor illustration — placeholder",
-      },
-      {
-        id: "pub-1-film-1",
-        type: "film",
-        title: "Untitled",
-        author: "Anonymous",
-        glow: "green",
-        logline: "A short film — embed coming soon.",
-      },
-      {
-        id: "pub-1-art-1",
-        type: "art",
-        title: "Untitled",
-        author: "Anonymous",
-        glow: "green",
-        imageCaption: "Artwork placeholder",
-        editorNote:
-          "Editor's note — a short reflection from our editorial team on this piece will go here.",
-      },
-      {
-        id: "pub-1-poem-2",
-        type: "poem",
-        title: "Untitled",
-        author: "Anonymous",
-        glow: "green",
-        lines: [
-          "They ask what I'm made of.",
-          "I say paper and static,",
-          "unopened letters,",
-          "a name that used to fit different.",
-          "I am still writing myself",
-          "into a shape I recognize.",
-        ],
-        editorArtCaption: "Editor illustration — placeholder",
-      },
-      {
-        id: "pub-1-film-2",
-        type: "film",
-        title: "Untitled",
-        author: "Anonymous",
-        glow: "green",
-        logline: "A visual poem in motion — embed coming soon.",
-      },
-    ],
-  },
-];

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useSyncExternalStore } from "react";
 import { useSearchParams } from "react-router-dom";
-import type { Publication } from "../data/publications";
+import type { PieceType, Publication } from "../data/publications";
 import { magazinePages, pageFromQuery } from "./magazine";
 import { READING_KEY } from "./readingPosition";
 
@@ -9,12 +9,12 @@ import { READING_KEY } from "./readingPosition";
 export function useIssueNav(publication: Publication) {
   const [query, setQuery] = useSearchParams();
   const pages = useMemo(() => magazinePages(publication), [publication]);
-  const index = pageFromQuery(pages, query.get("piece"), query.get("page"));
+  const index = pageFromQuery(pages, query.get("piece"));
   useEffect(() => {
     const page = pages[index];
     if (!page.piece) return;
     try {
-      localStorage.setItem(READING_KEY, JSON.stringify({ version: 1, publicationId: publication.id, pieceId: page.piece.id, part: page.part }));
+      localStorage.setItem(READING_KEY, JSON.stringify({ version: 1, publicationId: publication.id, pieceId: page.piece.id }));
     } catch { /* Reading remains available when browser storage is disabled. */ }
   }, [pages, index, publication.id]);
   const goTo = useCallback(
@@ -22,15 +22,7 @@ export function useIssueNav(publication: Publication) {
       const next = Math.min(pages.length - 1, Math.max(0, target));
       if (next === index) return;
       const page = pages[next];
-      setQuery(
-        page.piece
-          ? {
-              piece: page.piece.id,
-              ...(page.part ? { page: String(page.part + 1) } : {}),
-            }
-          : {},
-        { replace: true },
-      );
+      setQuery(page.piece ? { piece: page.piece.id } : {}, { replace: true });
     },
     [pages, index, setQuery],
   );
@@ -49,7 +41,7 @@ export function useIssueNav(publication: Publication) {
       if (
         event.target instanceof HTMLElement &&
         event.target.closest(
-          "input, textarea, select, video, dialog, [contenteditable]",
+          "input, textarea, select, video, audio, dialog, [contenteditable], .song-player",
         )
       )
         return;
@@ -84,7 +76,7 @@ export function useMediaQuery(query: string) {
   );
 }
 
-export const pieceKind = { poem: "Poem", film: "Film", art: "Art" } as const;
+export const pieceKind = { poem: "Poem", film: "Film", art: "Art", song: "Song" } as const satisfies Record<PieceType, string>;
 
 export function pad(value: number) {
   return String(value).padStart(2, "0");
@@ -93,4 +85,4 @@ export function pad(value: number) {
 // Controls keep their own pointer behaviour; clicks and swipes on them never
 // turn the page.
 export const CONTROLS =
-  "a, button, video, input, textarea, select, summary, [role='button']";
+  "a, button, video, audio, input, textarea, select, summary, [role='button'], .song-player";

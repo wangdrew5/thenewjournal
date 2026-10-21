@@ -3,10 +3,17 @@ import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { useJournal } from "../lib/useJournal";
 import PublicationCard from "../components/PublicationCard";
+import { matchesPublished } from "../data/publishedIssues";
+import { PREVIEW_ID } from "../lib/preview";
+import { issueMark } from "../lib/issueLabel";
 
 export default function Home() {
   const reduced = useReducedMotion();
-  const { publications } = useJournal();
+  const journal = useJournal();
+  // In development the local draft has its own tile, unless it is exactly what is published.
+  const publications = journal.publications.filter(
+    (p) => p.id !== PREVIEW_ID || !journal.draft || !matchesPublished(journal.draft),
+  );
   const [savedPieces] = useState(() =>
     publications.flatMap((publication) =>
       publication.pieces
@@ -30,6 +37,9 @@ export default function Home() {
       >
         <h1>The <i>New</i> Journal<span aria-hidden="true">.</span></h1>
       </motion.header>
+      {publications.length === 0 && (
+        <p className="journal-empty">The first issue is on its way.</p>
+      )}
       <div className="magazine-grid journal-shelf">
         {publications.map((publication, i) => (
           <motion.section
@@ -41,7 +51,7 @@ export default function Home() {
             viewport={{ once: true, amount: 0.12 }}
             transition={{ duration: reduced ? 0 : 0.65 }}
           >
-            <div className="edition-heading"><span>{publication.issueNumber ?? "Yours"}</span><h3>{publication.theme === "museum" ? "The gallery edition" : publication.caption}</h3><span aria-hidden="true">↗</span></div>
+            <div className="edition-heading"><span>{issueMark(publication)}</span><h3>{publication.theme === "museum" ? "The gallery edition" : publication.caption}</h3><span aria-hidden="true">↗</span></div>
             <PublicationCard publication={publication} index={i} />
           </motion.section>
         ))}
@@ -53,9 +63,9 @@ export default function Home() {
           <h2 id="try-heading" className="font-display">
             Make something<br /><i>of your own.</i>
           </h2>
-          <p>Add writing, images, or film. Choose your edition and see your work become a magazine.</p>
+          <p>Add writing, artwork, film, and songs, choose an edition, then publish the issue to this site from the editor.</p>
           <Link to="/preview" className="desk-link">Open the editor <span aria-hidden="true">↗</span></Link>
-          <small>Your draft stays in this browser. Download a copy to keep or share it.</small>
+          <small>Drafts save in this browser. Publish writes the issue into the project; Commit and push puts it online.</small>
         </div>
       </motion.section>}
       {savedPieces.length > 0 && (
@@ -76,6 +86,11 @@ export default function Home() {
                   {piece.type === "poem" && (
                     <span className="contents-preview">{piece.lines[0]}</span>
                   )}
+                  {piece.type === "song" && piece.transcript.some((line) => line.trim()) && (
+                    <span className="contents-preview">
+                      {piece.transcript.find((line) => line.trim())}
+                    </span>
+                  )}
                 </span>
                 <span aria-hidden="true">↗</span>
               </Link>
@@ -83,7 +98,7 @@ export default function Home() {
           </div>
         </section>
       )}
-      <small className="site-credit">Site design by Ethan and Andrew</small>
+      <small className="site-credit">Special thanks to Ethan Birchenall for helping design the website</small>
     </main>
   );
 }

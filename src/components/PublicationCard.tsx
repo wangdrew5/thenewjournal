@@ -12,6 +12,7 @@ import IssueArtwork from "./magazine/IssueArtwork";
 import { DreamScene } from "./surreal/DreamScape";
 import { startEnter } from "../lib/enterTransition";
 import { themeNames } from "../lib/magazine";
+import { issueName } from "../lib/issueLabel";
 
 function OpenRow({ label }: { label: string }) {
   return (
@@ -26,7 +27,7 @@ function SurrealCover({ publication }: { publication: Publication }) {
   return (
     <div className="tile-book">
       <div className="tile-book-page" aria-hidden="true">
-        <span>{publication.issueNumber ? `No. ${publication.issueNumber}` : "Your issue"} · Writing</span>
+        <span>{issueName(publication, "No.")} · Writing</span>
         <i>Turn the page</i>
         <span className="tile-book-lines">
           <b />
@@ -45,7 +46,7 @@ function SurrealCover({ publication }: { publication: Publication }) {
         <div className="tile-book-shade" />
         <div className="cover-masthead">
           <span>The New Journal</span>
-          <span>{publication.issueNumber ? `No. ${publication.issueNumber}` : "Your issue"}</span>
+          <span>{issueName(publication, "No.")}</span>
         </div>
         <div className="cover-title">
           <h2>{publication.caption}</h2>
@@ -75,7 +76,7 @@ function GalleryCover({ publication }: { publication: Publication }) {
       <div className="tile-wall-label">
         <strong>{publication.caption}</strong>
         <span>
-          The New Journal, {publication.issueNumber ? `Issue ${publication.issueNumber}` : "your issue"}
+          The New Journal, {issueName(publication)}
         </span>
       </div>
       <div className="tile-wall-mast">

@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import {
   animate,
@@ -7,7 +7,7 @@ import {
   useReducedMotion,
   useTransform,
 } from "framer-motion";
-import type { Publication } from "../../data/publications";
+import type { Publication, SongPiece } from "../../data/publications";
 import type { MagazinePage } from "../../lib/magazine";
 import {
   CONTROLS,
@@ -20,9 +20,13 @@ import { useFinishEnterOnMount } from "../../lib/enterTransition";
 import { PREVIEW_ID } from "../../lib/preview";
 import IssueContents from "../pieces/IssueContents";
 import SavePieceButton from "../pieces/SavePieceButton";
+import SongPlayer from "../pieces/SongPlayer";
+import { useCurrentSong } from "../../lib/useSongAudio";
 import DreamScape, { DreamScene } from "./DreamScape";
-import { SCENE_COUNT, sceneNames } from "./scenes";
+import { SCENE_COUNT } from "./scenes";
+import { SceneClockContext, createSceneClock } from "./sceneClock";
 import "./surreal.css";
+import { issueName } from "../../lib/issueLabel";
 
 const FLIP_SECONDS = 0.95;
 const sceneFor = (index: number) => index % SCENE_COUNT;
@@ -41,8 +45,21 @@ function Lines({ lines, dropCap }: { lines: string[]; dropCap: boolean }) {
   return (
     <div className={`sr-poem ${dropCap ? "has-dropcap" : ""}`}>
       {lines.map((line, i) => (
-        <p key={i}>{line || " "}</p>
+        <p key={i}>{line || "\u00a0"}</p>
       ))}
+    </div>
+  );
+}
+
+function Transcript({ song }: { song: SongPiece }) {
+  return (
+    <div className="sr-transcript">
+      <p className="sr-transcript-label">Transcript</p>
+      {song.transcript.length ? (
+        <Lines lines={song.transcript} dropCap={false} />
+      ) : (
+        <p className="sr-transcript-empty">No transcript has been added for this song.</p>
+      )}
     </div>
   );
 }
@@ -52,34 +69,30 @@ function Folio({ publication, index }: { publication: Publication; index: number
     <header className="sr-folio">
       <span>The New Journal</span>
       <span>
-        {publication.issueNumber ? `Issue ${publication.issueNumber}` : "Your issue"} ·{" "}
+        {issueName(publication)} ·{" "}
         {pad(index)}
       </span>
     </header>
   );
 }
 
-function CoverFace({ publication }: { publication: Publication }) {
+function CoverFace({ publication, frozenAhead }: { publication: Publication; frozenAhead?: number }) {
   return (
     <div className="sr-cover">
       {publication.coverSrc ? (
         <img className="sr-cover-img" src={publication.coverSrc} alt={publication.coverAlt ?? ""} />
       ) : (
-        <DreamScene scene={0} className="sr-cover-art" />
+        <DreamScene scene={0} className="sr-cover-art" frozenAhead={frozenAhead} clockKey="cover" />
       )}
       <div className="sr-cover-shade" />
       <div className="sr-cover-mast">
         <span className="sr-cover-brand">The New Journal</span>
         <span className="sr-cover-issue">
-          {publication.issueNumber ? `No. ${publication.issueNumber}` : "Your issue"}
+          {issueName(publication, "No.")}
         </span>
       </div>
       <div className="sr-cover-title">
         <h1>{publication.caption}</h1>
-        <p>
-          {publication.pieces.length} {publication.pieces.length === 1 ? "piece" : "pieces"} ·
-          Surreal edition
-        </p>
       </div>
       <div className="sr-cover-open">
         Open the issue <span aria-hidden="true">→</span>
@@ -88,7 +101,19 @@ function CoverFace({ publication }: { publication: Publication }) {
   );
 }
 
-function PlateFace({ page, index }: { page: MagazinePage; index: number }) {
+// `live` is false for the copies of a page drawn on the turning leaf: they show the same
+// song state but cannot be used, so the page at rest stays the only working player.
+function PlateFace({
+  page,
+  index,
+  live,
+  frozenAhead,
+}: {
+  page: MagazinePage;
+  index: number;
+  live: boolean;
+  frozenAhead?: number;
+}) {
   const piece = page.piece!;
   const image =
     piece.type === "poem" ? piece.editorArtSrc : piece.type === "art" ? piece.imageSrc : undefined;
@@ -100,8 +125,13 @@ function PlateFace({ page, index }: { page: MagazinePage; index: number }) {
         : "";
   const isArt = piece.type === "art";
   return (
-    <div className={`sr-plate ${isArt ? "is-art" : ""} crop-${index % 4}`}>
-      <DreamScene scene={(sceneFor(index) + 2) % SCENE_COUNT} className="sr-plate-art" />
+    <div className={`sr-plate ${isArt ? "is-art" : ""} ${piece.type === "song" ? "is-song" : ""} crop-${index % 4}`}>
+      <DreamScene
+        scene={(sceneFor(index) + 2) % SCENE_COUNT}
+        className="sr-plate-art"
+        frozenAhead={frozenAhead}
+        clockKey={`plate-${index}`}
+      />
       <div className="sr-plate-shade" />
       {isArt ? (
         <figure className="sr-hung">
@@ -127,6 +157,7 @@ function PlateFace({ page, index }: { page: MagazinePage; index: number }) {
             </span>
             <h2>{piece.title}</h2>
             <p>by {piece.author}</p>
+            {piece.type === "song" && <SongPlayer song={piece} live={live} tone="dark" />}
           </div>
         </>
       )}
@@ -137,7 +168,6 @@ function PlateFace({ page, index }: { page: MagazinePage; index: number }) {
           ))}
         </div>
       )}
-      <span className="sr-plate-scene">{sceneNames[(sceneFor(index) + 2) % SCENE_COUNT]}</span>
     </div>
   );
 }
@@ -147,42 +177,45 @@ function TextFace({
   page,
   index,
   last,
+  startAt,
+  scrolls,
   onRestart,
 }: {
   publication: Publication;
   page: MagazinePage;
   index: number;
   last: boolean;
+  startAt: number;
+  scrolls: Map<string, number>;
   onRestart: () => void;
 }) {
   const piece = page.piece!;
+  const body = useRef<HTMLDivElement>(null);
+  const firstStart = useRef(startAt);
+  // Every copy of a page (the one at rest and the one on the turning leaf) is its own
+  // element, so a copy begins where the reader says rather than wherever a scroll
+  // container happened to be left, and records that start so the others can match it.
+  useLayoutEffect(() => {
+    const el = body.current;
+    if (!el) return;
+    if (firstStart.current) el.scrollTop = firstStart.current;
+    scrolls.set(page.id, el.scrollTop);
+  }, [scrolls, page.id]);
   return (
     <div className="sr-paper">
       <Folio publication={publication} index={index} />
-      <div className="sr-body" tabIndex={0} role="region" aria-label={`${piece.title}, scroll to read`}>
-        <p className="sr-kicker">
-          {pieceKind[piece.type]}
-          {page.parts > 1 && (
-            <>
-              {" "}
-              · {page.part ? "continued" : "part"} {page.part + 1} of {page.parts}
-            </>
-          )}
-        </p>
-        {page.part === 0 ? (
-          <>
-            <h1 className="sr-title">{piece.title}</h1>
-            <p className="sr-byline">by {piece.author}</p>
-            <span className="sr-rule" aria-hidden="true">
-              ❦
-            </span>
-          </>
-        ) : (
-          <h2 className="sr-title is-small">{piece.title}</h2>
-        )}
-        {piece.type === "poem" && (
-          <Lines lines={piece.lines} dropCap={page.part === 0} />
-        )}
+      <div
+        ref={body}
+        className="sr-body"
+        tabIndex={0}
+        role="region"
+        aria-label={piece.type === "song" ? `Transcript of ${piece.title}, scroll to read` : `${piece.title}, scroll to read`}
+        onScroll={(event) => scrolls.set(page.id, event.currentTarget.scrollTop)}
+      >
+        <p className="sr-kicker">{pieceKind[piece.type]}</p>
+        <h1 className="sr-title">{piece.title}</h1>
+        {piece.type === "poem" && <Lines lines={piece.lines} dropCap />}
+        {piece.type === "song" && <Transcript song={piece} />}
         {piece.type === "film" && (
           <div className="sr-film">
             {piece.videoSrc ? (
@@ -197,7 +230,12 @@ function TextFace({
         )}
         {piece.type === "art" && (
           <div className="sr-art-notes">
-            {piece.imageCaption && <p className="sr-caption">{piece.imageCaption}</p>}
+            {(piece.pageText ?? piece.imageCaption) && (
+              <p className="sr-caption">{piece.pageText ?? piece.imageCaption}</p>
+            )}
+            {piece.signatureSrc && (
+              <img className="sr-signature" src={piece.signatureSrc} alt={`Signature of ${piece.author}`} />
+            )}
             {piece.editorNote && (
               <blockquote>
                 <span>Editor’s note</span>
@@ -219,7 +257,6 @@ function TextFace({
         )}
       </div>
       <footer className="sr-foot">
-        <span>{piece.author}</span>
         <span>{index}</span>
       </footer>
     </div>
@@ -232,10 +269,29 @@ function BlankFace() {
 
 /* ---------- Reader ---------- */
 
+// The scene clock is shared by every copy of a page's scenery, so hand-overs between them
+// continue at the exact same phase. One per visit to the reader.
 export default function SurrealReader({ publication }: { publication: Publication }) {
+  const [sceneClock] = useState(createSceneClock);
+  return (
+    <SceneClockContext.Provider value={sceneClock}>
+      <SurrealBook publication={publication} />
+    </SceneClockContext.Provider>
+  );
+}
+
+function SurrealBook({ publication }: { publication: Publication }) {
   useFinishEnterOnMount();
   const reduced = useReducedMotion();
   const { pages, index, page, goTo, goToPiece } = useIssueNav(publication);
+  useCurrentSong(page.piece);
+  // The cover only uses italic Cormorant. Fetch the faces the pages use as soon as the reader
+  // opens; otherwise they load during the first turn and the text swaps font (and rewraps)
+  // mid-flip on both copies of the page.
+  useEffect(() => {
+    for (const face of ['400 1em "Cormorant Garamond"', '600 1em "Cormorant Garamond"', '700 1em "Lato"'])
+      document.fonts?.load(face).catch(() => {});
+  }, []);
   const spread = useMediaQuery("(min-width: 900px)");
   const last = pages.length - 1;
 
@@ -255,6 +311,7 @@ export default function SurrealReader({ publication }: { publication: Publicatio
   }
   const { shown, flip } = view;
 
+  const [scrolls] = useState(() => new Map<string, number>());
   const rot = useMotionValue(0);
   const forward = flip ? flip.to > flip.from : true;
   // Layout effect, not useEffect: the new leaf mounts in this commit, and `rot` still holds
@@ -283,17 +340,27 @@ export default function SurrealReader({ publication }: { publication: Publicatio
   const closed = spread && settledIndex === 0;
 
   const restart = () => goTo(0);
-  const face = (i: number, side: "L" | "R" | "P"): ReactNode => {
+  // `copy` marks faces drawn on the turning leaf rather than the page at rest: "start" for
+  // the page seen as the turn begins, "end" for the one seen as it lands. Their scenes hold
+  // still at that moment (see DreamScene's frozenAhead).
+  type Copy = false | "start" | "end";
+  const frozen = (copy: Copy) => (copy === "start" ? 0 : copy === "end" ? FLIP_SECONDS * 1000 : undefined);
+  const face = (i: number, side: "L" | "R" | "P", copy: Copy = false): ReactNode => {
     const p = pages[i];
     if (!p) return <BlankFace />;
-    if (!p.piece) return side === "L" ? null : <CoverFace publication={publication} />;
-    if (side === "L") return <PlateFace page={p} index={i} />;
+    if (!p.piece) return side === "L" ? null : <CoverFace publication={publication} frozenAhead={frozen(copy)} />;
+    if (side === "L") return <PlateFace page={p} index={i} live={!copy} frozenAhead={frozen(copy)} />;
     return (
       <TextFace
+        key={p.id}
         publication={publication}
         page={p}
         index={i}
         last={i === last}
+        // Only the page being turned away carries its scroll onto the turning leaf;
+        // an arriving page always opens at the top, on the leaf and once landed.
+        startAt={flip && i === flip.from ? scrolls.get(p.id) ?? 0 : 0}
+        scrolls={scrolls}
         onRestart={restart}
       />
     );
@@ -310,29 +377,29 @@ export default function SurrealReader({ publication }: { publication: Publicatio
     } else if (forward) {
       left = face(flip.from, "L");
       right = face(flip.to, "R");
-      leaf = { side: "right", front: face(flip.from, "R"), back: face(flip.to, "L") };
+      leaf = { side: "right", front: face(flip.from, "R", "start"), back: face(flip.to, "L", "end") };
     } else {
       left = face(flip.to, "L");
       right = face(flip.from, "R");
-      leaf = { side: "left", front: face(flip.from, "L"), back: face(flip.to, "R") };
+      leaf = { side: "left", front: face(flip.from, "L", "start"), back: face(flip.to, "R", "end") };
     }
   } else {
-    const single = (i: number) =>
+    const single = (i: number, copy: Copy = false) =>
       pages[i]?.piece ? (
-        <div className="sr-single">
-          <div className="sr-single-plate">{face(i, "L")}</div>
-          {face(i, "R")}
+        <div className={`sr-single ${pages[i].piece!.type === "song" ? "is-song" : ""}`}>
+          <div className="sr-single-plate">{face(i, "L", copy)}</div>
+          {face(i, "R", copy)}
         </div>
       ) : (
-        face(i, "R")
+        face(i, "R", copy)
       );
     if (!flip) right = single(shown);
     else if (forward) {
       right = single(flip.to);
-      leaf = { side: "single", front: single(flip.from), back: <BlankFace /> };
+      leaf = { side: "single", front: single(flip.from, "start"), back: <BlankFace /> };
     } else {
       right = single(flip.from);
-      leaf = { side: "single", front: single(flip.to), back: <BlankFace /> };
+      leaf = { side: "single", front: single(flip.to, "end"), back: <BlankFace /> };
     }
   }
 
@@ -341,7 +408,8 @@ export default function SurrealReader({ publication }: { publication: Publicatio
   function onClick(event: React.MouseEvent<HTMLDivElement>) {
     if (skipTouchClick.current) { skipTouchClick.current = false; return; }
     if (
-      (event.target instanceof HTMLElement && event.target.closest(CONTROLS)) ||
+      // Element, not HTMLElement: a click on an icon inside a control targets the SVG.
+      (event.target instanceof Element && event.target.closest(CONTROLS)) ||
       window.getSelection()?.toString()
     )
       return;
@@ -353,15 +421,17 @@ export default function SurrealReader({ publication }: { publication: Publicatio
 
   const piece = page.piece;
   return (
-    <div className="sr-reader" data-scene={sceneFor(settledIndex)}>
-      <DreamScape scene={sceneFor(settledIndex)} />
+    // The backdrop changes once a turn has landed, so its crossfade never competes with the turn.
+    <div className="sr-reader" data-scene={sceneFor(shown)}>
+      <DreamScape scene={sceneFor(shown)} paused={flip !== null} />
       <div className="sr-chrome sr-top">
         <Link to="/" className="sr-pill sr-back">
           <span aria-hidden="true">←</span> All issues
         </Link>
         <p className="sr-edition">
-          <span>The New Journal</span>
-          <i>{publication.issueNumber ? `Issue ${publication.issueNumber}` : "Your issue"} · Surreal edition</i>
+          <Link to="/" aria-label="The New Journal, back to the home page">
+            The New Journal
+          </Link>
         </p>
         <div className="sr-actions reader-actions">
           {import.meta.env.DEV && publication.id === PREVIEW_ID && (
@@ -449,9 +519,6 @@ export default function SurrealReader({ publication }: { publication: Publicatio
           ←
         </button>
         <div className="sr-progress">
-          <span className="sr-count" aria-live="polite" aria-atomic="true">
-            {index === 0 ? "Cover" : `Page ${index} of ${last}`}
-          </span>
           <span className="sr-stars" aria-hidden="true">
             {pages.length <= 24 &&
               pages.map((p, i) => (
@@ -464,7 +531,6 @@ export default function SurrealReader({ publication }: { publication: Publicatio
           →
         </button>
       </nav>
-      <p className="sr-hint">Click a page or use ← → to turn · Swipe on your phone</p>
     </div>
   );
 }

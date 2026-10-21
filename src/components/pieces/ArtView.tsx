@@ -43,7 +43,7 @@ export default function ArtView({ piece }: Props) {
               />
               {piece.imageCaption && (
                 <div className="art-caption absolute inset-x-0 bottom-0 translate-y-0 bg-gradient-to-t from-black/80 to-transparent px-5 py-4 transition-transform duration-400 group-hover:translate-y-0">
-                  <span className="font-display text-xs font-medium tracking-[0.25em] text-white/60 uppercase">
+                  <span className="font-display text-xs font-medium tracking-[0.25em] whitespace-pre-line text-white/60 uppercase">
                     {piece.imageCaption}
                   </span>
                 </div>

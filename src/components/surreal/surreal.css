@@ -269,15 +269,15 @@
   text-align: center;
   text-shadow: 0 2px 14px rgba(0, 0, 0, 0.6);
 }
-.sr-edition span {
+.sr-edition a {
+  color: inherit;
   font: italic 500 22px/1 var(--sr-serif);
+  text-decoration: none;
+  transition: opacity 200ms;
 }
-.sr-edition i {
-  font-style: normal;
-  font-size: 10px;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  opacity: 0.8;
+.sr-edition a:hover,
+.sr-edition a:focus-visible {
+  opacity: 0.75;
 }
 .sr-actions {
   justify-self: end;
@@ -323,12 +323,6 @@
   max-width: 420px;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.7);
 }
-.sr-count {
-  font-size: 10px;
-  letter-spacing: 0.26em;
-  text-transform: uppercase;
-  opacity: 0.85;
-}
 .sr-stars {
   display: flex;
   gap: 9px;
@@ -359,14 +353,6 @@
   font: italic 16px/1.2 var(--sr-serif);
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-.sr-hint {
-  padding: 2px 0 14px;
-  text-align: center;
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  opacity: 0.6;
-  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
 }
 
 /* Contents dialog in the dream palette */
@@ -641,21 +627,8 @@
   letter-spacing: -0.01em;
   text-wrap: balance;
 }
-.sr-title.is-small {
-  font-size: clamp(22px, 2vw, 28px);
-  opacity: 0.7;
-  margin-bottom: 18px;
-}
-.sr-byline {
-  margin-top: 8px;
-  color: #7c6957;
-  font: italic 18px var(--sr-serif);
-}
-.sr-rule {
-  display: block;
-  margin: 14px 0 18px;
-  color: #b08a6a;
-  font-size: 18px;
+.sr-title {
+  margin-bottom: 26px;
 }
 .sr-poem p {
   font: 400 clamp(17px, 1.32vw, 20px) / 1.62 var(--sr-serif);
@@ -699,8 +672,17 @@
   font: italic 19px/1.5 var(--sr-serif);
 }
 .sr-caption {
+  white-space: pre-line;
   color: #6f5d4d;
   font: italic 17px/1.5 var(--sr-serif);
+}
+.sr-signature {
+  display: block;
+  max-width: 70%;
+  height: 64px;
+  margin-top: 10px;
+  object-fit: contain;
+  object-position: left center;
 }
 .sr-art-notes blockquote {
   position: relative;
@@ -747,7 +729,7 @@
 }
 .sr-foot {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   padding-top: 10px;
   border-top: 1px solid rgba(80, 56, 32, 0.14);
   color: #9a8774;
@@ -815,7 +797,7 @@
   letter-spacing: -0.015em;
   text-wrap: balance;
 }
-.sr-plate-copy p {
+.sr-plate-copy > p {
   margin-top: 10px;
   font: italic 19px var(--sr-serif);
   opacity: 0.85;
@@ -869,6 +851,7 @@
     rgba(20, 22, 32, 0.6);
 }
 .sr-hung figcaption {
+  white-space: pre-line;
   font: italic 15px var(--sr-serif);
   opacity: 0.85;
   text-align: center;
@@ -889,13 +872,6 @@
   height: 12px;
   border-radius: 2px;
   background: rgba(255, 240, 210, 0.75);
-}
-.sr-plate-scene {
-  position: absolute;
-  top: 18px;
-  right: 22px;
-  font: italic 12px var(--sr-serif);
-  opacity: 0.6;
 }
 
 /* ---------- Cover ---------- */
@@ -953,10 +929,6 @@
   font: italic 500 clamp(34px, 3.8vw, 58px) / 1 var(--sr-serif);
   text-wrap: balance;
 }
-.sr-cover-title p {
-  font-size: 12px;
-  opacity: 0.8;
-}
 .sr-cover-open {
   position: absolute;
   right: clamp(22px, 3vw, 36px);
@@ -974,6 +946,25 @@
 }
 .sr-book:hover .sr-cover-open span {
   transform: translateX(5px);
+}
+
+/* ---------- Song: player on the plate, transcript on the paper ---------- */
+.sr-plate.is-song .sr-plate-shade {
+  background:
+    linear-gradient(270deg, rgba(20, 10, 0, 0.35), transparent 10%),
+    linear-gradient(180deg, transparent 25%, rgba(6, 8, 18, 0.82));
+}
+.sr-transcript-label {
+  margin-bottom: 12px;
+  color: #a0603f;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+.sr-transcript-empty {
+  color: #6f5d4d;
+  font: italic 18px/1.5 var(--sr-serif);
 }
 
 /* ---------- Single-page (phone) layout ---------- */
@@ -998,6 +989,33 @@
 .sr-single-plate .sr-plate-figure {
   display: none;
 }
+/* A song's band grows to hold its player above the transcript. */
+.sr-single.is-song .sr-single-plate {
+  flex: 0 0 auto;
+}
+.sr-single.is-song .sr-plate {
+  position: relative;
+  inset: auto;
+}
+.sr-single.is-song .sr-plate-copy {
+  position: relative;
+  inset: auto;
+  padding: 20px 18px 16px;
+}
+/* The short band puts the copy over the bright top of the scene; keep it legible. */
+.sr-single.is-song .sr-plate-shade {
+  background: linear-gradient(180deg, rgba(6, 8, 18, 0.5), rgba(6, 8, 18, 0.78));
+}
+.sr-single.is-song .sr-plate-copy h2 {
+  font-size: 30px;
+}
+.sr-single.is-song .sr-plate-copy > p {
+  margin-top: 6px;
+  font-size: 16px;
+}
+.sr-single.is-song .song-player {
+  margin-top: 12px;
+}
 .sr-single > .sr-paper {
   position: relative;
   inset: auto;
@@ -1005,9 +1023,7 @@
   min-height: 0;
   background-image: none;
 }
-.sr-single > .sr-paper .sr-title,
-.sr-single > .sr-paper .sr-byline,
-.sr-single > .sr-paper .sr-rule {
+.sr-single > .sr-paper .sr-title {
   display: none;
 }
 .sr-single > .sr-paper .sr-kicker {
@@ -1032,10 +1048,7 @@
     min-width: 0;
     flex: 1;
   }
-  .sr-hint {
-    display: none;
-  }
-  .sr-bottom {
+    .sr-bottom {
     padding-bottom: max(12px, env(safe-area-inset-bottom));
   }
 }

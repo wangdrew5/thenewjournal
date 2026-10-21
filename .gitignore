@@ -10,6 +10,8 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+# Song files uploaded in the editor wait here until they are published.
+.tnj-staging
 *.local
 
 # Editor directories and files

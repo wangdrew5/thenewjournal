@@ -434,6 +434,38 @@ body:has(.gal-reader) {
 .gal-poem {
   margin-top: clamp(18px, 3.5vh, 34px);
 }
+/* Song: title and player stay put; the transcript scrolls beneath them. */
+.gal-song-main {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.gal-song-head h2 {
+  font-size: clamp(26px, 2.4vw, 38px);
+  font-weight: 300;
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+.gal-song .song-player {
+  margin: clamp(14px, 2.6vh, 22px) 0 clamp(14px, 2.6vh, 22px);
+}
+.gal-song .gal-text-body {
+  flex: 1;
+}
+.gal-song .gal-poem {
+  margin-top: 0;
+}
+.gal-transcript-label {
+  margin-bottom: 10px;
+  color: var(--gal-mute);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+.gal-transcript-empty {
+  color: var(--gal-mute);
+  font: italic 15px/1.6 var(--gal-serif);
+}
 .gal-poem p {
   color: #2b2a27;
   font: 400 clamp(14.5px, 1.05vw, 16.5px) / 1.8 var(--gal-serif);

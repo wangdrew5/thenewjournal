@@ -1,6 +1,7 @@
-import { useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useCallback, useContext, useEffect, useId, useLayoutEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import { useReducedMotion } from "framer-motion";
 import { SCENE_COUNT } from "./scenes";
+import { SceneClockContext } from "./sceneClock";
 
 // Decorative, hand-built surreal scenes for the Surreal edition. They are
 // brand artwork, never contributor work, and are hidden from assistive tech.
@@ -665,21 +666,64 @@ const scenes = [TideDoor, NightWhale, ClockDesert, LanternIsles, PaperSky];
 export function DreamScene({
   scene,
   className = "",
+  frozenAhead,
+  clockKey,
 }: {
   scene: number;
   className?: string;
+  /**
+   * Hold the scene still, as it will look this many ms from now. Copies on a turning page
+   * use it: a still scene is drawn once and then only rotated, rather than repainted on
+   * every frame of the turn.
+   */
+  frozenAhead?: number;
+  /**
+   * Names this scene in the reader's shared scene clock (see sceneClock.ts): every copy of
+   * the same page's scenery uses the same key, so they hand over at exactly the same phase.
+   */
+  clockKey?: string;
 }) {
   const id = useId().replace(/:/g, "");
   const svg = useRef<SVGSVGElement>(null);
+  const clock = useContext(SceneClockContext);
+  // One moment per mount, taken at render. Effects can run again for the same mount (React's
+  // development StrictMode does it on purpose, a frame apart), and each run must see the
+  // same moment or the scene it just froze would move.
+  // (No document while rendering on a server; nothing animates there.)
+  const [born] = useState(() => (typeof document === "undefined" ? 0 : Number(document.timeline.currentTime ?? 0)));
   const Scene = scenes[((scene % SCENE_COUNT) + SCENE_COUNT) % SCENE_COUNT];
-  // Pin the scene's looping animations to the page clock, so a copy mounted later
-  // (the page left behind after a flip) continues the motion instead of restarting.
+  // Pin the scene's looping animations to the shared clock, so a copy mounted later (the
+  // page left behind after a flip) continues the motion instead of restarting.
   // Only CSS animations: getAnimations() also returns transitions, which must not jump.
   useLayoutEffect(() => {
-    for (const animation of svg.current?.getAnimations?.({ subtree: true }) ?? []) {
-      if (animation instanceof CSSAnimation) animation.startTime = 0;
+    const shared = clock && clockKey ? { clock, key: clockKey } : null;
+    const freezing = frozenAhead !== undefined;
+    const isEndCopy = freezing && frozenAhead > 0;
+    // A turning copy left its frozen phase behind: whatever replaces it (the page at rest, or
+    // the next copy of a leaf that turns straight back) carries on from exactly that moment,
+    // not from where the document clock happens to be. Taking it is idempotent: a repeat of
+    // this effect finds it already taken and the offset already set.
+    if (shared && !isEndCopy) {
+      const held = shared.clock.held.get(shared.key);
+      if (held !== undefined) {
+        shared.clock.offsets.set(shared.key, born - held);
+        shared.clock.held.delete(shared.key);
+      }
     }
-  }, [scene]);
+    const offset = (shared && shared.clock.offsets.get(shared.key)) ?? 0;
+    const phase = born + (frozenAhead ?? 0) - offset;
+    for (const animation of svg.current?.getAnimations?.({ subtree: true }) ?? []) {
+      if (!(animation instanceof CSSAnimation)) continue;
+      if (!freezing) {
+        animation.startTime = offset;
+      } else {
+        animation.currentTime = phase;
+        animation.pause();
+      }
+    }
+    // Same value on every run, because `born` does not change.
+    if (shared && isEndCopy) shared.clock.held.set(shared.key, phase);
+  }, [scene, frozenAhead, clock, clockKey, born]);
   return (
     <svg
       ref={svg}
@@ -694,18 +738,93 @@ export function DreamScene({
   );
 }
 
-// Full-viewport backdrop: crossfades between scenes and leans with the mouse.
-export default function DreamScape({ scene }: { scene: number }) {
+const FADE_MS = 1600;
+const FADE_EASING = "cubic-bezier(0.22, 1, 0.36, 1)";
+
+// One backdrop scene. A scene that arrives fades (and settles) in over the one beneath it.
+// The fade is a native Web Animation, so it can be held exactly where it is and resumed
+// without a jump: a page turn never has to share the screen with a background transition.
+function BackdropLayer({
+  id,
+  scene,
+  first,
+  paused,
+  reduced,
+  onSettled,
+}: {
+  id: number;
+  scene: number;
+  first: boolean;
+  paused: boolean;
+  reduced: boolean | null;
+  /** Reports that this layer is fully in. Must be stable: a new function restarts the fade. */
+  onSettled: (id: number) => void;
+}) {
+  const node = useRef<HTMLDivElement>(null);
+  const fade = useRef<Animation | null>(null);
+  // Before paint, so the layer never shows a frame at full strength before it starts fading.
+  useLayoutEffect(() => {
+    const el = node.current;
+    if (first || !el) return;
+    if (reduced) {
+      onSettled(id);
+      return;
+    }
+    const animation = el.animate(
+      [
+        { opacity: 0, transform: "scale(1.04)" },
+        { opacity: 1, transform: "scale(1)" },
+      ],
+      { duration: FADE_MS, easing: FADE_EASING, fill: "both" },
+    );
+    animation.onfinish = () => onSettled(id);
+    fade.current = animation;
+    // Cancelling drops the callback first, so a layer that goes away (or is remounted by
+    // StrictMode) cannot report back late.
+    return () => {
+      animation.onfinish = null;
+      animation.cancel();
+      fade.current = null;
+    };
+  }, [id, first, reduced, onSettled]);
+  // Hold a running fade for a turn, and resume only a held one (playing a finished
+  // animation would restart it).
+  useLayoutEffect(() => {
+    const animation = fade.current;
+    if (!animation) return;
+    if (paused && animation.playState === "running") animation.pause();
+    else if (!paused && animation.playState === "paused") animation.play();
+  }, [paused, id, first, reduced, onSettled]);
+  return (
+    <div ref={node} className="dreamscape-layer">
+      <DreamScene scene={scene} />
+    </div>
+  );
+}
+
+// Full-viewport backdrop: crossfades between scenes and leans with the mouse. While `paused`
+// (a page is turning) a fade in progress holds still and no new scene is started.
+export default function DreamScape({ scene, paused = false }: { scene: number; paused?: boolean }) {
   const ref = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
   // A new scene fades in over the old one, which stays opaque until it is fully in; fading
   // both at once let the dark backdrop flash through. At most two scenes exist at a time:
-  // a change asked for mid-crossfade waits, and only the latest one is ever started.
+  // a change asked for mid-crossfade (or mid-turn) waits, and only the latest one is started.
   const [layers, setLayers] = useState([{ key: 0, scene }]);
   const top = layers[layers.length - 1];
-  if (layers.length === 1 && top.scene !== scene) {
+  if (!paused && layers.length === 1 && top.scene !== scene) {
     setLayers([...layers, { key: top.key + 1, scene }]);
   }
+  // A layer finishing drops everything beneath it. A report from a layer that is no longer
+  // there (or from the bottom one) changes nothing.
+  const settle = useCallback(
+    (key: number) =>
+      setLayers((current) => {
+        const at = current.findIndex((layer) => layer.key === key);
+        return at > 0 ? current.slice(at) : current;
+      }),
+    [],
+  );
   useEffect(() => {
     if (
       reduced ||
@@ -731,18 +850,15 @@ export default function DreamScape({ scene }: { scene: number }) {
   return (
     <div ref={ref} className="dreamscape" aria-hidden="true">
       {layers.map((layer) => (
-        <motion.div
+        <BackdropLayer
           key={layer.key}
-          className="dreamscape-layer"
-          initial={layer.key === 0 ? false : { opacity: 0, scale: 1.04 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: reduced ? 0 : 1.6, ease: [0.22, 1, 0.36, 1] }}
-          onAnimationComplete={() =>
-            setLayers((current) => current.slice(current.findIndex((l) => l.key === layer.key)))
-          }
-        >
-          <DreamScene scene={layer.scene} />
-        </motion.div>
+          id={layer.key}
+          scene={layer.scene}
+          first={layer.key === 0}
+          paused={paused}
+          reduced={reduced}
+          onSettled={settle}
+        />
       ))}
       <div className="dreamscape-grain" />
       <div className="dreamscape-vignette" />

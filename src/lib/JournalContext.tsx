@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useReducer, type ReactNode } from "react";
 import { JournalContext } from "./useJournal";
 import { comedyExample } from "../data/comedyExample";
-import { publications as originals } from "../data/publications";
+import { publishedIssues } from "../data/publishedIssues";
 import {
   parsePreviewDraft,
   previewPublication,
@@ -63,7 +63,7 @@ function useJournalState() {
   const publications = useMemo(
     () =>
       [
-        ...[...originals, comedyExample].filter((publication) => !publication.hidden),
+        ...[...publishedIssues, comedyExample].filter((publication) => !publication.hidden),
         ...(draft ? [previewPublication(draft)] : []),
       ],
     [draft],
