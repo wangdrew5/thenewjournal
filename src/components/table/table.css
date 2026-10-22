@@ -642,17 +642,17 @@ html:not([data-scene="table"]) .mode-toggle {
     radial-gradient(ellipse 130% 110% at 50% 45%, rgba(18, 8, 3, 0.62), rgba(10, 4, 1, 0.86)),
     rgba(30, 14, 6, 0.4);
 }
-:root[data-scene="table"]:not([data-mode="light"]) {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) {
   color-scheme: dark;
 }
-:root[data-scene="table"]:not([data-mode="light"]) .table-scene::after {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .table-scene::after {
   opacity: 1;
 }
-:root[data-scene="table"]:not([data-mode="light"]) body {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) body {
   background: #1d0f06;
   color: #f1e3cc;
 }
-:root[data-scene="table"]:not([data-mode="light"]) :is(
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) :is(
   .site-header .nav-link,
   .site-header a:not(.nav-link),
   .mode-toggle,
@@ -660,49 +660,49 @@ html:not([data-scene="table"]) .mode-toggle {
 ) {
   color: #f1e3cc;
 }
-:root[data-scene="table"]:not([data-mode="light"]) .site-header .nav-link::after {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .site-header .nav-link::after {
   background: #f1e3cc;
 }
-:root[data-scene="table"]:not([data-mode="light"]) body .site-header.is-scrolled {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) body .site-header.is-scrolled {
   background: rgba(28, 14, 6, 0.74);
   box-shadow: 0 1px 0 rgba(240, 200, 150, 0.12);
 }
-:root[data-scene="table"]:not([data-mode="light"]) :where(a, button):focus-visible {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) :where(a, button):focus-visible {
   outline-color: #e9b27a;
 }
-:root[data-scene="table"]:not([data-mode="light"]) .journal-masthead h1 {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .journal-masthead h1 {
   color: #f6e8d0;
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
 }
-:root[data-scene="table"]:not([data-mode="light"]) .journal-masthead h1 > span {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .journal-masthead h1 > span {
   color: #e48f5f;
 }
-:root[data-scene="table"]:not([data-mode="light"]) .table-caption {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .table-caption {
   color: rgba(241, 227, 204, 0.78);
 }
-:root[data-scene="table"]:not([data-mode="light"]) .table-caption strong,
-:root[data-scene="table"]:not([data-mode="light"]) .saved-section h2 {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .table-caption strong,
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .saved-section h2 {
   color: #f6e8d0;
 }
-:root[data-scene="table"]:not([data-mode="light"]) .tc-heading {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .tc-heading {
   color: #f1e3cc;
 }
-:root[data-scene="table"]:not([data-mode="light"]) .saved-link {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .saved-link {
   border-color: rgba(240, 200, 150, 0.22);
   background: rgba(34, 18, 8, 0.72);
   color: #f1e3cc;
 }
-:root[data-scene="table"]:not([data-mode="light"]) .saved-link .text-green {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .saved-link .text-green {
   color: #e48f5f;
 }
-:root[data-scene="table"]:not([data-mode="light"]) .site-credit {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .site-credit {
   color: rgba(241, 227, 204, 0.55);
 }
 /* Paper on the table is lit by the lamp, not the window: a touch warmer and dimmer */
-:root[data-scene="table"]:not([data-mode="light"]) :is(.paper-sheet, .journal-desk, .table-letter, .table-polaroid, .table-note) {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) :is(.paper-sheet, .journal-desk, .table-letter, .table-polaroid, .table-note) {
   filter: brightness(0.9) sepia(0.12);
 }
-:root[data-scene="table"]:not([data-mode="light"]) .tc-copy {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .tc-copy {
   box-shadow:
     1px 1px 0 rgba(236, 228, 210, 0.75),
     2px 2px 0 rgba(200, 190, 170, 0.7),
@@ -710,6 +710,97 @@ html:not([data-scene="table"]) .mode-toggle {
     10px 14px 20px rgba(0, 0, 0, 0.55),
     2px 4px 4px rgba(0, 0, 0, 0.5);
 }
-:root[data-scene="table"]:not([data-mode="light"]) :is(.table-mug, .table-cassette, .tc-museum .tc-copy) {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) :is(.table-mug, .table-cassette, .tc-museum .tc-copy) {
   filter: brightness(0.82);
+}
+
+/* ---------- The editor: a desk to work at ---------- */
+:root[data-page="editor"] .mode-toggle {
+  display: none;
+}
+:root[data-page="editor"] .preview-page {
+  max-width: 1180px;
+}
+:root[data-page="editor"] .preview-heading h1 {
+  font-size: clamp(38px, 5vw, 56px);
+  color: #f6e8d0;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
+}
+:root[data-page="editor"] .preview-heading p,
+:root[data-page="editor"] .preview-page > .back-link {
+  color: rgba(241, 227, 204, 0.8);
+  font-size: 15px;
+}
+:root[data-page="editor"] .preview-workspace {
+  grid-template-columns: minmax(0, 400px) minmax(0, 1fr);
+  gap: 36px;
+}
+/* The form is a dark leather folio; the preview is a page laid beside it */
+:root[data-page="editor"] .preview-editor {
+  gap: 22px;
+  padding: 30px 28px 34px;
+  border: 1px solid rgba(240, 200, 150, 0.14);
+  border-radius: 10px;
+  background: rgba(26, 13, 6, 0.78);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 225, 180, 0.07);
+  backdrop-filter: blur(10px);
+}
+:root[data-page="editor"] .preview-field {
+  font-size: 13px;
+  color: rgba(241, 227, 204, 0.85);
+}
+:root[data-page="editor"] .preview-field input,
+:root[data-page="editor"] .preview-field textarea,
+:root[data-page="editor"] .preview-field select {
+  background: rgba(10, 5, 2, 0.7);
+  border-color: rgba(240, 200, 150, 0.2);
+  color: #f6e8d0;
+  font-size: 15px;
+}
+:root[data-page="editor"] .preview-help,
+:root[data-page="editor"] .preview-save {
+  font-size: 12px;
+  color: rgba(241, 227, 204, 0.62);
+}
+:root[data-page="editor"] .preview-stage {
+  position: sticky;
+  top: 96px;
+  max-height: calc(100vh - 120px);
+  overflow: auto;
+  padding: 40px 44px;
+  border: 0;
+  border-radius: 3px;
+  color: #2a1b10;
+  background: linear-gradient(180deg, #fbf6ec, #f1e8d6);
+  box-shadow: 1px 1px 0 #e4d8c2, 3px 3px 0 #d3c6ad, 18px 26px 40px rgba(0, 0, 0, 0.45);
+  filter: brightness(0.94) sepia(0.1);
+}
+:root[data-page="editor"] .preview-stage .text-green,
+:root[data-page="editor"] .preview-stage [class*="text-green"] {
+  color: #8c3a1c;
+}
+:root[data-page="editor"] .preview-stage * {
+  text-shadow: none;
+}
+:root[data-page="editor"] .preview-stage [class*="text-white"],
+:root[data-page="editor"] .preview-stage .font-display,
+:root[data-page="editor"] .preview-stage .poem-text {
+  color: #2a1b10;
+}
+:root[data-page="editor"] .preview-stage-label {
+  color: #6a4f3a;
+}
+:root[data-page="editor"] .preview-stage em,
+:root[data-page="editor"] .preview-stage p {
+  color: #4a3322;
+}
+@media (max-width: 900px) {
+  :root[data-page="editor"] .preview-workspace {
+    grid-template-columns: 1fr;
+  }
+  :root[data-page="editor"] .preview-stage {
+    position: static;
+    max-height: none;
+    padding: 28px 24px;
+  }
 }

@@ -21,7 +21,7 @@ const Preview = import.meta.env.DEV ? lazy(() => import("./pages/Preview")) : nu
 
 // The public pages sit on a table in daylight; the editor keeps its dark lanterns.
 // Issue readers bring their own full-screen backdrop, so neither is drawn there.
-const TABLE_PAGES = ["/", "/about", "/partners"];
+const TABLE_PAGES = ["/", "/about", "/partners", "/preview"];
 
 function Backdrop() {
   const { pathname } = useLocation();
@@ -29,7 +29,10 @@ function Backdrop() {
   useEffect(() => {
     if (table) document.documentElement.dataset.scene = "table";
     else delete document.documentElement.dataset.scene;
-  }, [table]);
+    // The editor is always the dark table, whichever mode the pages use.
+    if (pathname === "/preview") document.documentElement.dataset.page = "editor";
+    else delete document.documentElement.dataset.page;
+  }, [table, pathname]);
   if (pathname.startsWith("/publication/")) return null;
   return table ? <TableScene /> : <GlowField />;
 }

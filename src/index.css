@@ -858,9 +858,9 @@ body:has(dialog[open]) {
 .preview-field input:focus,
 .preview-field textarea:focus,
 .preview-field select:focus {
-  outline: 2px solid #7ce5a4;
+  outline: 2px solid #f0b878;
   outline-offset: 3px;
-  border-color: #22b25c80;
+  border-color: #d9822b80;
 }
 .preview-help {
   font-size: 11px;
@@ -898,10 +898,10 @@ body:has(dialog[open]) {
   cursor: pointer;
 }
 .preview-file:hover {
-  border-color: #7ce5a4;
+  border-color: #f0b878;
 }
 .preview-file:focus-within {
-  outline: 2px solid #7ce5a4;
+  outline: 2px solid #f0b878;
   outline-offset: 3px;
 }
 .preview-file input {
@@ -927,14 +927,14 @@ body:has(dialog[open]) {
 }
 .preview-actions .preview-open {
   padding: 12px 18px;
-  border: 1px solid #22b25c60;
+  border: 1px solid #d9822b60;
   border-radius: 6px;
-  background: #22b25c14;
-  color: #d3ffe3;
+  background: #d9822b14;
+  color: #ffe9cf;
   transition: background 180ms;
 }
 .preview-open:hover {
-  background: #22b25c26;
+  background: #d9822b26;
 }
 .preview-open:active {
   transform: translateY(1px);
@@ -1058,12 +1058,12 @@ body:has(dialog[open]) {
 .preview-add button:hover,
 .preview-piece-actions button:hover,
 .preview-undo button:hover {
-  border-color: #7ce5a480;
+  border-color: #f0b87880;
   color: #b8efcc;
-  background: #7ce5a40a;
+  background: #f0b8780a;
 }
 .preview-add button:active {
-  background: #7ce5a41a;
+  background: #f0b8781a;
 }
 .preview-add button:disabled,
 .preview-piece-actions button:disabled,
@@ -1104,8 +1104,8 @@ body:has(dialog[open]) {
 }
 .preview-contents button[aria-current] {
   color: #b8efcc;
-  background: #7ce5a40a;
-  box-shadow: inset 2px 0 #7ce5a4;
+  background: #f0b8780a;
+  box-shadow: inset 2px 0 #f0b878;
 }
 .preview-piece-number {
   font-size: 11px;
@@ -1171,7 +1171,7 @@ body:has(dialog[open]) {
 .preview-empty > span {
   display: block;
   font: 24px var(--font-display);
-  color: #7ce5a480;
+  color: #f0b87880;
   margin-bottom: 24px;
 }
 .preview-empty h2 {
@@ -1204,7 +1204,7 @@ body:has(dialog[open]) {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at 50% 100%, #7ce5a430, transparent 70%);
+  background: radial-gradient(ellipse at 50% 100%, #f0b87830, transparent 70%);
   opacity: 0;
   transition: opacity 200ms;
 }
@@ -1227,8 +1227,8 @@ body:has(dialog[open]) {
   inset: 0;
   z-index: -1;
   border-radius: 4px;
-  background: #7ce5a40a;
-  box-shadow: inset 2px 0 #7ce5a4;
+  background: #f0b8780a;
+  box-shadow: inset 2px 0 #f0b878;
   pointer-events: none;
 }
 .preview-contents button > span:last-child {
@@ -1258,13 +1258,13 @@ body:has(dialog[open]) {
 .preview-field input:focus,
 .preview-field textarea:focus {
   background: #0c120e;
-  box-shadow: 0 0 18px #7ce5a40a;
+  box-shadow: 0 0 18px #f0b8780a;
 }
 .preview-stage {
   transition: border-color 250ms;
 }
 .preview-workspace:has(.preview-editor:focus-within) .preview-stage {
-  border-color: #7ce5a44a;
+  border-color: #f0b8784a;
 }
 .preview-file {
   transition:
@@ -1273,7 +1273,7 @@ body:has(dialog[open]) {
 }
 .preview-file:hover,
 .preview-file:focus-within {
-  background: #7ce5a40a;
+  background: #f0b8780a;
 }
 .preview-open span {
   display: inline-block;
@@ -1326,7 +1326,7 @@ body:has(dialog[open]) {
   height: 20px;
 }
 .editor-save-status[data-state="saved"] .editor-save-icon {
-  color: #7ce5a4;
+  color: #f0b878;
 }
 .editor-save-status[data-state="error"] .editor-save-icon {
   color: #ffb84d;
@@ -1346,7 +1346,7 @@ body:has(dialog[open]) {
   width: 3px;
   height: 3px;
   border-radius: 50%;
-  background: #7ce5a4;
+  background: #f0b878;
   animation: save-breathe 650ms ease-in-out infinite alternate;
 }
 .save-dots i:nth-child(2) {
@@ -1469,11 +1469,11 @@ body:has(dialog[open]) {
     background 180ms;
 }
 .theme-choice:has(input:checked) {
-  border-color: #7ce5a480;
-  background: #7ce5a408;
+  border-color: #f0b87880;
+  background: #f0b87808;
 }
 .theme-choice input {
-  accent-color: #7ce5a4;
+  accent-color: #f0b878;
   margin-top: 3px;
 }
 .theme-choice > span {
