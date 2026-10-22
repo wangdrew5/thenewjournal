@@ -13,6 +13,8 @@ export default function Home() {
   const publications = journal.publications.filter(
     (p) => p.id !== PREVIEW_ID || !journal.draft || !matchesPublished(journal.draft),
   );
+  // Gallery-edition issues live in the Gallery, as individual works; the table holds magazines.
+  const magazines = publications.filter((p) => p.theme !== "museum");
   const [savedPieces] = useState(() =>
     publications.flatMap((publication) =>
       publication.pieces
@@ -36,7 +38,7 @@ export default function Home() {
       >
         <h1>The <i>New</i> Journal<span aria-hidden="true">.</span></h1>
       </motion.header>
-      <CoverTable publications={publications} />
+      <CoverTable publications={magazines} />
       {import.meta.env.DEV && <motion.section className="journal-desk" aria-labelledby="try-heading" initial={{ opacity: reduced ? 1 : 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
         <div className="desk-paper" aria-hidden="true"><span>The New Journal / Your issue</span><i>It starts<br />with a page.</i><div className="desk-lines"><b /><b /><b /><b /></div><span>01</span></div>
         <div className="desk-copy">

@@ -9,6 +9,8 @@ import {
 import NavBar from "./components/NavBar";
 import GlowField from "./components/GlowField";
 import TableScene from "./components/table/TableScene";
+import GalleryWall from "./components/gallerywall/GalleryWall";
+import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import About from "./pages/About";
 import Partners from "./pages/Partners";
@@ -34,6 +36,7 @@ function Backdrop() {
     else delete document.documentElement.dataset.page;
   }, [table, pathname]);
   if (pathname.startsWith("/publication/")) return null;
+  if (pathname === "/gallery") return <GalleryWall />;
   return table ? <TableScene /> : <GlowField />;
 }
 
@@ -59,6 +62,7 @@ function AnimatedRoutes() {
             path="/preview"
             element={Preview ? <Suspense fallback={null}><Preview /></Suspense> : <Navigate to="/" replace />}
           />
+          <Route path="/gallery" element={<Gallery />} />
           <Route path="/about" element={<About />} />
           <Route path="/partners" element={<Partners />} />
           <Route path="/publication/:pubId" element={<PublicationViewer />} />

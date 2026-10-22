@@ -74,6 +74,9 @@ export default function NavBar() {
         </NavLink>
 
         <div className="flex items-center gap-3 sm:gap-7">
+          <NavLink to="/gallery" className={navLinkClass}>
+            Gallery
+          </NavLink>
           <NavLink to="/about" className={navLinkClass}>
             About
           </NavLink>
