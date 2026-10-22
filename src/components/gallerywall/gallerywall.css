@@ -33,22 +33,32 @@
   position: relative;
   display: block;
   width: 100%;
-  overflow: hidden;
   text-align: left;
-  background: #1c1a18;
+  cursor: pointer;
 }
 .gw-card:focus-visible {
   outline: 2px solid #efe6d6;
-  outline-offset: 4px;
+  outline-offset: 6px;
+}
+.gw-frame,
+.gw-blank,
+.gw-sheet,
+.gw-screen,
+.gw-tape {
+  display: block;
+  overflow: hidden;
+  background: #1c1a18;
+  outline: 1px solid rgba(239, 230, 214, 0.08);
+  transition: outline-color 0.25s, transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.gw-card:hover :is(.gw-frame, .gw-blank, .gw-sheet, .gw-screen, .gw-tape) {
+  outline-color: rgba(239, 230, 214, 0.55);
+  transform: translateY(-3px);
 }
 .gw-frame img {
   display: block;
   width: 100%;
   height: auto;
-  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.gw-card:hover .gw-frame img {
-  transform: scale(1.03);
 }
 .gw-blank,
 .gw-sheet,
@@ -57,8 +67,8 @@
   display: grid;
   align-content: center;
   gap: 4px;
-  min-height: 220px;
-  padding: 28px 26px 70px;
+  min-height: 200px;
+  padding: 28px 26px;
   font: italic 500 19px / 1.5 "Cormorant Garamond", Georgia, serif;
   color: rgba(239, 230, 214, 0.88);
 }
@@ -69,25 +79,34 @@
 .gw-screen {
   font: 400 14px / 1.6 Inter, sans-serif;
 }
-/* Title and author appear when you point at a work */
-.gw-plate {
+/* A round arrow in the corner says the work opens */
+.gw-card::after {
+  content: "\2197";
   position: absolute;
-  inset: auto 0 0;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  font-size: 15px;
+  color: #efe6d6;
+  background: rgba(12, 11, 9, 0.62);
+  border: 1px solid rgba(239, 230, 214, 0.35);
+  backdrop-filter: blur(6px);
+  transition: background 0.2s, color 0.2s;
+}
+.gw-card:hover::after,
+.gw-card:focus-visible::after {
+  background: #efe6d6;
+  color: #121110;
+}
+/* Title and author sit under each work */
+.gw-plate {
   display: grid;
   gap: 1px;
-  padding: 36px 18px 16px;
-  background: linear-gradient(180deg, transparent, rgba(8, 7, 6, 0.88));
-  opacity: 0;
-  transition: opacity 0.25s;
-}
-.gw-card:hover .gw-plate,
-.gw-card:focus-visible .gw-plate {
-  opacity: 1;
-}
-@media (hover: none) {
-  .gw-plate {
-    opacity: 1;
-  }
+  padding: 12px 2px 0;
 }
 .gw-plate strong {
   font: 500 20px / 1.15 "Cormorant Garamond", Georgia, serif;
@@ -95,10 +114,13 @@
 }
 .gw-plate span {
   font-size: 13px;
-  color: rgba(239, 230, 214, 0.8);
+  color: rgba(239, 230, 214, 0.75);
 }
 .gw-plate small {
   display: none;
+}
+.gw-item {
+  margin-bottom: 32px;
 }
 
 /* Looking closer */
@@ -157,9 +179,8 @@
   margin: 40px auto 0;
 }
 @media (prefers-reduced-motion: reduce) {
-  .gw-frame img,
-  .gw-plate {
-    transition: none;
+  .gw-card * {
+    transition: none !important;
   }
 }
 .gw-dialog [class*="text-green"] {
