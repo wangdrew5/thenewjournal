@@ -157,6 +157,57 @@ function Mug() {
   );
 }
 
+// Things that stand for what is inside the issues: writing, art, and songs.
+function Letter() {
+  return (
+    <div className="table-letter" aria-hidden="true">
+      <svg viewBox="0 0 260 330" focusable="false">
+        <rect width="260" height="330" fill="#fbf7ee" />
+        <path d="M0 110h260M0 220h260" stroke="#d9cfbd" strokeWidth="1.5" />
+        <g fill="none" stroke="#2c3e66" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.82">
+          <path d="M28 40c6-8 10 6 16-2s9 4 14-1 8 3 12 0" />
+          <path d="M28 70c10-4 18 3 28-1s14 2 24-1 16 3 26 0 18 2 30-1 14 2 22 0 12 2 20 0 10 2 18 0" />
+          <path d="M28 92c12-3 20 2 30-1s16 3 28 0 14-2 24 1 18-2 28 0 12 2 22-1" />
+          <path d="M28 136c8-3 18 3 28 0s14 2 26-1 16 3 26 0 20 2 30-1 12 2 24 0 14 2 22 0" />
+          <path d="M28 158c10-2 16 3 26 0s20 2 28-1 14 3 26 0 16-2 26 1 10-2 20 0" />
+          <path d="M28 180c12-3 18 2 30 0s14 3 24 0 18 2 28-1" />
+          <path d="M28 246c10-3 16 2 26 0s18 3 28 0 12-2 24 1 16-2 26 0 14 2 24-1 14 2 20 0" />
+          <path d="M28 268c8-2 18 3 28 0s16 2 24-1 18 3 28 0 10 2 22 0" />
+          <path d="M150 300c6-6 12 4 18-2s8 6 14 0 10 4 16-1" />
+        </g>
+      </svg>
+    </div>
+  );
+}
+
+function Polaroid() {
+  return (
+    <div className="table-polaroid" aria-hidden="true">
+      <DreamScene scene={2} className="table-polaroid-art" />
+    </div>
+  );
+}
+
+function Cassette() {
+  return (
+    <svg className="table-cassette" viewBox="0 0 200 128" aria-hidden="true" focusable="false">
+      <rect x="1" y="1" width="198" height="126" rx="8" fill="#26231f" />
+      <rect x="14" y="12" width="172" height="74" rx="4" fill="#efe3c8" />
+      <rect x="14" y="12" width="172" height="16" rx="4" fill="#c4553a" />
+      <path d="M26 44h148" stroke="#b8a888" strokeWidth="1" />
+      <text x="28" y="40" fontFamily="'Cormorant Garamond', Georgia, serif" fontStyle="italic" fontSize="13" fill="#3b2a1c">songs, side A</text>
+      <rect x="50" y="50" width="100" height="30" rx="15" fill="#1a1815" />
+      <circle cx="66" cy="65" r="11" fill="#efe3c8" />
+      <circle cx="134" cy="65" r="11" fill="#efe3c8" />
+      <circle cx="66" cy="65" r="5" fill="#1a1815" />
+      <circle cx="134" cy="65" r="5" fill="#1a1815" />
+      <path d="M44 126l10-26h92l10 26" fill="#34302a" />
+      <circle cx="74" cy="114" r="4" fill="#1a1815" />
+      <circle cx="126" cy="114" r="4" fill="#1a1815" />
+    </svg>
+  );
+}
+
 function Pencil() {
   return (
     <svg className="table-pencil" viewBox="0 0 300 16" aria-hidden="true" focusable="false">
@@ -205,7 +256,10 @@ export default function CoverTable({ publications }: { publications: Publication
   return (
     <section className="cover-table" aria-label="Issues">
       <div className="table-spread">
+        <Polaroid />
+        <Letter />
         <Mug />
+        <Cassette />
         <Pencil />
         {publications.length ? (
           <div className="table-covers">
