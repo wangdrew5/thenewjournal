@@ -621,3 +621,95 @@
     margin: -90px auto 0;
   }
 }
+
+/* ---------- Light and dark ----------
+   Light is the oak by daylight above. Dark (the default) is the same table at night:
+   a deep walnut under one lamp, with cream ink instead of brown. */
+html:not([data-scene="table"]) .mode-toggle {
+  display: none;
+}
+:root[data-scene="table"] .mode-toggle {
+  color: #2b1a0e;
+}
+.table-scene::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.45s;
+  background:
+    radial-gradient(ellipse 55% 45% at 30% 22%, rgba(255, 176, 96, 0.16), transparent 70%),
+    radial-gradient(ellipse 130% 110% at 50% 45%, rgba(18, 8, 3, 0.62), rgba(10, 4, 1, 0.86)),
+    rgba(30, 14, 6, 0.4);
+}
+:root[data-scene="table"]:not([data-mode="light"]) {
+  color-scheme: dark;
+}
+:root[data-scene="table"]:not([data-mode="light"]) .table-scene::after {
+  opacity: 1;
+}
+:root[data-scene="table"]:not([data-mode="light"]) body {
+  background: #1d0f06;
+  color: #f1e3cc;
+}
+:root[data-scene="table"]:not([data-mode="light"]) :is(
+  .site-header .nav-link,
+  .site-header a:not(.nav-link),
+  .mode-toggle,
+  .journal-home
+) {
+  color: #f1e3cc;
+}
+:root[data-scene="table"]:not([data-mode="light"]) .site-header .nav-link::after {
+  background: #f1e3cc;
+}
+:root[data-scene="table"]:not([data-mode="light"]) body .site-header.is-scrolled {
+  background: rgba(28, 14, 6, 0.74);
+  box-shadow: 0 1px 0 rgba(240, 200, 150, 0.12);
+}
+:root[data-scene="table"]:not([data-mode="light"]) :where(a, button):focus-visible {
+  outline-color: #e9b27a;
+}
+:root[data-scene="table"]:not([data-mode="light"]) .journal-masthead h1 {
+  color: #f6e8d0;
+  text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
+}
+:root[data-scene="table"]:not([data-mode="light"]) .journal-masthead h1 > span {
+  color: #e48f5f;
+}
+:root[data-scene="table"]:not([data-mode="light"]) .table-caption {
+  color: rgba(241, 227, 204, 0.78);
+}
+:root[data-scene="table"]:not([data-mode="light"]) .table-caption strong,
+:root[data-scene="table"]:not([data-mode="light"]) .saved-section h2 {
+  color: #f6e8d0;
+}
+:root[data-scene="table"]:not([data-mode="light"]) .tc-heading {
+  color: #f1e3cc;
+}
+:root[data-scene="table"]:not([data-mode="light"]) .saved-link {
+  border-color: rgba(240, 200, 150, 0.22);
+  background: rgba(34, 18, 8, 0.72);
+  color: #f1e3cc;
+}
+:root[data-scene="table"]:not([data-mode="light"]) .saved-link .text-green {
+  color: #e48f5f;
+}
+:root[data-scene="table"]:not([data-mode="light"]) .site-credit {
+  color: rgba(241, 227, 204, 0.55);
+}
+/* Paper on the table is lit by the lamp, not the window: a touch warmer and dimmer */
+:root[data-scene="table"]:not([data-mode="light"]) :is(.paper-sheet, .journal-desk, .table-letter, .table-polaroid, .table-note) {
+  filter: brightness(0.9) sepia(0.12);
+}
+:root[data-scene="table"]:not([data-mode="light"]) .tc-copy {
+  box-shadow:
+    1px 1px 0 rgba(236, 228, 210, 0.75),
+    2px 2px 0 rgba(200, 190, 170, 0.7),
+    3px 3px 0 rgba(160, 150, 130, 0.6),
+    10px 14px 20px rgba(0, 0, 0, 0.55),
+    2px 4px 4px rgba(0, 0, 0, 0.5);
+}
+:root[data-scene="table"]:not([data-mode="light"]) :is(.table-mug, .table-cassette, .tc-museum .tc-copy) {
+  filter: brightness(0.82);
+}
