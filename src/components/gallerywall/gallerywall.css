@@ -1,220 +1,104 @@
-/* The Gallery: a dark plaster wall, picture lights, works hung in a loose grid. */
+/* The Gallery: nothing but the work, on a quiet dark ground. */
 .gw-wall {
   position: fixed;
   inset: 0;
   z-index: -10;
   pointer-events: none;
-  background:
-    radial-gradient(ellipse 120% 90% at 50% 20%, #34302b, #1b1916 70%, #100f0d);
+  background: #121110;
 }
-.gw-wall::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: 0.35;
-  mix-blend-mode: overlay;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/%3E%3C/svg%3E");
-}
-.gw-light {
-  position: absolute;
-  top: -10vh;
-  width: 38vw;
-  height: 80vh;
-  background: radial-gradient(ellipse at 50% 0%, rgba(255, 232, 190, 0.2), transparent 70%);
-  filter: blur(14px);
-}
-.gw-light-a { left: 2vw; }
-.gw-light-b { left: 31vw; opacity: 0.8; }
-.gw-light-c { right: 2vw; }
-.gw-floor {
-  position: absolute;
-  inset: auto 0 0;
-  height: 14vh;
-  background: linear-gradient(180deg, transparent, rgba(0, 0, 0, 0.5));
-}
-
 .gw-page {
   padding-top: 124px;
   color: #efe6d6;
 }
 .gw-heading h1 {
-  font: 400 clamp(46px, 7vw, 92px) / 1 "Cormorant Garamond", Georgia, serif;
-  letter-spacing: -0.01em;
-}
-.gw-heading p {
-  max-width: 460px;
-  margin-top: 18px;
-  font-size: 16px;
-  line-height: 1.7;
-  color: rgba(239, 230, 214, 0.72);
+  font: 400 clamp(34px, 4.5vw, 52px) / 1 "Cormorant Garamond", Georgia, serif;
 }
 .gw-empty {
-  margin-top: 80px;
-  font: italic 500 24px "Cormorant Garamond", Georgia, serif;
-  color: rgba(239, 230, 214, 0.8);
-}
-.gw-filters {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 44px 0 48px;
-}
-.gw-filters button {
-  min-height: 44px;
-  padding: 8px 18px;
-  border: 1px solid rgba(239, 230, 214, 0.22);
-  border-radius: 999px;
-  font-size: 14px;
-  color: rgba(239, 230, 214, 0.82);
-  transition: background 0.2s, color 0.2s, border-color 0.2s;
-}
-.gw-filters button span {
-  margin-left: 6px;
-  font-size: 12px;
-  opacity: 0.6;
-}
-.gw-filters button:hover {
-  border-color: rgba(239, 230, 214, 0.5);
-}
-.gw-filters button[aria-pressed="true"] {
-  background: #efe6d6;
-  border-color: #efe6d6;
-  color: #1b1916;
+  margin-top: 64px;
+  font: italic 500 22px "Cormorant Garamond", Georgia, serif;
+  color: rgba(239, 230, 214, 0.75);
 }
 .gw-wallgrid {
   columns: 3 260px;
-  column-gap: 44px;
+  column-gap: 20px;
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 48px 0 0;
 }
 .gw-item {
   break-inside: avoid;
-  margin-bottom: 52px;
+  margin-bottom: 20px;
 }
 .gw-card {
+  position: relative;
   display: block;
   width: 100%;
+  overflow: hidden;
   text-align: left;
-  transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-}
-.gw-card:hover,
-.gw-card:focus-visible {
-  transform: translateY(-6px);
+  background: #1c1a18;
 }
 .gw-card:focus-visible {
-  outline: 2px solid #f0b878;
-  outline-offset: 8px;
-}
-/* Artwork: a mat inside a thin frame */
-.gw-frame {
-  display: block;
-  padding: 22px;
-  background: #f4efe4;
-  border: 7px solid #26231f;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5), 0 22px 36px rgba(0, 0, 0, 0.5);
+  outline: 2px solid #efe6d6;
+  outline-offset: 4px;
 }
 .gw-frame img {
   display: block;
   width: 100%;
   height: auto;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
-.gw-blank {
-  display: grid;
-  place-items: center;
-  min-height: 190px;
-  padding: 16px;
-  text-align: center;
-  font: italic 500 18px "Cormorant Garamond", Georgia, serif;
-  color: #5b5850;
-  background: #e8e2d4;
+.gw-card:hover .gw-frame img {
+  transform: scale(1.03);
 }
-/* Writing: a sheet with the opening lines */
-.gw-sheet {
-  display: grid;
-  gap: 4px;
-  padding: 30px 28px 34px;
-  background: #fbf6ea;
-  color: #2f2218;
-  font: italic 500 18px / 1.5 "Cormorant Garamond", Georgia, serif;
-  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.45), 0 20px 32px rgba(0, 0, 0, 0.45);
-  transform: rotate(-0.8deg);
-}
-/* Film: a dark screen */
-.gw-screen {
-  position: relative;
-  display: grid;
-  align-content: end;
-  min-height: 190px;
-  padding: 22px;
-  background: radial-gradient(ellipse at 50% 40%, #2b2a35, #0d0d12);
-  border: 7px solid #26231f;
-  box-shadow: 0 22px 36px rgba(0, 0, 0, 0.55);
-  color: rgba(239, 230, 214, 0.85);
-  font-size: 14px;
-  line-height: 1.5;
-}
-.gw-play {
-  position: absolute;
-  top: 38%;
-  left: 50%;
-  width: 46px;
-  height: 46px;
-  translate: -50% -50%;
-  border: 1.5px solid rgba(239, 230, 214, 0.7);
-  border-radius: 50%;
-}
-.gw-play::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 54%;
-  translate: -50% -50%;
-  border-style: solid;
-  border-width: 8px 0 8px 13px;
-  border-color: transparent transparent transparent rgba(239, 230, 214, 0.8);
-}
-/* Song: a cassette label */
+.gw-blank,
+.gw-sheet,
+.gw-screen,
 .gw-tape {
   display: grid;
-  gap: 6px;
-  padding: 18px 22px 24px;
-  background: #e9dcbf;
-  color: #3b2a1c;
-  border-top: 14px solid #c4553a;
-  border-radius: 6px;
-  font: italic 500 17px / 1.4 "Cormorant Garamond", Georgia, serif;
-  box-shadow: 0 20px 32px rgba(0, 0, 0, 0.5);
+  align-content: center;
+  gap: 4px;
+  min-height: 220px;
+  padding: 28px 26px 70px;
+  font: italic 500 19px / 1.5 "Cormorant Garamond", Georgia, serif;
+  color: rgba(239, 230, 214, 0.88);
 }
+.gw-play,
 .gw-reels {
-  display: flex;
-  justify-content: center;
-  gap: 54px;
-  margin-bottom: 8px;
+  display: none;
 }
-.gw-reels i {
-  width: 26px;
-  height: 26px;
-  border: 6px solid #1a1815;
-  border-radius: 50%;
+.gw-screen {
+  font: 400 14px / 1.6 Inter, sans-serif;
 }
-/* The brass plate under each work */
+/* Title and author appear when you point at a work */
 .gw-plate {
+  position: absolute;
+  inset: auto 0 0;
   display: grid;
-  gap: 2px;
-  margin-top: 16px;
+  gap: 1px;
+  padding: 36px 18px 16px;
+  background: linear-gradient(180deg, transparent, rgba(8, 7, 6, 0.88));
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.gw-card:hover .gw-plate,
+.gw-card:focus-visible .gw-plate {
+  opacity: 1;
+}
+@media (hover: none) {
+  .gw-plate {
+    opacity: 1;
+  }
 }
 .gw-plate strong {
-  font: 500 22px / 1.15 "Cormorant Garamond", Georgia, serif;
+  font: 500 20px / 1.15 "Cormorant Garamond", Georgia, serif;
   color: #f6ecdb;
 }
 .gw-plate span {
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(239, 230, 214, 0.8);
 }
 .gw-plate small {
-  font-size: 12px;
-  color: rgba(239, 230, 214, 0.55);
+  display: none;
 }
 
 /* Looking closer */
@@ -273,7 +157,8 @@
   margin: 40px auto 0;
 }
 @media (prefers-reduced-motion: reduce) {
-  .gw-card {
+  .gw-frame img,
+  .gw-plate {
     transition: none;
   }
 }

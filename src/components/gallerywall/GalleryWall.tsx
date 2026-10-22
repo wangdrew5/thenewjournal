@@ -1,13 +1,6 @@
 import "./gallerywall.css";
 
-// The Gallery's own room: a dark plaster wall lit by a few picture lights.
+// The Gallery has a plain dark ground so the work is all there is to look at.
 export default function GalleryWall() {
-  return (
-    <div className="gw-wall" aria-hidden="true">
-      <div className="gw-light gw-light-a" />
-      <div className="gw-light gw-light-b" />
-      <div className="gw-light gw-light-c" />
-      <div className="gw-floor" />
-    </div>
-  );
+  return <div className="gw-wall" aria-hidden="true" />;
 }

@@ -5,7 +5,7 @@ import { useJournal } from "../lib/useJournal";
 import { matchesPublished } from "../data/publishedIssues";
 import { PREVIEW_ID } from "../lib/preview";
 import { issueName } from "../lib/issueLabel";
-import type { Piece, PieceType, Publication } from "../data/publications";
+import type { Piece, Publication } from "../data/publications";
 import ArtView from "../components/pieces/ArtView";
 import PoemView from "../components/pieces/PoemView";
 import FilmView from "../components/pieces/FilmView";
@@ -17,14 +17,6 @@ interface Work {
   piece: Piece;
   publication: Publication;
 }
-
-const KINDS: { type: PieceType | "all"; label: string }[] = [
-  { type: "all", label: "Everything" },
-  { type: "art", label: "Art" },
-  { type: "poem", label: "Writing" },
-  { type: "film", label: "Film" },
-  { type: "song", label: "Songs" },
-];
 
 function snippet(piece: Piece) {
   const lines =
@@ -170,7 +162,6 @@ function WorkDialog({
 export default function Gallery() {
   const reduced = useReducedMotion();
   const journal = useJournal();
-  const [kind, setKind] = useState<PieceType | "all">("all");
   const [open, setOpen] = useState<number | null>(null);
   const opener = useRef<HTMLElement | null>(null);
 
@@ -181,9 +172,7 @@ export default function Gallery() {
         .flatMap((publication) => publication.pieces.map((piece) => ({ piece, publication }))),
     [journal.publications, journal.draft],
   );
-  const counts = (type: PieceType | "all") =>
-    type === "all" ? all.length : all.filter((work) => work.piece.type === type).length;
-  const works = kind === "all" ? all : all.filter((work) => work.piece.type === kind);
+  const works = all;
 
   function step(offset: -1 | 1) {
     setOpen((current) =>
@@ -202,28 +191,12 @@ export default function Gallery() {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: reduced ? 0 : 0.4 }}
       >
-        <h1>The Gallery</h1>
-        <p>Individual works from across the issues. Pick one to look closer.</p>
+        <h1>Gallery</h1>
       </motion.header>
       {all.length === 0 ? (
         <p className="gw-empty">The first works are on their way.</p>
       ) : (
         <>
-          <div className="gw-filters" role="group" aria-label="Show">
-            {KINDS.filter((k) => counts(k.type) > 0).map((k) => (
-              <button
-                key={k.type}
-                type="button"
-                aria-pressed={kind === k.type}
-                onClick={() => {
-                  setKind(k.type);
-                  setOpen(null);
-                }}
-              >
-                {k.label} <span>{counts(k.type)}</span>
-              </button>
-            ))}
-          </div>
           <ul className="gw-wallgrid">
             {works.map((work, index) => (
               <WorkCard
