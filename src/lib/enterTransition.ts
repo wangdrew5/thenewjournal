@@ -15,8 +15,9 @@ export interface EnterState {
   kind: "enter";
   rect: Rect;
   theme: IssueTheme;
-  to: string;
-  phase: "growing" | "waiting";
+  /** The cover has filled the screen / the reader has mounted behind it. */
+  grown: boolean;
+  ready: boolean;
 }
 export interface ReturnState {
   kind: "return";
@@ -44,18 +45,24 @@ function safetyNet(finish: () => void) {
   window.setTimeout(() => mine === token && finish(), 2600);
 }
 
-export function startEnter(element: Element, theme: IssueTheme, to: string) {
-  emit({ kind: "enter", rect: measure(element), theme, to, phase: "growing" });
+// The route changes at the click, so the reader loads while the cover grows over it;
+// the overlay lifts once it has filled the screen and the reader is there.
+export function startEnter(element: Element, theme: IssueTheme) {
+  emit({ kind: "enter", rect: measure(element), theme, grown: false, ready: false });
   safetyNet(finishEnter);
 }
 export function finishEnter() {
   if (state?.kind === "enter") emit(null);
 }
-// Returns the destination once, the first time the cover finishes growing.
-export function takeGrownDestination() {
-  if (state?.kind !== "enter" || state.phase !== "growing") return null;
-  state = { ...state, phase: "waiting" };
-  return state.to;
+export function markGrown() {
+  if (state?.kind !== "enter") return;
+  if (state.ready) emit(null);
+  else state = { ...state, grown: true };
+}
+function markReady() {
+  if (state?.kind !== "enter") return;
+  if (state.grown) emit(null);
+  else state = { ...state, ready: true };
 }
 
 export function startReturn(id: string, theme: IssueTheme) {
@@ -82,7 +89,6 @@ export function useEnterState() {
 }
 export function useFinishEnterOnMount() {
   useEffect(() => {
-    const timer = window.setTimeout(finishEnter, 120);
-    return () => window.clearTimeout(timer);
+    markReady();
   }, []);
 }

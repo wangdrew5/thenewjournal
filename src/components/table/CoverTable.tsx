@@ -7,7 +7,7 @@ import {
   type MouseEvent,
   type PointerEvent,
 } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useReducedMotion } from "framer-motion";
 import type { Publication } from "../../data/publications";
 import {
@@ -16,7 +16,7 @@ import {
   startEnter,
   useEnterState,
 } from "../../lib/enterTransition";
-import { issueName } from "../../lib/issueLabel";
+import { issueMark, issueName } from "../../lib/issueLabel";
 import { themeNames } from "../../lib/magazine";
 import { useMediaQuery } from "../../lib/useIssueNav";
 import { DreamScene } from "../surreal/DreamScape";
@@ -35,6 +35,15 @@ const LIE = [
   { r: -6.5, x: -6, y: 4 },
 ];
 
+function OpenRow({ label }: { label: string }) {
+  return (
+    <div className="tc-open">
+      <span>{label}</span>
+      <span aria-hidden="true">↗</span>
+    </div>
+  );
+}
+
 function Cover({ publication }: { publication: Publication }) {
   if (publication.theme === "museum")
     return (
@@ -47,6 +56,8 @@ function Cover({ publication }: { publication: Publication }) {
           {publication.coverSrc ? <img src={publication.coverSrc} alt="" /> : <IssueArtwork />}
         </div>
         <h3 className="tc-title">{publication.caption}</h3>
+        <p className="tc-sub">The New Journal, {issueName(publication)}</p>
+        <OpenRow label="Enter the gallery" />
       </>
     );
   return (
@@ -62,6 +73,7 @@ function Cover({ publication }: { publication: Publication }) {
         <span>{issueName(publication, "No.")}</span>
       </div>
       <h3 className="tc-title">{publication.caption}</h3>
+      <OpenRow label="Open the magazine" />
     </>
   );
 }
@@ -82,6 +94,7 @@ function TableCover({
   covers: Map<string, Element>;
 }) {
   const reduced = useReducedMotion();
+  const navigate = useNavigate();
   const theme = publication.theme ?? "surreal";
   const cover = useRef<HTMLDivElement>(null);
   const to = `/publication/${publication.id}`;
@@ -100,7 +113,8 @@ function TableCover({
       return;
     if (reduced || !cover.current) return;
     event.preventDefault();
-    startEnter(cover.current, theme, to);
+    startEnter(cover.current, theme);
+    navigate(to);
   }
   return (
     <Link
@@ -129,6 +143,10 @@ function TableCover({
       <div className="tc-copy" ref={cover}>
         <Cover publication={publication} />
       </div>
+      <span className="tc-heading">
+        <span>{issueMark(publication)}</span>
+        <span>{publication.theme === "museum" ? "The gallery edition" : publication.caption}</span>
+      </span>
     </Link>
   );
 }

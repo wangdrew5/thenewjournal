@@ -97,11 +97,11 @@
   transform:
     translate(calc(var(--x) + var(--side) * 26px), var(--y))
     rotate(var(--r));
-  transition: transform 0.55s var(--ease-out);
+  transition: transform 0.32s var(--ease-out);
 }
 .tc.is-lifted {
   transform: translate(var(--x), calc(var(--y) - 22px)) rotate(0deg) scale(1.07);
-  transition-duration: 0.45s;
+  transition-duration: 0.28s;
 }
 .tc-copy {
   position: relative;
@@ -115,7 +115,7 @@
     3px 3px 0 rgba(160, 150, 130, 0.8),
     10px 14px 18px rgba(60, 35, 15, 0.32),
     2px 4px 4px rgba(60, 35, 15, 0.28);
-  transition: box-shadow 0.45s var(--ease-out);
+  transition: box-shadow 0.3s var(--ease-out);
 }
 .tc.is-lifted .tc-copy {
   box-shadow:
@@ -188,7 +188,7 @@
   letter-spacing: 0.08em;
 }
 .tc-title {
-  bottom: 16px;
+  bottom: 40px;
   text-wrap: balance;
 }
 .tc-surreal .tc-title {
@@ -462,4 +462,65 @@
   color: #4a3322;
   font-size: 18px;
   line-height: 1.7;
+}
+
+/* Andrew's wording from the original home page: the open prompt on each cover,
+   the gallery label, and the edition heading under each issue. */
+.tc-open {
+  position: absolute;
+  z-index: 1;
+  left: 16px;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  justify-content: space-between;
+  font: 500 clamp(9px, 0.8vw, 11px) "Inter", sans-serif;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #fbf3e6;
+  opacity: 0.9;
+}
+.tc-museum .tc-open {
+  color: #1b1b19;
+}
+.tc-museum .tc-title {
+  bottom: 66px;
+}
+.tc-sub {
+  position: absolute;
+  z-index: 1;
+  left: 16px;
+  right: 14px;
+  bottom: 42px;
+  margin: 0;
+  font: italic 500 clamp(11px, 1vw, 14px) "Cormorant Garamond", Georgia, serif;
+  color: #5b5850;
+}
+.tc-heading {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% + 14px);
+  display: flex;
+  justify-content: center;
+  gap: 0.7em;
+  font: italic 500 clamp(15px, 1.4vw, 19px) "Cormorant Garamond", Georgia, serif;
+  color: #3b2410;
+  opacity: 0;
+  transition: opacity 0.25s;
+  pointer-events: none;
+}
+.tc-heading span:first-child {
+  font: 600 11px "Inter", sans-serif;
+  letter-spacing: 0.18em;
+  align-self: center;
+}
+.tc.is-lifted .tc-heading,
+.tc:focus-visible .tc-heading {
+  opacity: 1;
+}
+@media (hover: none) {
+  .tc-heading {
+    opacity: 1;
+  }
 }

@@ -1,10 +1,10 @@
 import { useLayoutEffect, useRef } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import {
   finishReturn,
   startReturn,
-  takeGrownDestination,
+  markGrown,
   useEnterState,
 } from "../lib/enterTransition";
 import { useJournal } from "../lib/useJournal";
@@ -12,7 +12,6 @@ import { useJournal } from "../lib/useJournal";
 const EASE = [0.76, 0, 0.24, 1] as const;
 
 export default function EnterOverlay() {
-  const navigate = useNavigate();
   const { pathname } = useLocation();
   const { publications } = useJournal();
   const reduced = useReducedMotion();
@@ -45,12 +44,9 @@ export default function EnterOverlay() {
           aria-hidden="true"
           initial={{ ...current.rect, opacity: 1, borderRadius: 4 }}
           animate={{ ...full, borderRadius: 0 }}
-          exit={{ opacity: 0, transition: { duration: 0.55 } }}
-          transition={{ duration: 0.62, ease: EASE }}
-          onAnimationComplete={() => {
-            const to = takeGrownDestination();
-            if (to) navigate(to);
-          }}
+          exit={{ opacity: 0, transition: { duration: 0.28 } }}
+          transition={{ duration: 0.4, ease: EASE }}
+          onAnimationComplete={markGrown}
         >
           <span className="enter-overlay-mark">The New Journal</span>
         </motion.div>
@@ -66,9 +62,9 @@ export default function EnterOverlay() {
               ? { ...current.target, opacity: 1, borderRadius: 4 }
               : { ...full, opacity: 1, borderRadius: 0 }
           }
-          exit={{ opacity: 0, transition: { duration: 0.35 } }}
+          exit={{ opacity: 0, transition: { duration: 0.25 } }}
           transition={{
-            duration: current.target ? 0.62 : 0.2,
+            duration: current.target ? 0.45 : 0.15,
             ease: current.target ? EASE : "easeOut",
           }}
           onAnimationComplete={() => {
