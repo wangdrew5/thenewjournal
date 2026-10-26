@@ -7,6 +7,7 @@ const KEY = "tnj:mode:v1";
 const listeners = new Set<() => void>();
 
 function read(): ColorMode {
+  if (typeof localStorage === "undefined") return "dark";
   try {
     return localStorage.getItem(KEY) === "light" ? "light" : "dark";
   } catch {
@@ -14,11 +15,11 @@ function read(): ColorMode {
   }
 }
 let mode = read();
-document.documentElement.dataset.mode = mode;
+if (typeof document !== "undefined") document.documentElement.dataset.mode = mode;
 
 export function setColorMode(next: ColorMode) {
   mode = next;
-  document.documentElement.dataset.mode = next;
+  if (typeof document !== "undefined") document.documentElement.dataset.mode = next;
   try {
     localStorage.setItem(KEY, next);
   } catch {

@@ -13,6 +13,7 @@ const DEFAULT: ReadingPrefs = { size: 1, tone: "paper" };
 const listeners = new Set<() => void>();
 
 function read(): ReadingPrefs {
+  if (typeof localStorage === "undefined") return DEFAULT;
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) ?? "null") as Partial<ReadingPrefs> | null;
     const size = Number.isInteger(raw?.size) && raw!.size! >= 0 && raw!.size! < READ_SIZES.length ? raw!.size! : DEFAULT.size;
@@ -23,6 +24,7 @@ function read(): ReadingPrefs {
 }
 let prefs = read();
 function apply() {
+  if (typeof document === "undefined") return;
   const root = document.documentElement;
   root.dataset.readSize = String(prefs.size);
   root.dataset.readTone = prefs.tone;
