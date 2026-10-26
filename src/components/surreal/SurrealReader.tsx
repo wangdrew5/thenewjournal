@@ -21,6 +21,7 @@ import { PREVIEW_ID } from "../../lib/preview";
 import IssueContents from "../pieces/IssueContents";
 import SavePieceButton from "../pieces/SavePieceButton";
 import SongPlayer from "../pieces/SongPlayer";
+import ReadingControls from "./ReadingControls";
 import { useCurrentSong } from "../../lib/useSongAudio";
 import DreamScape, { DreamScene } from "./DreamScape";
 import { SCENE_COUNT } from "./scenes";
@@ -49,6 +50,12 @@ function Lines({ lines, dropCap }: { lines: string[]; dropCap: boolean }) {
       ))}
     </div>
   );
+}
+
+// Longer writing says how long it takes, at a relaxed 180 words a minute.
+function readMinutes(lines: string[]) {
+  const words = lines.join(" ").split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 180));
 }
 
 function Transcript({ song }: { song: SongPiece }) {
@@ -212,7 +219,12 @@ function TextFace({
         aria-label={piece.type === "song" ? `Transcript of ${piece.title}, scroll to read` : `${piece.title}, scroll to read`}
         onScroll={(event) => scrolls.set(page.id, event.currentTarget.scrollTop)}
       >
-        <p className="sr-kicker">{pieceKind[piece.type]}</p>
+        <p className="sr-kicker">
+          {pieceKind[piece.type]}
+          {piece.type === "poem" && readMinutes(piece.lines) >= 2 && (
+            <span className="sr-readtime"> · {readMinutes(piece.lines)} min read</span>
+          )}
+        </p>
         <h1 className="sr-title">{piece.title}</h1>
         {piece.type === "poem" && <Lines lines={piece.lines} dropCap />}
         {piece.type === "song" && <Transcript song={piece} />}
@@ -439,6 +451,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
               Edit issue
             </Link>
           )}
+          <ReadingControls />
           <IssueContents
             pieces={publication.pieces}
             currentIndex={publication.pieces.findIndex((p) => p.id === piece?.id)}
