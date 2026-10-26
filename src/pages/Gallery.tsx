@@ -6,7 +6,6 @@ import { matchesPublished } from "../data/publishedIssues";
 import { PREVIEW_ID } from "../lib/preview";
 import { issueName } from "../lib/issueLabel";
 import type { Piece, Publication } from "../data/publications";
-import ArtView from "../components/pieces/ArtView";
 import PoemView from "../components/pieces/PoemView";
 import FilmView from "../components/pieces/FilmView";
 import SongView from "../components/pieces/SongView";
@@ -80,6 +79,29 @@ function WorkCard({ work, onOpen }: { work: Work; onOpen: (element: HTMLElement)
   );
 }
 
+// A work looked at closely: the picture fits the screen, with its caption beneath.
+function ArtLook({ piece }: { piece: Extract<Piece, { type: "art" }> }) {
+  return (
+    <figure className="gw-look">
+      <figcaption className="gw-look-head">
+        <h2>{piece.title}</h2>
+        <span>{piece.author}</span>
+      </figcaption>
+      {piece.imageSrc ? (
+        <img src={piece.imageSrc} alt={piece.imageAlt ?? `${piece.title} by ${piece.author}`} />
+      ) : (
+        <p className="media-unavailable">Artwork not yet available.</p>
+      )}
+      {(piece.imageCaption || piece.pageText || piece.editorNote) && (
+        <div className="gw-look-text">
+          {piece.imageCaption && <p className="gw-look-caption">{piece.imageCaption}</p>}
+          {(piece.pageText || piece.editorNote) && <p>{piece.pageText || piece.editorNote}</p>}
+        </div>
+      )}
+    </figure>
+  );
+}
+
 function WorkDialog({
   works,
   index,
@@ -133,7 +155,7 @@ function WorkDialog({
       </div>
       <div className="gw-dialog-body">
         <SongAudioProvider key={piece.id}>
-          {piece.type === "art" && <ArtView piece={piece} />}
+          {piece.type === "art" && <ArtLook piece={piece} />}
           {piece.type === "poem" && <PoemView piece={piece} />}
           {piece.type === "film" && <FilmView piece={piece} />}
           {piece.type === "song" && <SongView piece={piece} />}

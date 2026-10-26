@@ -804,3 +804,53 @@ html:not([data-scene="table"]) .mode-toggle {
     padding: 28px 24px;
   }
 }
+
+/* ---------- Polish ---------- */
+/* Text on a copy stays clear of the copy laid over its right edge */
+.cover-table {
+  --lap: 0.25;
+}
+.tc:not(:last-child) :is(.tc-mast, .tc-title, .tc-open, .tc-sub) {
+  right: calc(var(--cw) * var(--lap) + 6px);
+}
+@media (max-width: 640px) {
+  .cover-table {
+    --lap: 0.1;
+  }
+}
+/* The one orchestrated moment: copies are set down on the table in turn */
+@keyframes tc-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(-80px) rotate(calc(var(--r) * -3)) scale(1.08);
+  }
+}
+@keyframes table-fade {
+  from {
+    opacity: 0;
+  }
+}
+.tc.is-arriving .tc-copy {
+  animation: tc-arrive 0.75s cubic-bezier(0.2, 0.9, 0.25, 1) backwards;
+  animation-delay: calc(var(--i) * 120ms + 120ms);
+}
+.table-spread > :not(.table-covers) {
+  animation: table-fade 0.9s 0.35s ease-out backwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tc.is-arriving .tc-copy,
+  .table-spread > :not(.table-covers) {
+    animation: none;
+  }
+}
+@media (max-width: 640px) {
+  .tc-heading {
+    display: none;
+  }
+}
+
+/* Props that hang over the screen edge are cropped, not scrolled to (and never widen a phone's page) */
+html,
+body {
+  overflow-x: clip;
+}

@@ -44,6 +44,10 @@ function OpenRow({ label }: { label: string }) {
   );
 }
 
+// The first visit to the table in a session: copies are set down one after another.
+// Coming back from reading, or visiting again, finds them already there.
+let arrived = false;
+
 function Cover({ publication }: { publication: Publication }) {
   if (publication.theme === "museum")
     return (
@@ -85,6 +89,7 @@ function TableCover({
   side,
   onLift,
   covers,
+  arriving,
 }: {
   publication: Publication;
   index: number;
@@ -92,6 +97,7 @@ function TableCover({
   side: number;
   onLift: (id: string | null) => void;
   covers: Map<string, Element>;
+  arriving: boolean;
 }) {
   const reduced = useReducedMotion();
   const navigate = useNavigate();
@@ -119,13 +125,14 @@ function TableCover({
   return (
     <Link
       to={to}
-      className={`tc tc-${theme} ${lifted ? "is-lifted" : ""}`}
+      className={`tc tc-${theme} ${lifted ? "is-lifted" : ""} ${arriving ? "is-arriving" : ""}`}
       style={
         {
           "--r": `${lie.r}deg`,
           "--x": `${lie.x}px`,
           "--y": `${lie.y}px`,
           "--side": side,
+          "--i": index,
           zIndex: lifted ? 50 : index + 1,
         } as CSSProperties
       }
@@ -269,6 +276,11 @@ export default function CoverTable({ publications }: { publications: Publication
     return () => window.clearTimeout(timer);
   }, [returning]);
 
+  const [arriving] = useState(() => !arrived && !returning);
+  useEffect(() => {
+    arrived = true;
+  }, []);
+
   const liftedAt = publications.findIndex((publication) => publication.id === lifted);
   const featured = liftedAt >= 0 ? publications[liftedAt] : null;
   return (
@@ -291,6 +303,7 @@ export default function CoverTable({ publications }: { publications: Publication
                 side={liftedAt < 0 || index === liftedAt ? 0 : index < liftedAt ? -1 : 1}
                 onLift={setLifted}
                 covers={covers}
+                arriving={arriving}
               />
             ))}
           </div>

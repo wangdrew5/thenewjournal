@@ -186,3 +186,42 @@
 .gw-dialog [class*="text-green"] {
   color: #f0b878;
 }
+
+/* Looking closely at artwork */
+.gw-look {
+  display: grid;
+  justify-items: center;
+  gap: 22px;
+  margin: 0;
+}
+.gw-look-head {
+  justify-self: start;
+  display: grid;
+  gap: 2px;
+}
+.gw-look-head h2 {
+  font: 400 clamp(28px, 4vw, 42px) / 1.1 "Cormorant Garamond", Georgia, serif;
+  color: #f6ecdb;
+}
+.gw-look-head span {
+  font-size: 14px;
+  color: rgba(239, 230, 214, 0.7);
+}
+.gw-look img {
+  display: block;
+  max-width: 100%;
+  max-height: calc(100vh - 280px);
+  object-fit: contain;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
+}
+.gw-look-text {
+  justify-self: start;
+  max-width: 560px;
+  font-size: 15px;
+  line-height: 1.7;
+  color: rgba(239, 230, 214, 0.78);
+}
+.gw-look-caption {
+  font: italic 500 19px / 1.5 "Cormorant Garamond", Georgia, serif;
+  color: rgba(239, 230, 214, 0.9);
+}

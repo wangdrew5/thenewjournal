@@ -316,7 +316,10 @@ button {
 @media (max-width: 480px) {
   .site-header nav {
     gap: 8px;
-    padding-inline: 16px;
+    padding-inline: 14px;
+  }
+  .site-header .nav-link {
+    font-size: 14px;
   }
   .site-header nav > div {
     gap: 0;
