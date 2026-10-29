@@ -137,11 +137,6 @@ body:has(.gal-reader) {
   background: #fff;
   color: #000;
 }
-.gal-actions .save-piece.is-saved {
-  border-color: #1b1b19;
-  background: #1b1b19;
-  color: #fff;
-}
 .gal-actions .save-toast {
   border-color: var(--gal-line);
   background: #fff;
@@ -183,7 +178,6 @@ body:has(.gal-reader) {
 .gal-reader .dialog-piece-copy .font-display {
   font: 400 17px var(--gal-serif);
 }
-.gal-reader .contents-type,
 .gal-reader .dialog-selection {
   color: var(--gal-mute);
 }
@@ -746,12 +740,6 @@ body:has(.gal-reader) {
   }
   .gal-step {
     min-width: 44px;
-  }
-}
-@media (max-width: 420px) {
-  .gal-actions .save-piece {
-    font-size: 0;
-    gap: 0;
   }
 }
 

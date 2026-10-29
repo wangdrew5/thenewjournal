@@ -425,17 +425,6 @@
 :root[data-scene="table"] .desk-link {
   border-color: #8c3a1c;
 }
-:root[data-scene="table"] .saved-section h2 {
-  color: #2b1a0e;
-}
-:root[data-scene="table"] .saved-link {
-  border-color: rgba(70, 40, 18, 0.25);
-  background: rgba(250, 242, 228, 0.7);
-  color: #2b1a0e;
-}
-:root[data-scene="table"] .saved-link .text-green {
-  color: #8c3a1c;
-}
 :root[data-scene="table"] .site-credit {
   color: rgba(43, 26, 14, 0.55);
 }
@@ -728,20 +717,11 @@ html:not([data-scene="table"]) .mode-toggle {
 :root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .table-caption {
   color: rgba(241, 227, 204, 0.78);
 }
-:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .table-caption strong,
-:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .saved-section h2 {
+:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .table-caption strong {
   color: #f6e8d0;
 }
 :root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .tc-heading {
   color: #f1e3cc;
-}
-:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .saved-link {
-  border-color: rgba(240, 200, 150, 0.22);
-  background: rgba(34, 18, 8, 0.72);
-  color: #f1e3cc;
-}
-:root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .saved-link .text-green {
-  color: #e48f5f;
 }
 :root[data-scene="table"]:is(:not([data-mode="light"]), [data-page="editor"]) .site-credit {
   color: rgba(241, 227, 204, 0.55);

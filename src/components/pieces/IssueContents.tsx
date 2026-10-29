@@ -1,6 +1,5 @@
 import { useRef, useState } from "react";
 import type { Piece } from "../../data/publications";
-import { pieceKind } from "../../lib/useIssueNav";
 interface Props {
   pieces: Piece[];
   currentIndex: number;
@@ -109,7 +108,6 @@ export default function IssueContents({
                   {String(i + 1).padStart(2, "0")}
                 </span>
                 <span className="dialog-piece-copy">
-                  <span className="contents-type">{pieceKind[piece.type]}</span>
                   <span className="font-display">{piece.title}</span>
                   {piece.type === "poem" && (
                     <span className="contents-preview">{piece.lines[0]}</span>

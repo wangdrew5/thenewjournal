@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { useJournal } from "../lib/useJournal";
@@ -15,19 +14,6 @@ export default function Home() {
   );
   // Gallery-edition issues live in the Gallery, as individual works; the table holds magazines.
   const magazines = publications.filter((p) => p.theme !== "museum");
-  const [savedPieces] = useState(() =>
-    publications.flatMap((publication) =>
-      publication.pieces
-        .filter((piece) => {
-          try {
-            return localStorage.getItem(`tnj:saved:v1:${piece.id}`) === "true";
-          } catch {
-            return false;
-          }
-        })
-        .map((piece) => ({ ...piece, publicationId: publication.id })),
-    ),
-  );
   return (
     <main className="home-page journal-home mx-auto max-w-6xl px-6 pb-24 sm:px-10">
       <motion.header
@@ -51,36 +37,6 @@ export default function Home() {
           <small>Drafts save in this browser. Publish writes the issue into the project; Commit and push puts it online.</small>
         </div>
       </motion.section>}
-      {savedPieces.length > 0 && (
-        <section aria-labelledby="saved-heading" className="saved-section">
-          <h2 id="saved-heading" className="font-display text-xl text-white/80">
-            Your saved pieces
-          </h2>
-          <div className="flex flex-wrap gap-3">
-            {savedPieces.map((piece) => (
-              <Link
-                key={piece.id}
-                to={`/publication/${piece.publicationId}?piece=${piece.id}`}
-                className="saved-link inline-flex min-h-11 items-center gap-3 rounded-xl border border-green/25 bg-green/5 px-5 py-2 text-sm text-white/80"
-              >
-                <span className="text-green capitalize">{piece.type}</span>
-                <span className="saved-work">
-                  <span>{piece.title}</span>
-                  {piece.type === "poem" && (
-                    <span className="contents-preview">{piece.lines[0]}</span>
-                  )}
-                  {piece.type === "song" && piece.transcript.some((line) => line.trim()) && (
-                    <span className="contents-preview">
-                      {piece.transcript.find((line) => line.trim())}
-                    </span>
-                  )}
-                </span>
-                <span aria-hidden="true">↗</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
       <small className="site-credit">Special thanks to Ethan Birchenall for helping design the website</small>
     </main>
   );

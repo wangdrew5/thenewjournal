@@ -283,10 +283,6 @@
   justify-self: end;
   gap: 8px;
 }
-.sr-actions .save-piece.is-saved {
-  color: #ffe2b0;
-  border-color: rgba(255, 216, 150, 0.6);
-}
 .sr-actions .save-toast {
   background: rgba(14, 18, 30, 0.9);
   border-color: rgba(255, 255, 255, 0.18);
@@ -372,8 +368,7 @@
 .sr-reader .dialog-piece[aria-current] {
   background: rgba(255, 255, 255, 0.06);
 }
-.sr-reader .dialog-selection,
-.sr-reader .contents-type {
+.sr-reader .dialog-selection {
   color: #f3c99d;
 }
 
@@ -1122,10 +1117,6 @@
 @media (max-width: 420px) {
   .sr-back {
     padding: 0 12px;
-  }
-  .sr-actions .save-piece {
-    font-size: 0;
-    gap: 0;
   }
 }
 

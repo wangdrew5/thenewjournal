@@ -6,7 +6,6 @@ import { CONTROLS, pad, pieceKind, useIssueNav } from "../../lib/useIssueNav";
 import { useFinishEnterOnMount } from "../../lib/enterTransition";
 import { PREVIEW_ID } from "../../lib/preview";
 import IssueContents from "../pieces/IssueContents";
-import SavePieceButton from "../pieces/SavePieceButton";
 import SongPlayer from "../pieces/SongPlayer";
 import { useCurrentSong } from "../../lib/useSongAudio";
 import IssueArtwork from "../magazine/IssueArtwork";
@@ -248,7 +247,6 @@ export default function GalleryReader({ publication }: { publication: Publicatio
             onSelect={goToPiece}
             onCover={() => goTo(0)}
           />
-          {piece && <SavePieceButton key={piece.id} pieceId={piece.id} />}
         </div>
       </header>
 

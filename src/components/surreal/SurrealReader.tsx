@@ -19,7 +19,6 @@ import { useFinishEnterOnMount } from "../../lib/enterTransition";
 import { PREVIEW_ID } from "../../lib/preview";
 import { partnerById, partnerLogoUrl } from "../../data/partners";
 import IssueContents from "../pieces/IssueContents";
-import SavePieceButton from "../pieces/SavePieceButton";
 import SongPlayer from "../pieces/SongPlayer";
 import ReadingControls from "./ReadingControls";
 import { useCurrentSong } from "../../lib/useSongAudio";
@@ -474,7 +473,6 @@ function SurrealBook({ publication }: { publication: Publication }) {
             onSelect={goToPiece}
             onCover={() => goTo(0)}
           />
-          {piece && <SavePieceButton key={piece.id} pieceId={piece.id} />}
         </div>
       </div>
 
