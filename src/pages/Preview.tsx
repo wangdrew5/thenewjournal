@@ -31,6 +31,7 @@ import FilmView from "../components/pieces/FilmView";
 import SongView from "../components/pieces/SongView";
 import { matchesPublished, publishedDrafts } from "../data/publishedIssues";
 import { suggestPublicationId } from "../lib/publish";
+import { partners } from "../data/partners";
 
 // The dev server's publishing endpoints (scripts/publish-plugin.ts).
 async function devRequest(path: string, body: BodyInit, type = "application/json") {
@@ -547,6 +548,35 @@ export default function Preview() {
                   value={piece.author}
                   onChange={(e) => update({ author: e.target.value })}
                 />
+              </label>
+              <label className="preview-field">
+                Page created by (optional)
+                <input
+                  maxLength={120}
+                  placeholder="Who made this page"
+                  value={piece.pageCreator}
+                  onChange={(e) => update({ pageCreator: e.target.value })}
+                />
+                <span className="preview-help">
+                  Shown small in the footer of the right page.
+                </span>
+              </label>
+              <label className="preview-field">
+                Partner organization (optional)
+                <select
+                  value={piece.partner}
+                  onChange={(e) => update({ partner: e.target.value })}
+                >
+                  <option value="">None</option>
+                  {partners.map((partner) => (
+                    <option key={partner.id} value={partner.id}>
+                      {partner.name}
+                    </option>
+                  ))}
+                </select>
+                <span className="preview-help">
+                  Its logo appears at the top of the left page.
+                </span>
               </label>
               {piece.type === "poem" && (
                 <label className="preview-field">

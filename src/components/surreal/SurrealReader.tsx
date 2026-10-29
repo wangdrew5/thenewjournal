@@ -12,12 +12,12 @@ import type { MagazinePage } from "../../lib/magazine";
 import {
   CONTROLS,
   pad,
-  pieceKind,
   useIssueNav,
   useMediaQuery,
 } from "../../lib/useIssueNav";
 import { useFinishEnterOnMount } from "../../lib/enterTransition";
 import { PREVIEW_ID } from "../../lib/preview";
+import { partnerById, partnerLogoUrl } from "../../data/partners";
 import IssueContents from "../pieces/IssueContents";
 import SavePieceButton from "../pieces/SavePieceButton";
 import SongPlayer from "../pieces/SongPlayer";
@@ -131,15 +131,25 @@ function PlateFace({
         ? piece.imageAlt ?? `${piece.title} by ${piece.author}`
         : "";
   const isArt = piece.type === "art";
+  const partner = partnerById(piece.partner);
+  const scene = (sceneFor(index) + 2) % SCENE_COUNT;
   return (
-    <div className={`sr-plate ${isArt ? "is-art" : ""} ${piece.type === "song" ? "is-song" : ""} crop-${index % 4}`}>
+    <div className={`sr-plate is-${piece.type} scene-${scene} crop-${index % 4}`}>
       <DreamScene
-        scene={(sceneFor(index) + 2) % SCENE_COUNT}
+        scene={scene}
         className="sr-plate-art"
         frozenAhead={frozenAhead}
         clockKey={`plate-${index}`}
       />
       <div className="sr-plate-shade" />
+      {partner && (
+        <div className={`sr-plate-partner ${partner.logoOnDark ? "has-dark-version" : ""}`}>
+          <img className="for-light" src={partnerLogoUrl(partner)} alt={`With ${partner.name}`} decoding="async" />
+          {partner.logoOnDark && (
+            <img className="for-dark" src={partnerLogoUrl(partner, true)} alt={`With ${partner.name}`} decoding="async" />
+          )}
+        </div>
+      )}
       {isArt ? (
         <figure className="sr-hung">
           {image ? (
@@ -159,9 +169,6 @@ function PlateFace({
             </figure>
           )}
           <div className="sr-plate-copy">
-            <span className="sr-plate-no">
-              No. {pad(index)} <i>·</i> {pieceKind[piece.type]}
-            </span>
             <h2>{piece.title}</h2>
             <p>by {piece.author}</p>
             {piece.type === "song" && <SongPlayer song={piece} live={live} tone="dark" />}
@@ -219,12 +226,11 @@ function TextFace({
         aria-label={piece.type === "song" ? `Transcript of ${piece.title}, scroll to read` : `${piece.title}, scroll to read`}
         onScroll={(event) => scrolls.set(page.id, event.currentTarget.scrollTop)}
       >
-        <p className="sr-kicker">
-          {pieceKind[piece.type]}
-          {piece.type === "poem" && readMinutes(piece.lines) >= 2 && (
-            <span className="sr-readtime"> · {readMinutes(piece.lines)} min read</span>
-          )}
-        </p>
+        {piece.type === "poem" && readMinutes(piece.lines) >= 2 && (
+          <p className="sr-kicker">
+            <span className="sr-readtime">{readMinutes(piece.lines)} min read</span>
+          </p>
+        )}
         <h1 className="sr-title">{piece.title}</h1>
         {piece.type === "poem" && <Lines lines={piece.lines} dropCap />}
         {piece.type === "song" && <Transcript song={piece} />}
@@ -269,7 +275,8 @@ function TextFace({
         )}
       </div>
       <footer className="sr-foot">
-        <span>{index}</span>
+        {piece.pageCreator && <span className="sr-credit">Page created by {piece.pageCreator}</span>}
+        <span className="sr-folio-no">{index}</span>
       </footer>
     </div>
   );
@@ -304,6 +311,15 @@ function SurrealBook({ publication }: { publication: Publication }) {
     for (const face of ['400 1em "Cormorant Garamond"', '600 1em "Cormorant Garamond"', '700 1em "Lato"'])
       document.fonts?.load(face).catch(() => {});
   }, []);
+  // Likewise partner logos, so one never pops in on a page as it turns into view.
+  useEffect(() => {
+    for (const id of new Set(publication.pieces.map((piece) => piece.partner))) {
+      const partner = partnerById(id);
+      if (!partner) continue;
+      new Image().src = partnerLogoUrl(partner);
+      if (partner.logoOnDark) new Image().src = partnerLogoUrl(partner, true);
+    }
+  }, [publication]);
   const spread = useMediaQuery("(min-width: 900px)");
   const last = pages.length - 1;
 

@@ -464,6 +464,54 @@
   line-height: 1.7;
 }
 
+/* ---------- Our partners ---------- */
+.partner-list {
+  margin-top: 8px;
+}
+.partner {
+  padding-top: 44px;
+  margin-top: 44px;
+  border-top: 1px solid rgba(74, 51, 34, 0.18);
+}
+.partner-logo {
+  display: inline-flex;
+  align-items: center;
+  height: 84px;
+  max-width: min(100%, 300px);
+}
+.partner-logo img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+.partner h2 {
+  margin-top: 22px;
+  font: 500 clamp(28px, 4vw, 36px) / 1.1 "Cormorant Garamond", Georgia, serif;
+  letter-spacing: -0.02em;
+}
+.partner p {
+  margin-top: 14px;
+  font-size: 17px;
+}
+.partner-site {
+  display: inline-block;
+  margin-top: 18px;
+  color: #6d3f1f;
+  font-size: 15px;
+  text-decoration: underline;
+  text-decoration-color: rgba(109, 63, 31, 0.35);
+  text-underline-offset: 3px;
+}
+.partner-site:hover {
+  text-decoration-color: currentColor;
+}
+.partner-logo:focus-visible,
+.partner-site:focus-visible {
+  outline: 2px solid #8a5a36;
+  outline-offset: 4px;
+  border-radius: 2px;
+}
+
 /* Andrew's wording from the original home page: the open prompt on each cover,
    the gallery label, and the edition heading under each issue. */
 .tc-open {

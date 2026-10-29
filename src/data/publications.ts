@@ -10,6 +10,10 @@ interface PieceBase {
   title: string;
   author: string;
   glow: GlowColor;
+  /** Who made this page of the journal, credited small in the page footer. */
+  pageCreator?: string;
+  /** The partner organization (an id from data/partners) whose logo tops the left page. */
+  partner?: string;
 }
 
 export interface PoemPiece extends PieceBase {

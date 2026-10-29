@@ -729,11 +729,24 @@
 }
 .sr-foot {
   display: flex;
-  justify-content: flex-end;
+  align-items: baseline;
+  gap: 16px;
   padding-top: 10px;
   border-top: 1px solid rgba(80, 56, 32, 0.14);
   color: #9a8774;
   font: italic 13px var(--sr-serif);
+}
+.sr-credit {
+  min-width: 0;
+  color: #6f5d4d;
+  overflow: hidden;
+  font-size: 11px;
+  letter-spacing: 0.02em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sr-folio-no {
+  margin-left: auto;
 }
 
 /* ---------- Plates (left pages) ---------- */
@@ -773,23 +786,68 @@
     linear-gradient(270deg, rgba(20, 10, 0, 0.35), transparent 10%),
     rgba(6, 8, 18, 0.45);
 }
+/* A partner organization's logo, on a tab tinted from the scenery behind it: a shade darker
+   on dark pages, lighter on the one light scene, so the logo reads without the tab drawing
+   the eye. The colours were sampled from each scene where the tab sits (`--tab` is r g b). */
+.sr-plate.scene-0 { --tab: 21 36 52; }
+.sr-plate.scene-1 { --tab: 10 14 35; }
+.sr-plate.scene-2 { --tab: 54 73 96; }
+.sr-plate.scene-3 { --tab: 8 21 16; }
+.sr-plate.scene-4 { --tab: 249 233 223; }
+/* Art pages sit under a darker wash, and so does a song's band on phones. */
+.sr-plate.is-art.scene-0 { --tab: 14 25 37; }
+.sr-plate.is-art.scene-1 { --tab: 8 11 27; }
+.sr-plate.is-art.scene-2 { --tab: 36 49 65; }
+.sr-plate.is-art.scene-3 { --tab: 7 15 15; }
+.sr-plate.is-art.scene-4 { --tab: 90 81 77; }
+.sr-single.is-song .sr-plate.scene-0 { --tab: 14 24 36; }
+.sr-single.is-song .sr-plate.scene-1 { --tab: 8 11 25; }
+.sr-single.is-song .sr-plate.scene-2 { --tab: 32 42 57; }
+.sr-single.is-song .sr-plate.scene-3 { --tab: 5 13 14; }
+.sr-single.is-song .sr-plate.scene-4 { --tab: 78 72 70; }
+/* Logos with dark lettering switch to their light version wherever the tab is dark. */
+.sr-plate-partner.has-dark-version .for-light,
+.sr-plate.scene-4:not(.is-art) .sr-plate-partner .for-dark {
+  display: none;
+}
+.sr-plate.scene-4:not(.is-art) .sr-plate-partner.has-dark-version .for-light {
+  display: block;
+}
+.sr-single.is-song .sr-plate.scene-4 .sr-plate-partner.has-dark-version .for-light {
+  display: none;
+}
+.sr-single.is-song .sr-plate.scene-4 .sr-plate-partner .for-dark {
+  display: block;
+}
+.sr-plate-partner {
+  position: absolute;
+  z-index: 1;
+  top: clamp(18px, 3.2vh, 30px);
+  left: clamp(24px, 3vw, 44px);
+  display: flex;
+  align-items: center;
+  height: clamp(40px, 5.5vh, 52px);
+  max-width: 44%;
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgb(var(--tab, 251 246 236) / 0.82);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.12);
+}
+.sr-plate-partner img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+/* Clear of the film's sprocket strip. */
+.sr-plate.is-film .sr-plate-partner {
+  left: max(clamp(24px, 3vw, 44px), 58px);
+}
 .sr-plate-copy {
   position: absolute;
   right: clamp(24px, 3vw, 44px);
   bottom: clamp(28px, 5vh, 52px);
   left: clamp(24px, 3vw, 44px);
   text-shadow: 0 2px 24px rgba(0, 0, 0, 0.6);
-}
-.sr-plate-no {
-  font-size: 10px;
-  letter-spacing: 0.3em;
-  text-transform: uppercase;
-  opacity: 0.85;
-}
-.sr-plate-no i {
-  margin: 0 6px;
-  font-style: normal;
-  opacity: 0.6;
 }
 .sr-plate-copy h2 {
   margin-top: 10px;
@@ -1002,6 +1060,15 @@
   inset: auto;
   padding: 20px 18px 16px;
 }
+.sr-single.is-song .sr-plate:has(.sr-plate-partner) .sr-plate-copy {
+  padding-top: 62px;
+}
+.sr-single .sr-plate-partner {
+  top: 14px;
+  left: 18px;
+  height: 36px;
+  padding: 5px 8px;
+}
 /* The short band puts the copy over the bright top of the scene; keep it legible. */
 .sr-single.is-song .sr-plate-shade {
   background: linear-gradient(180deg, rgba(6, 8, 18, 0.5), rgba(6, 8, 18, 0.78));
@@ -1190,6 +1257,9 @@ html[data-read-tone="night"] .sr-folio {
 html[data-read-tone="night"] .sr-foot {
   color: #8f8070;
   border-color: rgba(232, 220, 200, 0.1);
+}
+html[data-read-tone="night"] .sr-credit {
+  color: #b5a690;
 }
 html[data-read-tone="night"] :is(.sr-title) {
   color: #f4e8d4;

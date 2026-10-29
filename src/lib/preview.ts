@@ -4,6 +4,7 @@ import type {
   PieceType,
   Publication,
 } from "../data/publications";
+import { partnerById } from "../data/partners";
 
 export const PREVIEW_ID = "preview-issue";
 // Keep the original key so existing visitors retain their work after migration.
@@ -84,6 +85,10 @@ export interface PreviewPiece {
   caption: string;
   /** Art: the text on the right page. Absent from older drafts; read as the caption. */
   pageText: string;
+  /** Who made this page; credited small in the footer. Absent from older drafts; read as "". */
+  pageCreator: string;
+  /** A partner id from data/partners, or "". Absent from older drafts; read as "". */
+  partner: string;
   /** Art: an SVG signature drawn below the right-page text (embedded, or a site path once published). */
   signature: string;
   alt: string;
@@ -113,6 +118,8 @@ export function createPreviewPiece(type: PieceType, id: string): PreviewPiece {
     caption: "",
     pageText: "",
     signature: "",
+    pageCreator: "",
+    partner: "",
     alt: "",
     video: "",
     audio: "",
@@ -290,6 +297,7 @@ export function parsePreviewDraft(raw: string | null): PreviewDraft | null {
         (p.audio !== undefined && !isText(p.audio)) ||
         (p.pageText !== undefined && !isText(p.pageText)) ||
         (p.signature !== undefined && !isSignature(p.signature)) ||
+        !isOptionalText(p.pageCreator, 120) ||
         !isImage(p.image)
       )
         return null;
@@ -305,6 +313,9 @@ export function parsePreviewDraft(raw: string | null): PreviewDraft | null {
         // Drafts from before the two art texts were split showed one caption in both places.
         pageText: p.pageText ?? (p.type === "art" ? p.caption : ""),
         signature: p.signature ?? "",
+        pageCreator: p.pageCreator ?? "",
+        // A partner no longer listed simply drops off the page rather than losing the draft.
+        partner: typeof p.partner === "string" && partnerById(p.partner) ? p.partner : "",
         alt: p.alt,
         video: p.video,
         audio: p.audio ?? "",
@@ -339,6 +350,8 @@ export function previewPublication(
         title: p.title.trim() || "Untitled",
         author: p.author.trim() || "Anonymous",
         glow: "green" as const,
+        pageCreator: p.pageCreator.trim() || undefined,
+        partner: p.partner || undefined,
       };
       // Every medium is handled by name, so none can fall through to another's rendering.
       switch (p.type) {

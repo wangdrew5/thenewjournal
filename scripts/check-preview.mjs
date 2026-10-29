@@ -109,6 +109,18 @@ try {
     assert.deepEqual(m.parsePreviewDraft(JSON.stringify(issue)), issue, "A published signature path must reload");
     assert.equal(m.previewPublication(issue, { base: "/thenewjournal/" }).pieces[0].signatureSrc, `/thenewjournal/${issue.pieces[0].signature}`);
   }
+  // Partner organizations: a known id travels to the reader; an unknown one is dropped, not fatal.
+  {
+    const poem = { ...m.createPreviewPiece("poem", "preview-partner"), title: "With", text: "Line", partner: "pongo" };
+    const draft = { ...m.createPreviewDraft(), pieces: [poem] };
+    assert.deepEqual(m.parsePreviewDraft(JSON.stringify(draft)), draft);
+    assert.equal(m.previewPublication(draft).pieces[0].partner, "pongo");
+    const gone = m.parsePreviewDraft(JSON.stringify({ ...draft, pieces: [{ ...poem, partner: "no-such-partner" }] }));
+    assert.equal(gone.pieces[0].partner, "");
+    assert.equal(m.previewPublication(gone).pieces[0].partner, undefined);
+    const { partner: _none, ...older } = poem;
+    assert.equal(m.parsePreviewDraft(JSON.stringify({ ...draft, pieces: [older] })).pieces[0].partner, "");
+  }
   let state = { draft: m.createPreviewDraft(), saveStatus: "" };
   const items = [
     {

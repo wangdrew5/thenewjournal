@@ -316,8 +316,8 @@ export default function CoverTable({ publications }: { publications: Publication
           <>
             <strong>{featured.caption}</strong>
             <span>
-              {themeNames[featured.theme ?? "surreal"]} edition, {featured.pieces.length}{" "}
-              {featured.pieces.length === 1 ? "piece" : "pieces"}. Click to read.
+              {featured.pieces.length} {featured.pieces.length === 1 ? "page" : "pages"},{" "}
+              {finePointer ? "click" : "tap"} to read!
             </span>
           </>
         ) : publications.length ? (

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { partnerLogoUrl, partners } from "../data/partners";
 
 export default function Partners() {
   return (
@@ -13,9 +14,30 @@ export default function Partners() {
           Our partners
         </h1>
         <p>
-          The organizations that make The New Journal possible will be listed
-          here soon.
+          The organizations that make The New Journal possible.
         </p>
+        <ul className="partner-list">
+          {partners.map((partner) => (
+            <li key={partner.name} className="partner">
+              <a className="partner-logo" href={partner.url} target="_blank" rel="noopener noreferrer">
+                <img
+                  src={partnerLogoUrl(partner)}
+                  alt={`${partner.name} logo`}
+                  loading="lazy"
+                  decoding="async"
+                />
+              </a>
+              <h2>{partner.name}</h2>
+              {partner.paragraphs.map((text) => (
+                <p key={text}>{text}</p>
+              ))}
+              <a className="partner-site" href={partner.url} target="_blank" rel="noopener noreferrer">
+                Visit {partner.name} <span aria-hidden="true">↗</span>
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            </li>
+          ))}
+        </ul>
       </motion.div>
     </main>
   );
