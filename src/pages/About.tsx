@@ -14,7 +14,7 @@ export default function About() {
         </h1>
         <p>
           The New Journal is an online publication by and for incarcerated
-          youth.
+          youth and adults.
         </p>
       </motion.div>
     </main>
