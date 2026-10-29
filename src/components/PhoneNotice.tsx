@@ -1,24 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 
-const SEEN_KEY = "tnj:phone-notice:v1";
-
 // A phone: a touch screen whose shorter side is phone-sized. Tablets and computers never match.
 function isPhone() {
   if (typeof window === "undefined" || !window.matchMedia) return false;
   return window.matchMedia("(pointer: coarse)").matches && Math.min(window.screen.width, window.screen.height) < 600;
 }
 
-function seen() {
-  try {
-    return localStorage.getItem(SEEN_KEY) === "1";
-  } catch {
-    return false;
-  }
-}
-
-/** Shown once per phone: the journal reads best on a bigger screen. */
+/**
+ * On phones, each time the site is opened or reloaded: the journal reads best on a bigger
+ * screen. It lives above the routes, so moving between pages never brings it back.
+ */
 export default function PhoneNotice() {
-  const [open, setOpen] = useState(() => isPhone() && !seen());
+  const [open, setOpen] = useState(isPhone);
   const button = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
@@ -30,11 +23,6 @@ export default function PhoneNotice() {
   }, [open]);
 
   function close() {
-    try {
-      localStorage.setItem(SEEN_KEY, "1");
-    } catch {
-      // Private browsing: it simply shows again next visit.
-    }
     setOpen(false);
   }
 
