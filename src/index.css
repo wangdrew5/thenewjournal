@@ -1815,3 +1815,49 @@ body:has(.journal-home) .nav-link { font-size: 12px; letter-spacing: .02em; text
     font-size: 14px;
   }
 }
+
+/* Shown once on phones: the journal reads best on a bigger screen. */
+.phone-notice {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(8, 5, 3, 0.62);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+.phone-notice-card {
+  width: min(100%, 340px);
+  padding: 26px 24px 22px;
+  border: 1px solid rgba(241, 227, 204, 0.18);
+  border-radius: 14px;
+  background: #1d130c;
+  color: #f1e3cc;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  text-align: center;
+}
+.phone-notice-card h2 {
+  font: 500 26px / 1.1 "Cormorant Garamond", Georgia, serif;
+}
+.phone-notice-card p {
+  margin-top: 10px;
+  font-size: 15px;
+  line-height: 1.55;
+  color: rgba(241, 227, 204, 0.82);
+}
+.phone-notice-card button {
+  margin-top: 20px;
+  min-height: 44px;
+  padding: 0 28px;
+  border-radius: 999px;
+  background: #f1e3cc;
+  color: #1d130c;
+  font-size: 14px;
+  font-weight: 600;
+}
+.phone-notice-card button:focus-visible {
+  outline: 2px solid #f0b878;
+  outline-offset: 3px;
+}

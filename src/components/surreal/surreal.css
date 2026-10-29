@@ -1148,6 +1148,17 @@
   .sr-single .sr-plate.is-film .sr-plate-copy {
     padding-left: 56px;
   }
+  /* The short band would crowd all fourteen sprocket holes together; space them as on a
+     computer (about 46px apart) and let the strip cut off the ones that don't fit. */
+  .sr-single .sr-filmstrip {
+    justify-content: flex-start;
+    gap: 34px;
+    padding-top: 17px;
+    overflow: hidden;
+  }
+  .sr-single .sr-filmstrip span {
+    flex: none;
+  }
   /* Art: a taller band, so the painting can actually be seen, hung clear of the logo. */
   .sr-single.is-art .sr-single-plate {
     flex-basis: 55%;
@@ -1239,9 +1250,19 @@
   .sr-single-plate .sr-plate-copy > p {
     font-size: 15px;
   }
-  /* Two-page view on wide phones: the film's words clear its sprocket strip too. */
+  /* Two-page view on wide phones: the film's words clear its sprocket strip too, and its
+     holes keep their computer spacing. */
   .sr-book.is-spread .sr-plate.is-film .sr-plate-copy {
     left: 58px;
+  }
+  .sr-book.is-spread .sr-filmstrip {
+    justify-content: flex-start;
+    gap: 34px;
+    padding-top: 17px;
+    overflow: hidden;
+  }
+  .sr-book.is-spread .sr-filmstrip span {
+    flex: none;
   }
   /* Phones set volume with their own buttons; the slider gives its room to the times. */
   .sr-plate .song-level {
