@@ -42,7 +42,7 @@ The issues visitors see are the ones published from the editor. With nothing pub
 
 Songs can use a direct HTTPS audio link or an audio file chosen from disk (MP3, M4A, or WAV, up to 20 MB). A chosen file is uploaded to the dev server and kept in the git-ignored `.tnj-staging/` folder (not in the browser) until you publish, when it moves to `public/published/<address>/audio/`.
 
-The publish endpoints exist only under `npm run dev` and only answer requests from this computer that carry the editor's header. Media paths are stored relative to the site root and gain the base path when shown, since GitHub Pages serves the site from `/thenewjournal/`.
+The publish endpoints exist only under `npm run dev` and only answer requests from this computer that carry the editor's header. Media paths are stored relative to the site root and gain the base path when shown, so the site also works from a sub-path; it is served from the root of thenewjournal.org.
 
 **Add a piece** lets you add writing, artwork, films, or songs to a growing issue (up to 200 pieces). Select any piece in the contents list to edit it, move it up/down, or remove it with an undo option. Open finished pieces in the reader. Existing two-poem drafts migrate automatically without changing their piece IDs.
 
