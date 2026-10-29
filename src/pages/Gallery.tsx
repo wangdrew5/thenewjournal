@@ -6,10 +6,6 @@ import { matchesPublished } from "../data/publishedIssues";
 import { PREVIEW_ID } from "../lib/preview";
 import { issueName } from "../lib/issueLabel";
 import type { Piece, Publication } from "../data/publications";
-import PoemView from "../components/pieces/PoemView";
-import FilmView from "../components/pieces/FilmView";
-import SongView from "../components/pieces/SongView";
-import { SongAudioProvider } from "../lib/SongAudioProvider";
 import "../components/gallerywall/gallerywall.css";
 
 interface Work {
@@ -17,10 +13,11 @@ interface Work {
   publication: Publication;
 }
 
+// A few opening lines for the wall. Song lyrics run long, so fewer of them.
 function snippet(piece: Piece) {
   const lines =
     piece.type === "poem" ? piece.lines : piece.type === "song" ? piece.transcript : [];
-  return lines.filter((line) => line.trim()).slice(0, 4);
+  return lines.filter((line) => line.trim()).slice(0, piece.type === "song" ? 2 : 4);
 }
 
 function WorkCard({ work, onOpen }: { work: Work; onOpen: (element: HTMLElement) => void }) {
@@ -39,7 +36,7 @@ function WorkCard({ work, onOpen }: { work: Work; onOpen: (element: HTMLElement)
             {piece.imageSrc ? (
               <img src={piece.imageSrc} alt="" loading="lazy" />
             ) : (
-              <span className="gw-blank">{piece.imageCaption || piece.title}</span>
+              <span className="gw-blank">{piece.title}</span>
             )}
           </span>
         )}
@@ -53,16 +50,11 @@ function WorkCard({ work, onOpen }: { work: Work; onOpen: (element: HTMLElement)
         {piece.type === "film" && (
           <span className="gw-screen">
             <span className="gw-play" aria-hidden="true" />
-            <span className="gw-logline">{piece.logline}</span>
           </span>
         )}
         {piece.type === "song" && (
           <span className="gw-tape">
-            <span className="gw-reels" aria-hidden="true">
-              <i />
-              <i />
-            </span>
-            {snippet(piece).slice(0, 2).map((line, index) => (
+            {snippet(piece).map((line, index) => (
               <span key={index}>{line}</span>
             ))}
           </span>
@@ -79,26 +71,75 @@ function WorkCard({ work, onOpen }: { work: Work; onOpen: (element: HTMLElement)
   );
 }
 
-// A work looked at closely: the picture fits the screen, with its caption beneath.
-function ArtLook({ piece }: { piece: Extract<Piece, { type: "art" }> }) {
+const sourceVerb: Record<Piece["type"], string> = {
+  poem: "Read",
+  art: "See",
+  film: "Watch",
+  song: "Listen to",
+};
+
+// A work looked at closely. Every kind shares one column: its title and maker, then the work.
+function Look({ piece }: { piece: Piece }) {
+  const [audioFailed, setAudioFailed] = useState(false);
   return (
-    <figure className="gw-look">
-      <figcaption className="gw-look-head">
+    <article className={`gw-look gw-look-${piece.type}`}>
+      <header className="gw-look-head">
         <h2>{piece.title}</h2>
         <span>{piece.author}</span>
-      </figcaption>
-      {piece.imageSrc ? (
-        <img src={piece.imageSrc} alt={piece.imageAlt ?? `${piece.title} by ${piece.author}`} />
-      ) : (
-        <p className="media-unavailable">Artwork not yet available.</p>
-      )}
-      {(piece.imageCaption || piece.pageText || piece.editorNote) && (
-        <div className="gw-look-text">
-          {piece.imageCaption && <p className="gw-look-caption">{piece.imageCaption}</p>}
-          {(piece.pageText || piece.editorNote) && <p>{piece.pageText || piece.editorNote}</p>}
+      </header>
+      {piece.type === "art" &&
+        (piece.imageSrc ? (
+          <img className="gw-look-image" src={piece.imageSrc} alt={piece.imageAlt ?? `${piece.title} by ${piece.author}`} />
+        ) : (
+          <p className="gw-look-missing">Artwork not yet available.</p>
+        ))}
+      {piece.type === "poem" && (
+        <div className="gw-look-lines">
+          {piece.lines.map((line, index) => (
+            <p key={index}>{line || "\u00a0"}</p>
+          ))}
         </div>
       )}
-    </figure>
+      {piece.type === "film" && (
+        <>
+          {piece.videoSrc ? (
+            <video className="gw-look-video" src={piece.videoSrc} controls preload="metadata" />
+          ) : (
+            <p className="gw-look-missing">Film not yet available.</p>
+          )}
+          {piece.logline && <p className="gw-look-note">{piece.logline}</p>}
+        </>
+      )}
+      {piece.type === "song" && (
+        <>
+          {piece.audioSrc ? (
+            <audio
+              className="gw-look-audio"
+              src={piece.audioSrc}
+              controls
+              preload="metadata"
+              aria-label={`Play ${piece.title}`}
+              onError={() => setAudioFailed(true)}
+              onLoadedMetadata={() => setAudioFailed(false)}
+            />
+          ) : (
+            <p className="gw-look-missing">Song not yet available.</p>
+          )}
+          {audioFailed && (
+            <p role="alert" className="gw-look-note">
+              This song could not play right now.
+            </p>
+          )}
+          {piece.transcript.some((line) => line.trim()) && (
+            <section className="gw-look-lines" aria-label={`Transcript of ${piece.title}`}>
+              {piece.transcript.map((line, index) => (
+                <p key={index}>{line || "\u00a0"}</p>
+              ))}
+            </section>
+          )}
+        </>
+      )}
+    </article>
   );
 }
 
@@ -146,25 +187,22 @@ function WorkDialog({
       onClick={(event) => event.target === event.currentTarget && onClose()}
     >
       <div className="gw-dialog-bar">
-        <span>
-          {index + 1} of {works.length}
-        </span>
-        <button ref={close} type="button" onClick={onClose}>
-          Close
-        </button>
+        <div>
+          <span>
+            {index + 1} of {works.length}
+          </span>
+          <button ref={close} type="button" onClick={onClose}>
+            Close
+          </button>
+        </div>
       </div>
       <div className="gw-dialog-body">
-        <SongAudioProvider key={piece.id}>
-          {piece.type === "art" && <ArtLook piece={piece} />}
-          {piece.type === "poem" && <PoemView piece={piece} />}
-          {piece.type === "film" && <FilmView piece={piece} />}
-          {piece.type === "song" && <SongView piece={piece} />}
-        </SongAudioProvider>
+        <Look key={piece.id} piece={piece} />
         <Link
           className="gw-source"
           to={`/publication/${publication.id}?piece=${encodeURIComponent(piece.id)}`}
         >
-          Read it in {publication.caption}, {issueName(publication)}
+          {sourceVerb[piece.type]} it in {publication.caption}, {issueName(publication)}
         </Link>
       </div>
       {works.length > 1 && (

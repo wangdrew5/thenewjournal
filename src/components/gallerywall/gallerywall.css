@@ -19,15 +19,13 @@
   color: rgba(239, 230, 214, 0.75);
 }
 .gw-wallgrid {
-  columns: 3 260px;
-  column-gap: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 40px 24px;
+  align-items: start;
   list-style: none;
   padding: 0;
   margin: 48px 0 0;
-}
-.gw-item {
-  break-inside: avoid;
-  margin-bottom: 20px;
 }
 .gw-card {
   position: relative;
@@ -40,12 +38,14 @@
   outline: 2px solid #efe6d6;
   outline-offset: 6px;
 }
+/* Every work sits in the same 4:5 box, so titles line up across a row. */
 .gw-frame,
 .gw-blank,
 .gw-sheet,
 .gw-screen,
 .gw-tape {
   display: block;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
   background: #1c1a18;
   outline: 1px solid rgba(239, 230, 214, 0.08);
@@ -58,7 +58,8 @@
 .gw-frame img {
   display: block;
   width: 100%;
-  height: auto;
+  height: 100%;
+  object-fit: contain;
 }
 .gw-blank,
 .gw-sheet,
@@ -67,17 +68,40 @@
   display: grid;
   align-content: center;
   gap: 4px;
-  min-height: 200px;
   padding: 28px 26px;
   font: italic 500 19px / 1.5 "Cormorant Garamond", Georgia, serif;
   color: rgba(239, 230, 214, 0.88);
 }
-.gw-play,
-.gw-reels {
-  display: none;
+/* Each line is held to three rows, so long lyrics never spill out of the box. */
+.gw-sheet > span,
+.gw-tape > span {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
 }
+/* A film is a screen with a play mark. */
 .gw-screen {
-  font: 400 14px / 1.6 Inter, sans-serif;
+  place-items: center;
+  background: radial-gradient(circle at 50% 45%, #26231f, #151311);
+}
+.gw-play {
+  width: 64px;
+  height: 64px;
+  border: 1px solid rgba(239, 230, 214, 0.45);
+  border-radius: 50%;
+  position: relative;
+  background: rgba(12, 11, 9, 0.35);
+}
+.gw-play::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 54%;
+  border-style: solid;
+  border-width: 11px 0 11px 18px;
+  border-color: transparent transparent transparent rgba(239, 230, 214, 0.9);
+  transform: translate(-50%, -50%);
 }
 /* A round arrow in the corner says the work opens */
 .gw-card::after {
@@ -105,8 +129,8 @@
 /* Title and author sit under each work */
 .gw-plate {
   display: grid;
-  gap: 1px;
-  padding: 12px 2px 0;
+  gap: 2px;
+  padding: 14px 2px 0;
 }
 .gw-plate strong {
   font: 500 20px / 1.15 "Cormorant Garamond", Georgia, serif;
@@ -118,9 +142,6 @@
 }
 .gw-plate small {
   display: none;
-}
-.gw-item {
-  margin-bottom: 32px;
 }
 
 /* Looking closer */
@@ -139,12 +160,22 @@
   position: sticky;
   top: 0;
   z-index: 1;
+  padding: 18px 0;
+  font-size: 13px;
+  color: rgba(239, 230, 214, 0.7);
+  background: linear-gradient(180deg, #0c0b09 70%, transparent);
+}
+.gw-dialog-bar > div,
+.gw-dialog-body,
+.gw-dialog-nav {
+  width: 100%;
+  max-width: 760px;
+  margin-inline: auto;
+}
+.gw-dialog-bar > div {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 18px 0;
-  font-size: 13px;
-  background: linear-gradient(180deg, #0c0b09 60%, transparent);
 }
 .gw-dialog-bar button,
 .gw-dialog-nav button {
@@ -159,9 +190,7 @@
   background: rgba(239, 230, 214, 0.1);
 }
 .gw-dialog-body {
-  width: 100%;
-  max-width: 960px;
-  margin: 12px auto 0;
+  margin-top: 8px;
 }
 .gw-source {
   display: inline-block;
@@ -174,9 +203,10 @@
 .gw-dialog-nav {
   display: flex;
   justify-content: space-between;
-  width: 100%;
-  max-width: 960px;
-  margin: 40px auto 0;
+  gap: 12px;
+  margin-top: 40px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(239, 230, 214, 0.12);
 }
 @media (prefers-reduced-motion: reduce) {
   .gw-card * {
@@ -187,41 +217,61 @@
   color: #f0b878;
 }
 
-/* Looking closely at artwork */
+/* Looking closely: the title and maker, then the work, all on the column's left edge. */
 .gw-look {
   display: grid;
-  justify-items: center;
-  gap: 22px;
+  gap: 24px;
   margin: 0;
 }
 .gw-look-head {
-  justify-self: start;
   display: grid;
-  gap: 2px;
+  gap: 4px;
 }
 .gw-look-head h2 {
-  font: 400 clamp(28px, 4vw, 42px) / 1.1 "Cormorant Garamond", Georgia, serif;
+  font: 400 clamp(30px, 4.4vw, 44px) / 1.08 "Cormorant Garamond", Georgia, serif;
   color: #f6ecdb;
+  text-wrap: balance;
 }
 .gw-look-head span {
   font-size: 14px;
+  line-height: 1.5;
   color: rgba(239, 230, 214, 0.7);
 }
-.gw-look img {
+/* The painting alone, as large as the screen allows, centred in the column. */
+.gw-look-image {
+  justify-self: center;
   display: block;
   max-width: 100%;
-  max-height: calc(100vh - 280px);
+  max-height: calc(100vh - 260px);
   object-fit: contain;
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6);
 }
-.gw-look-text {
-  justify-self: start;
-  max-width: 560px;
-  font-size: 15px;
-  line-height: 1.7;
-  color: rgba(239, 230, 214, 0.78);
+.gw-look-video,
+.gw-look-audio {
+  display: block;
+  width: 100%;
 }
-.gw-look-caption {
-  font: italic 500 19px / 1.5 "Cormorant Garamond", Georgia, serif;
-  color: rgba(239, 230, 214, 0.9);
+.gw-look-video {
+  aspect-ratio: 16 / 9;
+  background: #000;
+  border-radius: 4px;
+}
+.gw-look-audio {
+  color-scheme: dark;
+}
+.gw-look-lines {
+  display: grid;
+  gap: 6px;
+  max-width: 34em;
+  font: 400 clamp(18px, 1.6vw, 20px) / 1.6 "Cormorant Garamond", Georgia, serif;
+  color: rgba(246, 236, 219, 0.9);
+}
+.gw-look-note,
+.gw-look-missing {
+  font-size: 15px;
+  line-height: 1.6;
+  color: rgba(239, 230, 214, 0.7);
+}
+.gw-look-missing {
+  font-style: italic;
 }
