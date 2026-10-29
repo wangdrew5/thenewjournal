@@ -1808,3 +1808,10 @@ body:has(.journal-home) .nav-link { font-size: 12px; letter-spacing: .02em; text
 }
 
 /* Home: no published issue yet */
+
+/* Phones: the home page's links match the other pages' instead of shrinking. */
+@media (max-width: 480px) {
+  body:has(.journal-home) .site-header .nav-link {
+    font-size: 14px;
+  }
+}

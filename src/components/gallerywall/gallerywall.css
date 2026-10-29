@@ -213,6 +213,42 @@
     transition: none !important;
   }
 }
+/* Phones: one work per row, with writing, film and song in shorter boxes. */
+@media (max-width: 599px) {
+  .gw-wallgrid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+  .gw-blank,
+  .gw-sheet,
+  .gw-screen,
+  .gw-tape {
+    aspect-ratio: 4 / 3;
+  }
+}
+/* Touch screens: a tap shouldn't leave a work stuck in its lifted hover state. */
+@media (hover: none) {
+  .gw-card:hover :is(.gw-frame, .gw-blank, .gw-sheet, .gw-screen, .gw-tape) {
+    outline-color: rgba(239, 230, 214, 0.08);
+    transform: none;
+  }
+  .gw-card:hover::after {
+    background: rgba(12, 11, 9, 0.62);
+    color: #efe6d6;
+  }
+}
+/* Phones on their side: let the painting use the height there is. */
+@media (orientation: landscape) and (max-height: 520px) and (pointer: coarse) {
+  .gw-dialog-bar {
+    padding: 10px 0;
+  }
+  .gw-look .gw-look-image {
+    max-height: calc(100dvh - 110px);
+  }
+  .gw-look .gw-look-video {
+    width: min(100%, calc((100dvh - 110px) * 16 / 9));
+  }
+}
 .gw-dialog [class*="text-green"] {
   color: #f0b878;
 }

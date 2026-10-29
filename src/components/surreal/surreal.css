@@ -1119,6 +1119,135 @@
     padding: 0 12px;
   }
 }
+/* ---------- Phones: tidier single pages (the single layout only exists below 900px) ---------- */
+@media (max-width: 899px) {
+  /* The band above the words grows with its title, so a long title or maker never runs
+     up under the partner logo or out of sight on short screens. (Songs already work so.) */
+  .sr-single:not(.is-art) .sr-single-plate {
+    display: flex;
+    flex: 0 0 auto;
+    min-height: 30%;
+  }
+  .sr-single:not(.is-art) .sr-plate {
+    position: relative;
+    inset: auto;
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: flex-end;
+  }
+  .sr-single:not(.is-art) .sr-plate-copy {
+    position: relative;
+    inset: auto;
+    padding: 20px 18px 16px;
+  }
+  .sr-single:not(.is-art) .sr-plate:has(.sr-plate-partner) .sr-plate-copy {
+    padding-top: 66px;
+  }
+  /* Film: the sprocket strip runs down the band's left edge; keep the words clear of it. */
+  .sr-single .sr-plate.is-film .sr-plate-copy {
+    padding-left: 56px;
+  }
+  /* Art: a taller band, so the painting can actually be seen, hung clear of the logo. */
+  .sr-single.is-art .sr-single-plate {
+    flex-basis: 55%;
+  }
+  .sr-single-plate .sr-hung {
+    inset: 16px 18px 12px;
+    gap: 10px;
+  }
+  .sr-single-plate .sr-plate:has(.sr-plate-partner) .sr-hung {
+    top: 62px;
+  }
+  .sr-single-plate .sr-hung img,
+  .sr-single-plate .sr-hung-empty {
+    max-height: calc(100% - 30px);
+    padding: 8px;
+    border-width: 6px;
+  }
+  .sr-single-plate .sr-hung figcaption {
+    font-size: 13px;
+  }
+}
+/* ---------- Phones on their side: the book fills the screen ----------
+   Touch screens only, so no computer window, however small, ever gets this. */
+@media (orientation: landscape) and (max-height: 520px) and (pointer: coarse) {
+  .sr-reader {
+    min-height: 0;
+  }
+  .sr-top {
+    padding: 8px 14px 0;
+  }
+  .sr-pill,
+  .sr-actions .micro-button {
+    min-height: 36px;
+  }
+  /* The page arrows move to either side of the book; the page count gives way to height. */
+  .sr-bottom {
+    position: absolute;
+    inset: 0;
+    justify-content: space-between;
+    padding: 0 12px;
+    pointer-events: none;
+  }
+  .sr-bottom .sr-round {
+    width: 42px;
+    height: 42px;
+    pointer-events: auto;
+  }
+  .sr-progress {
+    display: none;
+  }
+  .sr-stage {
+    padding: 6px 66px 10px;
+  }
+  .sr-book.is-spread {
+    --pw: min(calc((100vw - 140px) / 2), calc((100dvh - 66px) * 0.74));
+  }
+  .sr-book.is-single {
+    --pw: min(760px, calc(100vw - 132px));
+    height: calc(100dvh - 66px);
+  }
+  /* Picture on the left, words on the right. */
+  .sr-single {
+    flex-direction: row;
+  }
+  /* (Selectors match the portrait rules' weight, and come later, so these win.) */
+  .sr-single:not(.is-art) .sr-single-plate,
+  .sr-single.is-art .sr-single-plate {
+    flex: 0 0 42%;
+    min-height: 0;
+  }
+  .sr-single .sr-single-plate .sr-plate {
+    position: absolute;
+    inset: 0;
+  }
+  .sr-single .sr-single-plate .sr-plate-copy,
+  .sr-single .sr-single-plate .sr-plate:has(.sr-plate-partner) .sr-plate-copy {
+    position: absolute;
+    inset: auto 16px 14px;
+    padding: 0;
+  }
+  .sr-single .sr-single-plate .sr-plate.is-film .sr-plate-copy {
+    left: 56px;
+    padding-left: 0;
+  }
+  .sr-single-plate .sr-plate-copy h2,
+  .sr-single.is-song .sr-plate-copy h2 {
+    font-size: 26px;
+  }
+  .sr-single-plate .sr-plate-copy > p {
+    font-size: 15px;
+  }
+  /* Two-page view on wide phones: the film's words clear its sprocket strip too. */
+  .sr-book.is-spread .sr-plate.is-film .sr-plate-copy {
+    left: 58px;
+  }
+  /* Phones set volume with their own buttons; the slider gives its room to the times. */
+  .sr-plate .song-level {
+    display: none;
+  }
+}
 
 @media (prefers-reduced-motion: reduce) {
   .twinkle,

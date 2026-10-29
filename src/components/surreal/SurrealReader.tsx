@@ -413,7 +413,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
   } else {
     const single = (i: number, copy: Copy = false) =>
       pages[i]?.piece ? (
-        <div className={`sr-single ${pages[i].piece!.type === "song" ? "is-song" : ""}`}>
+        <div className={`sr-single is-${pages[i].piece!.type}`}>
           <div className="sr-single-plate">{face(i, "L", copy)}</div>
           {face(i, "R", copy)}
         </div>
