@@ -5,6 +5,7 @@ import { useJournal } from "../lib/useJournal";
 import { matchesPublished } from "../data/publishedIssues";
 import { PREVIEW_ID } from "../lib/preview";
 import { issueName } from "../lib/issueLabel";
+import { useDialogFocus } from "../lib/useDialogFocus";
 import type { Piece, Publication } from "../data/publications";
 import "../components/gallerywall/gallerywall.css";
 
@@ -127,11 +128,12 @@ function Look({ piece }: { piece: Piece }) {
           )}
           {audioFailed && (
             <p role="alert" className="gw-look-note">
-              This song could not play right now.
+              This song could not play. Check your connection and try reloading the page.
             </p>
           )}
           {piece.transcript.some((line) => line.trim()) && (
             <section className="gw-look-lines" aria-label={`Transcript of ${piece.title}`}>
+              <h3 className="gw-transcript-heading">Transcript</h3>
               {piece.transcript.map((line, index) => (
                 <p key={index}>{line || "\u00a0"}</p>
               ))}
@@ -156,9 +158,10 @@ function WorkDialog({
 }) {
   const reduced = useReducedMotion();
   const close = useRef<HTMLButtonElement>(null);
+  const dialog = useRef<HTMLDivElement>(null);
+  useDialogFocus(dialog, close);
   const { piece, publication } = works[index];
   useEffect(() => {
-    close.current?.focus();
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     return () => {
@@ -168,14 +171,19 @@ function WorkDialog({
   useEffect(() => {
     const key = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
-      else if (event.key === "ArrowRight") onStep(1);
-      else if (event.key === "ArrowLeft") onStep(-1);
+      else if (!event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey &&
+        !(event.target instanceof HTMLElement && event.target.closest("audio, video, input, textarea, select, [contenteditable]"))) {
+        if (event.key === "ArrowRight") { event.preventDefault(); onStep(1); }
+        else if (event.key === "ArrowLeft") { event.preventDefault(); onStep(-1); }
+      }
     };
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
   }, [onClose, onStep]);
   return (
     <motion.div
+      ref={dialog}
+      tabIndex={-1}
       className="gw-dialog"
       role="dialog"
       aria-modal="true"
@@ -241,7 +249,6 @@ export default function Gallery() {
   }
   function close() {
     setOpen(null);
-    opener.current?.focus();
   }
   return (
     <main className="gw-page mx-auto max-w-6xl px-6 pb-24 sm:px-10">

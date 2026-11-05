@@ -1485,6 +1485,11 @@ body:has(.journal-home) .nav-link { font-size: 12px; letter-spacing: .02em; text
 .journal-masthead h1 { margin: 24px -5px 28px; font: 500 clamp(58px, 8.5vw, 116px)/1.03 'Cormorant Garamond', Georgia, serif; letter-spacing: -.065em; white-space: nowrap; }
 .journal-masthead h1 i { font-weight: 400; }
 .journal-masthead h1 > span { color: #c68d66; }
+.journal-intro { max-width: 35rem; margin: 0; color: #e7d9c8; font-size: clamp(15px, 1.35vw, 18px); line-height: 1.6; }
+.journal-resume { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 22px; padding: 11px 15px; border: 1px solid #b99778; background: #201812b3; color: #f5eadd; text-decoration: none; font-size: 14px; transition: background .2s, border-color .2s; }
+.journal-resume span:first-child { color: #dcc2a8; }
+.journal-resume strong { font-weight: 600; }
+.journal-resume:hover { background: #423024; border-color: #f2dbc4; }
 .journal-desk { margin-top: 90px; border-block: 1px solid #d8cbb633; display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 70px; padding: 64px 50px; background: #b6906506; overflow: hidden; }
 .desk-paper { position: relative; max-width: 285px; width: 100%; min-height: 345px; margin-inline: auto; padding: 28px; color: #2f2b25; background: #e7dfce; transform: rotate(-7deg); box-shadow: 3px 3px #cabfa8, 6px 6px #e7dfce, 22px 26px 50px #0008; transition: transform .7s cubic-bezier(.2,.8,.2,1); }
 .journal-desk:hover .desk-paper { transform: rotate(-3deg) translateY(-8px); }

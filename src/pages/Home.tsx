@@ -4,6 +4,7 @@ import { useJournal } from "../lib/useJournal";
 import CoverTable from "../components/table/CoverTable";
 import { matchesPublished } from "../data/publishedIssues";
 import { PREVIEW_ID } from "../lib/preview";
+import { readingPosition, READING_KEY } from "../lib/readingPosition";
 
 export default function Home() {
   const reduced = useReducedMotion();
@@ -14,6 +15,10 @@ export default function Home() {
   );
   // Gallery-edition issues live in the Gallery, as individual works; the table holds magazines.
   const magazines = publications.filter((p) => p.theme !== "museum");
+  let lastRead = null;
+  try {
+    lastRead = readingPosition(localStorage.getItem(READING_KEY), publications.filter((p) => p.id !== PREVIEW_ID));
+  } catch { /* The rest of the journal works without browser storage. */ }
   return (
     <main className="home-page journal-home mx-auto max-w-6xl px-6 pb-24 sm:px-10">
       <motion.header
@@ -23,6 +28,14 @@ export default function Home() {
         transition={{ duration: reduced ? 0 : 0.4 }}
       >
         <h1>The <i>New</i> Journal<span aria-hidden="true">.</span></h1>
+        <p className="journal-intro">An online publication by and for incarcerated youth and adults.</p>
+        {lastRead && (
+          <Link className="journal-resume" to={lastRead.to}>
+            <span>Continue reading</span>
+            <strong>{lastRead.page.piece?.title}</strong>
+            <span aria-hidden="true">↗</span>
+          </Link>
+        )}
       </motion.header>
       <CoverTable publications={magazines} />
       {import.meta.env.DEV && <motion.section className="journal-desk" aria-labelledby="try-heading" initial={{ opacity: reduced ? 1 : 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>

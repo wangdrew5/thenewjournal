@@ -302,6 +302,13 @@
   font: 400 clamp(18px, 1.6vw, 20px) / 1.6 "Cormorant Garamond", Georgia, serif;
   color: rgba(246, 236, 219, 0.9);
 }
+.gw-transcript-heading {
+  margin: 12px 0 6px;
+  font: 600 12px / 1.4 system-ui, sans-serif;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #dfc6aa;
+}
 .gw-look-note,
 .gw-look-missing {
   font-size: 15px;
