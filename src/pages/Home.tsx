@@ -2,10 +2,11 @@ import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { useJournal } from "../lib/useJournal";
 import CoverTable from "../components/table/CoverTable";
-import { matchesPublished } from "../data/publishedIssues";
+import { matchesPublished, publishedIssues } from "../data/publishedIssues";
 import { PREVIEW_ID } from "../lib/preview";
 import { readingPosition, READING_KEY } from "../lib/readingPosition";
 import { issueName } from "../lib/issueLabel";
+import InsideIssue from "../components/inside/InsideIssue";
 
 export default function Home() {
   const reduced = useReducedMotion();
@@ -46,6 +47,7 @@ export default function Home() {
         )}
       </motion.header>
       <CoverTable publications={magazines} />
+      <InsideIssue publication={publishedIssues[0]} />
       {import.meta.env.DEV && <motion.section className="journal-desk" aria-labelledby="try-heading" initial={{ opacity: reduced ? 1 : 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
         <div className="desk-paper" aria-hidden="true"><span>The New Journal / Your issue</span><i>It starts<br />with a page.</i><div className="desk-lines"><b /><b /><b /><b /></div><span>01</span></div>
         <div className="desk-copy">

@@ -88,12 +88,19 @@ function Look({ piece }: { piece: Piece }) {
         <h2>{piece.title}</h2>
         <span>{piece.author}</span>
       </header>
-      {piece.type === "art" &&
-        (piece.imageSrc ? (
-          <img className="gw-look-image" src={piece.imageSrc} alt={piece.imageAlt ?? `${piece.title} by ${piece.author}`} />
-        ) : (
-          <p className="gw-look-missing">Artwork not yet available.</p>
-        ))}
+      {piece.type === "art" && (
+        <>
+          {piece.imageSrc ? (
+            <img className="gw-look-image" src={piece.imageSrc} alt={piece.imageAlt ?? `${piece.title} by ${piece.author}`} />
+          ) : (
+            <p className="gw-look-missing">Artwork not yet available.</p>
+          )}
+          {piece.imageCaption && <p className="gw-look-note gw-art-caption">{piece.imageCaption}</p>}
+          {piece.pageText && piece.pageText.trim() !== piece.imageCaption.trim() && (
+            <p className="gw-art-context">{piece.pageText}</p>
+          )}
+        </>
+      )}
       {piece.type === "poem" && (
         <div className="gw-look-lines">
           {piece.lines.map((line, index) => (

@@ -333,3 +333,10 @@
 .gw-look-missing {
   font-style: italic;
 }
+.gw-art-caption { margin-top: -10px; }
+.gw-art-context {
+  max-width: 42em;
+  white-space: pre-line;
+  color: rgba(246, 236, 219, .9);
+  font: 400 18px / 1.7 "Cormorant Garamond", Georgia, serif;
+}
