@@ -8,6 +8,9 @@
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
   margin-top: 8px;
 }
+.cover-table.has-one-issue {
+  --cw: clamp(250px, 27vw, 340px);
+}
 
 /* ---------- The spread of issues ---------- */
 .table-spread {
@@ -408,6 +411,13 @@
 :root[data-scene="table"] .journal-masthead h1 > span {
   color: #8c3a1c;
 }
+:root[data-scene="table"][data-mode="light"] .journal-intro { color: #3f2919; }
+:root[data-scene="table"][data-mode="light"] .journal-featured { color: #2b1a0e; }
+:root[data-scene="table"][data-mode="light"] .journal-featured > span:first-child { color: #62402a; }
+:root[data-scene="table"][data-mode="light"] .journal-featured:hover > span:last-child { color: #8c3a1c; }
+:root[data-scene="table"][data-mode="light"] .journal-resume { color: #2b1a0e; background: #f4e3c9e8; border-color: #7c5034; }
+:root[data-scene="table"][data-mode="light"] .journal-resume span:first-child { color: #62402a; }
+:root[data-scene="table"][data-mode="light"] .journal-resume:hover { background: #fff3df; }
 :root[data-scene="table"] .journal-desk {
   border-color: rgba(70, 40, 18, 0.2);
   background: rgba(255, 240, 215, 0.12);
@@ -845,6 +855,7 @@ html:not([data-scene="table"]) .mode-toggle {
   .cover-table {
     --lap: 0.1;
   }
+  .cover-table.has-one-issue { --cw: min(68vw, 290px); }
 }
 /* The one orchestrated moment: copies are set down on the table in turn */
 @keyframes tc-arrive {

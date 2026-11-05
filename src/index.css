@@ -1486,6 +1486,11 @@ body:has(.journal-home) .nav-link { font-size: 12px; letter-spacing: .02em; text
 .journal-masthead h1 i { font-weight: 400; }
 .journal-masthead h1 > span { color: #c68d66; }
 .journal-intro { max-width: 35rem; margin: 0; color: #e7d9c8; font-size: clamp(15px, 1.35vw, 18px); line-height: 1.6; }
+.journal-featured { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 18px; width: fit-content; margin-top: 22px; color: #f5eadd; text-decoration: none; }
+.journal-featured > span:first-child { font-size: 12px; color: #d8c3ab; }
+.journal-featured strong { font: 500 24px / 1.1 'Cormorant Garamond', Georgia, serif; }
+.journal-featured > span:last-child { border-bottom: 1px solid currentColor; padding-bottom: 3px; font-size: 13px; }
+.journal-featured:hover > span:last-child { color: #f1bd8e; }
 .journal-resume { display: inline-flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 22px; padding: 11px 15px; border: 1px solid #b99778; background: #201812b3; color: #f5eadd; text-decoration: none; font-size: 14px; transition: background .2s, border-color .2s; }
 .journal-resume span:first-child { color: #dcc2a8; }
 .journal-resume strong { font-weight: 600; }

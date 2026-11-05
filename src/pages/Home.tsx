@@ -5,6 +5,7 @@ import CoverTable from "../components/table/CoverTable";
 import { matchesPublished } from "../data/publishedIssues";
 import { PREVIEW_ID } from "../lib/preview";
 import { readingPosition, READING_KEY } from "../lib/readingPosition";
+import { issueName } from "../lib/issueLabel";
 
 export default function Home() {
   const reduced = useReducedMotion();
@@ -29,6 +30,13 @@ export default function Home() {
       >
         <h1>The <i>New</i> Journal<span aria-hidden="true">.</span></h1>
         <p className="journal-intro">An online publication by and for incarcerated youth and adults.</p>
+        {magazines.length === 1 && (
+          <Link className="journal-featured" to={`/publication/${magazines[0].id}`}>
+            <span>{issueName(magazines[0])}</span>
+            <strong>{magazines[0].caption}</strong>
+            <span>Open issue <span aria-hidden="true">↗</span></span>
+          </Link>
+        )}
         {lastRead && (
           <Link className="journal-resume" to={lastRead.to}>
             <span>Continue reading</span>

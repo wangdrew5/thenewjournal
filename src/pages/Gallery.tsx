@@ -259,6 +259,7 @@ export default function Gallery() {
         transition={{ duration: reduced ? 0 : 0.4 }}
       >
         <h1>Gallery</h1>
+        <p>Writing, artwork, films, and songs from The New Journal.</p>
       </motion.header>
       {all.length === 0 ? (
         <p className="gw-empty">The first works are on their way.</p>

@@ -284,7 +284,7 @@ export default function CoverTable({ publications }: { publications: Publication
   const liftedAt = publications.findIndex((publication) => publication.id === lifted);
   const featured = liftedAt >= 0 ? publications[liftedAt] : null;
   return (
-    <section className="cover-table" aria-label="Issues">
+    <section className={`cover-table${publications.length === 1 ? " has-one-issue" : ""}`} aria-label="Issues">
       <div className="table-spread">
         <Polaroid />
         <Letter />
