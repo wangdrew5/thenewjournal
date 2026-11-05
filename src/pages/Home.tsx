@@ -2,8 +2,11 @@ import { Link } from "react-router-dom";
 import { motion, useReducedMotion } from "framer-motion";
 import { useJournal } from "../lib/useJournal";
 import CoverTable from "../components/table/CoverTable";
-import { matchesPublished } from "../data/publishedIssues";
+import { matchesPublished, publishedIssues } from "../data/publishedIssues";
 import { PREVIEW_ID } from "../lib/preview";
+import { readingPosition, READING_KEY } from "../lib/readingPosition";
+import { issueName } from "../lib/issueLabel";
+import InsideIssue from "../components/inside/InsideIssue";
 
 export default function Home() {
   const reduced = useReducedMotion();
@@ -14,6 +17,10 @@ export default function Home() {
   );
   // Gallery-edition issues live in the Gallery, as individual works; the table holds magazines.
   const magazines = publications.filter((p) => p.theme !== "museum");
+  let lastRead = null;
+  try {
+    lastRead = readingPosition(localStorage.getItem(READING_KEY), publications.filter((p) => p.id !== PREVIEW_ID));
+  } catch { /* The rest of the journal works without browser storage. */ }
   return (
     <main className="home-page journal-home mx-auto max-w-6xl px-6 pb-24 sm:px-10">
       <motion.header
@@ -23,8 +30,24 @@ export default function Home() {
         transition={{ duration: reduced ? 0 : 0.4 }}
       >
         <h1>The <i>New</i> Journal<span aria-hidden="true">.</span></h1>
+        <p className="journal-intro">An online publication by and for incarcerated youth and adults.</p>
+        {magazines.length === 1 && (
+          <Link className="journal-featured" to={`/publication/${magazines[0].id}`}>
+            <span>{issueName(magazines[0])}</span>
+            <strong>{magazines[0].caption}</strong>
+            <span>Open issue <span aria-hidden="true">↗</span></span>
+          </Link>
+        )}
+        {lastRead && (
+          <Link className="journal-resume" to={lastRead.to}>
+            <span>Continue reading</span>
+            <strong>{lastRead.page.piece?.title}</strong>
+            <span aria-hidden="true">↗</span>
+          </Link>
+        )}
       </motion.header>
       <CoverTable publications={magazines} />
+      <InsideIssue publication={publishedIssues[0]} />
       {import.meta.env.DEV && <motion.section className="journal-desk" aria-labelledby="try-heading" initial={{ opacity: reduced ? 1 : 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
         <div className="desk-paper" aria-hidden="true"><span>The New Journal / Your issue</span><i>It starts<br />with a page.</i><div className="desk-lines"><b /><b /><b /><b /></div><span>01</span></div>
         <div className="desk-copy">

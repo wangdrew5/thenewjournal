@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { useDialogFocus } from "../lib/useDialogFocus";
 
 // A phone: a touch screen whose shorter side is phone-sized. Tablets and computers never match.
 function isPhone() {
@@ -13,10 +14,11 @@ function isPhone() {
 export default function PhoneNotice() {
   const [open, setOpen] = useState(isPhone);
   const button = useRef<HTMLButtonElement>(null);
+  const dialog = useRef<HTMLDivElement>(null);
+  useDialogFocus(dialog, button, open);
 
   useEffect(() => {
     if (!open) return;
-    button.current?.focus();
     const key = (event: KeyboardEvent) => event.key === "Escape" && close();
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
@@ -29,7 +31,7 @@ export default function PhoneNotice() {
   if (!open) return null;
   return (
     <div className="phone-notice" onClick={(event) => event.target === event.currentTarget && close()}>
-      <div className="phone-notice-card" role="dialog" aria-modal="true" aria-labelledby="phone-notice-title">
+      <div ref={dialog} tabIndex={-1} className="phone-notice-card" role="dialog" aria-modal="true" aria-labelledby="phone-notice-title">
         <h2 id="phone-notice-title">Best on a computer</h2>
         <p>You can read The New Journal on your phone, but it looks and works best on a bigger screen.</p>
         <button ref={button} type="button" onClick={close}>

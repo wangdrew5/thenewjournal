@@ -436,7 +436,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
     if (skipTouchClick.current) { skipTouchClick.current = false; return; }
     if (
       // Element, not HTMLElement: a click on an icon inside a control targets the SVG.
-      (event.target instanceof Element && event.target.closest(CONTROLS)) ||
+      (event.target instanceof Element && event.target.closest(`${CONTROLS}, .sr-body`)) ||
       window.getSelection()?.toString()
     )
       return;
