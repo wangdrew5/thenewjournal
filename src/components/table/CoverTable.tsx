@@ -265,7 +265,7 @@ export default function CoverTable({ publications }: { publications: Publication
     if (!cover) return finishReturn();
     const rect = cover.getBoundingClientRect();
     if (rect.top < 0 || rect.bottom > window.innerHeight)
-      cover.scrollIntoView({ block: "center", behavior: "instant" });
+      cover.scrollIntoView({ block: "nearest", behavior: "instant" });
     setReturnTarget(cover);
   }, [covers]);
   // Once the overlay has gone, set the copy back down on the table.

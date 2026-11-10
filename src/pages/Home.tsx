@@ -4,6 +4,7 @@ import { useJournal } from "../lib/useJournal";
 import CoverTable from "../components/table/CoverTable";
 import { matchesPublished } from "../data/publishedIssues";
 import { PREVIEW_ID } from "../lib/preview";
+import ContinueReading from "../components/ContinueReading";
 
 export default function Home() {
   const reduced = useReducedMotion();
@@ -24,6 +25,7 @@ export default function Home() {
       >
         <h1>The <i>New</i> Journal<span aria-hidden="true">.</span></h1>
       </motion.header>
+      <ContinueReading publications={publications} />
       <CoverTable publications={magazines} />
       {import.meta.env.DEV && <motion.section className="journal-desk" aria-labelledby="try-heading" initial={{ opacity: reduced ? 1 : 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
         <div className="desk-paper" aria-hidden="true"><span>The New Journal / Your issue</span><i>It starts<br />with a page.</i><div className="desk-lines"><b /><b /><b /><b /></div><span>01</span></div>

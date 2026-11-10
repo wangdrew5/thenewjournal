@@ -3,6 +3,12 @@ import { magazinePages } from "./magazine";
 
 export const READING_KEY = "tnj:reading:v1";
 
+export function rememberReadingPosition(publicationId: string, pieceId: string) {
+  try {
+    localStorage.setItem(READING_KEY, JSON.stringify({ version: 1, publicationId, pieceId }));
+  } catch { /* Reading stays available when browser storage is disabled. */ }
+}
+
 export function readingPosition(raw: string | null, publications: Publication[]) {
   try {
     const value = JSON.parse(raw ?? "null");
