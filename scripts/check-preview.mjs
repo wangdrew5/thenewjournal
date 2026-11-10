@@ -542,6 +542,21 @@ try {
   assert.equal(issueName({ ...onPages, issueNumber: undefined }), "Online issue", "A published issue without a number gets neutral text");
   assert.equal(issueName({ ...onPages, id: m.PREVIEW_ID, issueNumber: undefined }), "Your issue");
 
+  // The homepage selection must work with real media as well as issues without art.
+  const { default: InsideIssue } = await server.ssrLoadModule("/src/components/inside/InsideIssue.tsx");
+  const inside = (publication) => renderToStaticMarkup(
+    React.createElement(MemoryRouter, null, React.createElement(InsideIssue, { publication })),
+  );
+  assert.equal(inside(undefined), "", "No issue means no empty feature");
+  assert.equal(inside({ ...onPages, pieces: [] }), "", "An empty issue has no feature");
+  const selection = inside(onPages);
+  assert.ok(selection.includes(first.issue.pieces[1].image), "The featured artwork uses its published image");
+  assert.ok(selection.includes("/publication/issue-01?piece=preview-art-p"), "Artwork opens the correct piece");
+  assert.ok(selection.includes("Uploaded"), "The song is offered in the selection");
+  assert.ok(!selection.includes("<audio"), "The homepage never starts a song");
+  const writingOnly = inside({ ...onPages, pieces: onPages.pieces.filter((p) => p.type === "poem") });
+  assert.ok(writingOnly.includes("/publication/issue-01?piece=preview-poem-p"), "An issue without art still links to its writing");
+
   // Empty state: no published issues (or only empty ones) shows a message, not a crash.
   assert.deepEqual(published.readPublished({}), []);
   assert.deepEqual(
