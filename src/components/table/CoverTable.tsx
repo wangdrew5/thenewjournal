@@ -59,7 +59,7 @@ function Cover({ publication }: { publication: Publication }) {
         <div className="tc-work">
           {publication.coverSrc ? <img src={publication.coverSrc} alt="" /> : <IssueArtwork />}
         </div>
-        <h3 className="tc-title">{publication.caption}</h3>
+        <h2 className="tc-title">{publication.caption}</h2>
         <p className="tc-sub">The New Journal, {issueName(publication)}</p>
         <OpenRow label="Enter the gallery" />
       </>
@@ -76,7 +76,7 @@ function Cover({ publication }: { publication: Publication }) {
         <span>The New Journal</span>
         <span>{issueName(publication, "No.")}</span>
       </div>
-      <h3 className="tc-title">{publication.caption}</h3>
+      <h2 className="tc-title">{publication.caption}</h2>
       <OpenRow label="Open the magazine" />
     </>
   );

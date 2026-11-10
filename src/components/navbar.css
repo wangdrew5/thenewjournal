@@ -1,0 +1,99 @@
+.site-nav-links {
+  display: flex;
+  align-items: center;
+  gap: inherit;
+}
+.site-menu-toggle {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .site-header nav {
+    gap: 8px;
+    padding: calc(8px + env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) 8px max(16px, env(safe-area-inset-left));
+  }
+  .site-header nav > .nav-link {
+    justify-content: center;
+    min-width: 44px;
+    font-size: 17px;
+  }
+  .site-header .site-nav-actions {
+    gap: 8px;
+  }
+  .site-header .social-link {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+  }
+  .site-menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    min-width: 86px;
+    padding: 0 12px;
+    border: 1px solid currentColor;
+    border-radius: 999px;
+    font-size: 14px;
+  }
+  .site-menu-toggle svg {
+    width: 20px;
+    height: 20px;
+  }
+  .site-menu-toggle:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 4px;
+  }
+  :root[data-scene="table"] .site-menu-toggle {
+    color: #f6e8d0;
+    background: #1d0f0633;
+  }
+  :root[data-scene="table"][data-mode="light"] .site-menu-toggle {
+    color: #2b1a0e;
+    background: #fbf3e633;
+  }
+  .site-header .site-nav-links {
+    position: absolute;
+    top: 100%;
+    left: max(16px, env(safe-area-inset-left));
+    right: max(16px, env(safe-area-inset-right));
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    padding: 12px;
+    border: 1px solid #f6e8d033;
+    border-radius: 8px;
+    background: #1d130c;
+    box-shadow: 0 16px 32px #0005;
+  }
+  .site-header .site-nav-links.is-open {
+    display: flex;
+  }
+  .site-header .site-nav-links .nav-link {
+    min-height: 48px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    color: #f6e8d0;
+    font-size: 16px;
+    filter: none;
+  }
+  .site-header .site-nav-links .social-link {
+    width: 100%;
+    justify-content: flex-start;
+    padding: 8px 16px;
+    gap: 12px;
+    color: #f6e8d0;
+  }
+  .site-nav-links .social-link::after {
+    content: "Instagram";
+    font-size: 16px;
+  }
+  .site-header .site-nav-links .nav-link::after {
+    display: none;
+  }
+  .site-header .site-nav-links .nav-link:is(:hover, :focus-visible, .is-active) {
+    background: #f6e8d012;
+  }
+}

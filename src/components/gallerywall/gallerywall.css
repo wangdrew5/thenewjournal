@@ -151,10 +151,19 @@
   z-index: 90;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  border: 0;
   overflow-y: auto;
   padding: 0 clamp(18px, 5vw, 64px) 32px;
   background: #0c0b09;
   color: #efe6d6;
+}
+.gw-dialog:not([open]) {
+  display: none;
 }
 .gw-dialog-bar {
   position: sticky;
@@ -310,4 +319,59 @@
 }
 .gw-look-missing {
   font-style: italic;
+}
+
+@media (max-width: 640px) {
+  .gw-page {
+    padding-top: calc(98px + env(safe-area-inset-top));
+    padding-inline: max(22px, env(safe-area-inset-left)) max(22px, env(safe-area-inset-right));
+  }
+  .gw-wallgrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 34px;
+    margin-top: 30px;
+  }
+  .gw-card:active :is(.gw-frame, .gw-sheet, .gw-screen, .gw-tape) {
+    transform: scale(0.985);
+  }
+  .gw-plate {
+    gap: 5px;
+  }
+  .gw-plate strong {
+    font-size: 24px;
+  }
+  .gw-plate span {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .gw-dialog {
+    padding: env(safe-area-inset-top) max(22px, env(safe-area-inset-right)) 0 max(22px, env(safe-area-inset-left));
+    overscroll-behavior-y: contain;
+  }
+  .gw-dialog-bar {
+    padding: 10px 0 16px;
+  }
+  .gw-dialog-body {
+    flex: 1 0 auto;
+    padding-bottom: 24px;
+  }
+  .gw-dialog-nav {
+    position: sticky;
+    bottom: 0;
+    flex-shrink: 0;
+    gap: 12px;
+    margin-top: 0;
+    padding: 14px 0 max(14px, env(safe-area-inset-bottom));
+    border-top: 1px solid #efe6d626;
+    background: #0c0b09;
+  }
+  .gw-dialog-nav button {
+    flex: 1;
+    padding-inline: 10px;
+    min-height: 48px;
+  }
+  .gw-source {
+    min-height: 44px;
+    line-height: 1.6;
+  }
 }

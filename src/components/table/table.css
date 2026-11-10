@@ -892,3 +892,89 @@ html,
 body {
   overflow-x: clip;
 }
+
+/* A phone has a table of its own: the newest cover is large enough to read,
+   and the other issues have separate touch targets instead of overlapping. */
+@media (max-width: 640px) {
+  :root[data-scene="table"] .journal-home {
+    padding-top: calc(78px + env(safe-area-inset-top));
+    padding-inline: max(22px, env(safe-area-inset-left)) max(22px, env(safe-area-inset-right));
+  }
+  .journal-masthead {
+    margin-bottom: 24px;
+  }
+  .journal-masthead h1 {
+    font-size: clamp(36px, 10.4vw, 62px);
+  }
+  .cover-table {
+    --cw: 100%;
+    --lap: 0;
+  }
+  .table-spread {
+    padding: 24px 4px 64px;
+  }
+  .table-covers {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+    gap: 38px 22px;
+    padding: 0;
+  }
+  .table-covers .tc {
+    margin: 0;
+    transform: none;
+  }
+  .table-covers .tc:first-child {
+    grid-column: 1 / -1;
+    justify-self: center;
+    width: min(78%, 300px);
+  }
+  .table-covers .tc-copy {
+    transform: rotate(calc(var(--r) * 0.4));
+  }
+  .table-covers .tc:active .tc-copy {
+    transform: rotate(0deg) scale(0.98);
+  }
+  .cover-table .tc :is(.tc-mast, .tc-title, .tc-open, .tc-sub) {
+    right: 14px;
+  }
+  .tc:first-child .tc-title {
+    font-size: clamp(30px, 8.5vw, 38px);
+    bottom: 48px;
+  }
+  .tc:first-child .tc-mast span:first-child {
+    font-size: 24px;
+  }
+  .tc:first-child .tc-open {
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+  .table-mug {
+    top: -28px;
+    right: -48px;
+    width: 100px;
+  }
+  .table-letter {
+    width: 160px;
+    bottom: 32px;
+    left: -70px;
+  }
+  .table-pencil {
+    bottom: 12px;
+    left: 0;
+  }
+  .table-caption {
+    margin-top: 0;
+    font-size: 14px;
+  }
+  :root[data-scene="table"] .journal-desk {
+    margin-top: 110px;
+  }
+  .paper-sheet {
+    padding: 30px 24px 36px;
+    transform: none;
+  }
+  .paper-sheet p {
+    font-size: 17px;
+  }
+}

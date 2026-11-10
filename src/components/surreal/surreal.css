@@ -1447,3 +1447,112 @@ html[data-read-tone="night"] .sr-body::-webkit-scrollbar-thumb {
     width: auto;
   }
 }
+
+/* Phone reading: one continuous sheet, with the illustration and the complete
+   work in the same scroll. The desktop spread and sideways-phone layout stay intact. */
+.sr-position {
+  display: none;
+}
+@media (max-width: 899px) {
+  .sr-top {
+    padding-top: calc(8px + env(safe-area-inset-top));
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
+    gap: 8px;
+  }
+  .sr-pill,
+  .sr-actions .micro-button,
+  .sr-read-row button {
+    min-height: 44px;
+  }
+  .sr-round {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .sr-reader {
+    min-height: 0;
+  }
+  .sr-book,
+  .sr-single,
+  .sr-body {
+    touch-action: pan-y pinch-zoom;
+  }
+  .sr-read-panel {
+    top: calc(62px + env(safe-area-inset-top));
+  }
+}
+@media (max-width: 899px) and (orientation: portrait), (max-width: 899px) and (min-height: 521px) {
+  .sr-stage {
+    padding: 10px 12px 14px;
+  }
+  .sr-book.is-single {
+    --pw: min(580px, calc(100vw - 24px));
+    height: 100%;
+    min-height: 0;
+  }
+  .sr-single {
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: thin;
+    scrollbar-color: #8b4f3a66 transparent;
+  }
+  .sr-single:not(.is-art) .sr-single-plate {
+    flex: 0 0 auto;
+    min-height: 180px;
+  }
+  .sr-single.is-art .sr-single-plate {
+    flex: 0 0 auto;
+    height: clamp(320px, 52svh, 520px);
+  }
+  .sr-single > .sr-paper {
+    flex: 1 0 auto;
+    min-height: calc(100% - 180px);
+    padding: 20px 24px 14px;
+  }
+  .sr-single.is-art > .sr-paper {
+    min-height: 0;
+  }
+  .sr-single .sr-body {
+    flex: 1 0 auto;
+    overflow: visible;
+    padding: 20px 0 26px;
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+  .sr-single.is-art > .sr-paper .sr-title {
+    display: block;
+    margin: 0 0 22px;
+    font-size: 30px;
+  }
+  .sr-single .sr-poem p {
+    font-size: calc(19px * var(--read-scale, 1));
+    line-height: 1.65;
+    overflow-wrap: anywhere;
+  }
+  .sr-single .sr-caption {
+    font-size: calc(18px * var(--read-scale, 1));
+  }
+  .sr-single .sr-foot {
+    flex-shrink: 0;
+  }
+  .sr-bottom {
+    padding: 0 max(16px, env(safe-area-inset-right)) max(10px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+  }
+  .sr-position {
+    display: block;
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.08em;
+  }
+  .sr-stars {
+    display: none;
+  }
+}
+@media (orientation: landscape) and (max-height: 520px) and (pointer: coarse) {
+  .sr-book.is-single {
+    height: calc(100dvh - 74px - env(safe-area-inset-top));
+  }
+  .sr-book.is-spread {
+    --pw: min(calc((100vw - 140px) / 2), calc((100dvh - 74px - env(safe-area-inset-top)) * 0.74));
+  }
+}

@@ -307,6 +307,40 @@ function BlankFace() {
   return <div className="sr-paper is-blank" />;
 }
 
+// A phone scrolls the illustration and paper together. Keep that scroll on the
+// turning copy too, so swiping away from a long poem doesn't jump to its beginning.
+function SinglePage({
+  page,
+  children,
+  startAt,
+  scrolls,
+}: {
+  page: MagazinePage;
+  children: ReactNode;
+  startAt: number;
+  scrolls: Map<string, number>;
+}) {
+  const root = useRef<HTMLDivElement>(null);
+  const initialScroll = useRef(startAt);
+  useLayoutEffect(() => {
+    if (!root.current) return;
+    root.current.scrollTop = initialScroll.current;
+    scrolls.set(page.id, root.current.scrollTop);
+  }, [page.id, scrolls]);
+  return (
+    <div
+      ref={root}
+      className={`sr-single is-${page.piece!.type}`}
+      onScroll={(event) => {
+        if (event.target === event.currentTarget)
+          scrolls.set(page.id, event.currentTarget.scrollTop);
+      }}
+    >
+      {children}
+    </div>
+  );
+}
+
 /* ---------- Reader ---------- */
 
 // The scene clock is shared by every copy of a page's scenery, so hand-overs between them
@@ -342,6 +376,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
     }
   }, [publication]);
   const spread = useMediaQuery("(min-width: 900px)");
+  const flipSeconds = spread ? FLIP_SECONDS : 0.5;
   const last = pages.length - 1;
 
   // `shown` is the page at rest and the URL `index` is the latest page asked for. A flip
@@ -371,13 +406,13 @@ function SurrealBook({ publication }: { publication: Publication }) {
     const singleBack = !spread && !fwd;
     rot.set(singleBack ? -180 : 0);
     const controls = animate(rot, singleBack ? 0 : fwd ? -180 : 180, {
-      duration: FLIP_SECONDS,
+      duration: flipSeconds,
       ease: [0.45, 0.05, 0.2, 1],
       onComplete: () =>
         setView((v) => (v.flip?.id === flip.id ? { ...v, shown: flip.to, flip: null } : v)),
     });
     return () => controls.stop();
-  }, [flip, rot, spread]);
+  }, [flip, rot, spread, flipSeconds]);
 
   const abs = useTransform(rot, (r) => Math.abs(r));
   const leafShade = useTransform(abs, (a) => Math.sin((a * Math.PI) / 180) * 0.42);
@@ -393,7 +428,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
   // the page seen as the turn begins, "end" for the one seen as it lands. Their scenes hold
   // still at that moment (see DreamScene's frozenAhead).
   type Copy = false | "start" | "end";
-  const frozen = (copy: Copy) => (copy === "start" ? 0 : copy === "end" ? FLIP_SECONDS * 1000 : undefined);
+  const frozen = (copy: Copy) => (copy === "start" ? 0 : copy === "end" ? flipSeconds * 1000 : undefined);
   const face = (i: number, side: "L" | "R" | "P", copy: Copy = false): ReactNode => {
     const p = pages[i];
     if (!p) return <BlankFace />;
@@ -435,10 +470,15 @@ function SurrealBook({ publication }: { publication: Publication }) {
   } else {
     const single = (i: number, copy: Copy = false) =>
       pages[i]?.piece ? (
-        <div className={`sr-single is-${pages[i].piece!.type}`}>
+        <SinglePage
+          key={pages[i].id}
+          page={pages[i]}
+          startAt={flip && i === flip.from ? scrolls.get(pages[i].id) ?? 0 : 0}
+          scrolls={scrolls}
+        >
           <div className="sr-single-plate">{face(i, "L", copy)}</div>
           {face(i, "R", copy)}
-        </div>
+        </SinglePage>
       ) : (
         face(i, "R", copy)
       );
@@ -462,6 +502,9 @@ function SurrealBook({ publication }: { publication: Publication }) {
       window.getSelection()?.toString()
     )
       return;
+    // Reading and text selection on a phone never turn the page. Use a swipe,
+    // the arrows, or Contents; tapping the front cover still opens the issue.
+    if (!spread && pages[index]?.piece) return;
     const rect = event.currentTarget.getBoundingClientRect();
     const ratio = (event.clientX - rect.left) / rect.width;
     if (closed) return goTo(1);
@@ -503,7 +546,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
           className={`sr-book ${spread ? "is-spread" : "is-single"} ${closed ? "is-closed" : ""}`}
           initial={false}
           animate={{ x: closed ? "-25%" : "0%" }}
-          transition={{ duration: reduced ? 0 : FLIP_SECONDS, ease: [0.45, 0.05, 0.2, 1] }}
+          transition={{ duration: reduced ? 0 : flipSeconds, ease: [0.45, 0.05, 0.2, 1] }}
           onClick={onClick}
           onPointerDown={(e) => {
             skipTouchClick.current = false;
@@ -549,6 +592,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
               className={`sr-leaf on-${leaf.side}`}
               style={{ rotateY: rot, z: leafLift }}
               aria-hidden="true"
+              inert
             >
               <div className="sr-face sr-face-front">
                 {leaf.front}
@@ -568,6 +612,9 @@ function SurrealBook({ publication }: { publication: Publication }) {
           ←
         </button>
         <div className="sr-progress">
+          <span className="sr-position" aria-live="polite" aria-atomic="true">
+            {index === 0 ? "Cover" : `${index} / ${last}`}
+          </span>
           <span className="sr-stars" aria-hidden="true">
             {pages.length <= 24 &&
               pages.map((p, i) => (

@@ -156,9 +156,15 @@ function WorkDialog({
   onStep: (offset: -1 | 1) => void;
 }) {
   const reduced = useReducedMotion();
+  const dialog = useRef<HTMLDialogElement>(null);
   const close = useRef<HTMLButtonElement>(null);
   const { piece, publication } = works[index];
+  function dismiss() {
+    dialog.current?.close();
+    onClose();
+  }
   useEffect(() => {
+    dialog.current?.showModal();
     close.current?.focus();
     const overflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -167,16 +173,20 @@ function WorkDialog({
     };
   }, []);
   useEffect(() => {
+    dialog.current?.scrollTo({ top: 0 });
+  }, [index]);
+  useEffect(() => {
     const key = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-      else if (event.key === "ArrowRight") onStep(1);
+      if (event.target instanceof Element && event.target.closest("audio, video, input, textarea, select")) return;
+      if (event.key === "ArrowRight") onStep(1);
       else if (event.key === "ArrowLeft") onStep(-1);
     };
     window.addEventListener("keydown", key);
     return () => window.removeEventListener("keydown", key);
-  }, [onClose, onStep]);
+  }, [onStep]);
   return (
-    <motion.div
+    <motion.dialog
+      ref={dialog}
       className="gw-dialog"
       role="dialog"
       aria-modal="true"
@@ -185,14 +195,18 @@ function WorkDialog({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: reduced ? 0 : 0.2 }}
-      onClick={(event) => event.target === event.currentTarget && onClose()}
+      onCancel={(event) => {
+        event.preventDefault();
+        dismiss();
+      }}
+      onClick={(event) => event.target === event.currentTarget && dismiss()}
     >
       <div className="gw-dialog-bar">
         <div>
           <span>
             {index + 1} of {works.length}
           </span>
-          <button ref={close} type="button" onClick={onClose}>
+          <button ref={close} type="button" onClick={dismiss}>
             Close
           </button>
         </div>
@@ -216,7 +230,7 @@ function WorkDialog({
           </button>
         </div>
       )}
-    </motion.div>
+    </motion.dialog>
   );
 }
 
