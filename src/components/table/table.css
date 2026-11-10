@@ -461,6 +461,8 @@
   padding-top: 44px;
   margin-top: 44px;
   border-top: 1px solid rgba(74, 51, 34, 0.18);
+  /* Arriving from a logo in an issue (/partners#id) lands clear of the fixed nav bar. */
+  scroll-margin-top: 116px;
 }
 .partner-logo {
   display: inline-flex;
@@ -491,11 +493,19 @@
   text-decoration-color: rgba(109, 63, 31, 0.35);
   text-underline-offset: 3px;
 }
-.partner-site:hover {
+.partner-inline {
+  color: #6d3f1f;
+  text-decoration: underline;
+  text-decoration-color: rgba(109, 63, 31, 0.35);
+  text-underline-offset: 3px;
+}
+.partner-site:hover,
+.partner-inline:hover {
   text-decoration-color: currentColor;
 }
 .partner-logo:focus-visible,
-.partner-site:focus-visible {
+.partner-site:focus-visible,
+.partner-inline:focus-visible {
   outline: 2px solid #8a5a36;
   outline-offset: 4px;
   border-radius: 2px;

@@ -833,6 +833,18 @@
   max-height: 100%;
   object-fit: contain;
 }
+/* The logo links to the partner's write-up on Our partners. */
+.sr-plate-partner.is-link {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.sr-plate-partner.is-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.22);
+}
+.sr-plate-partner.is-link:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.85);
+  outline-offset: 3px;
+}
 /* Clear of the film's sprocket strip. */
 .sr-plate.is-film .sr-plate-partner {
   left: max(clamp(24px, 3vw, 44px), 58px);

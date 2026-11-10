@@ -44,6 +44,8 @@ Songs can use a direct HTTPS audio link or an audio file chosen from disk (MP3, 
 
 The publish endpoints exist only under `npm run dev` and only answer requests from this computer that carry the editor's header. Media paths are stored relative to the site root and gain the base path when shown, so the site also works from a sub-path; it is served from the root of thenewjournal.org.
 
+In a poem's text (or a song transcript), a line wrapped in asterisks, like `*This poem was previously published in …*`, shows in italics.
+
 **Add a piece** lets you add writing, artwork, films, or songs to a growing issue (up to 200 pieces). Select any piece in the contents list to edit it, move it up/down, or remove it with an undo option. Open finished pieces in the reader. Existing two-poem drafts migrate automatically without changing their piece IDs.
 
 Drafts save in this browser until you publish. **Download issue** saves a portable JSON copy including embedded images (an uploaded song is referenced by its path, not copied into the file); **Restore issue** validates and opens downloaded files up to 8 MB, with confirmation before replacing existing work. A cover is optional. JPG, PNG, and WebP images under 1 MB are supported. Films use direct HTTPS MP4/WebM links, not video-platform page links. Songs use a direct HTTPS audio link or an uploaded audio file. Issue files saved before songs or publishing existed still restore. **Start over** clears the draft after confirmation.

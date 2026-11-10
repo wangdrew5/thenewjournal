@@ -10,6 +10,7 @@ export interface Partner {
    * Logos with their own background or outline read anywhere and need none.
    */
   logoOnDark?: string;
+  /** `[words](https://…)` in a paragraph becomes a link that opens in a new tab. */
   paragraphs: string[];
 }
 
@@ -25,7 +26,7 @@ export const partners: Partner[] = [
     paragraphs: [
       "The Pongo Poetry Project is a Seattle-based nonprofit that helps incarcerated and trauma-impacted youth express themselves through poetry. Through writing workshops in juvenile detention centers, psychiatric hospitals, and other facilities, Pongo gives young people a space to process their experiences and share their stories. The organization also publishes collections of poetry written by participants, allowing their voices to reach people outside these facilities.",
       "Through writing workshops, participants explore their emotions, reflect on their lives, and put their stories into words. Their poetry gives readers a chance to hear perspectives that are often overlooked and better understand the people behind them.",
-      "If you’d like to support Pongo, one of the most direct ways is to become a poetry mentor and sit with young writers as they put their experiences into words. Donations help keep those workshops going in detention centers and hospitals. Reading the poetry collections Pongo publishes, and passing them on to someone else, helps these voices travel a little further. And if you want to bring this kind of writing into your own community, Pongo offers training for that too.",
+      "If you’d like to support Pongo, one of the most direct ways is to become a poetry mentor and sit with young writers as they put their experiences into words. Donations help keep those workshops going in detention centers and hospitals. Reading [the poetry collections Pongo publishes](https://pongopoetryproject.org/bookstore/), and passing them on to someone else, helps these voices travel a little further. And if you want to bring this kind of writing into your own community, Pongo offers training for that too.",
     ],
   },
   {
@@ -47,7 +48,7 @@ export const partners: Partner[] = [
     paragraphs: [
       "Unincarcerated Productions is a Washington-based media organization that works with incarcerated and formerly incarcerated individuals through filmmaking, podcasts, and digital storytelling. Its programs, including Inside/Out Media Labs, teach participants skills in video production, interviewing, and other forms of media, helping them build creative and professional skills that can create opportunities after incarceration.",
       "The organization also produces projects such as Concrete Mama: The Podcast, which shares stories and conversations from inside Washington State Penitentiary. Through its programs, participants produce work that reflects their own experiences, giving audiences a closer look at life during and after incarceration, told by the people who have experienced it themselves.",
-      "Supporting Unincarcerated can start with something as easy as pressing play. Watching its films, listening to Concrete Mama, and sharing them with people you know helps these stories reach past prison walls. Donations go toward programs that teach participants their craft, along with skills that can open doors once they’re home. Organizations and creators who want to work together can also reach out about collaborating.",
+      "Supporting Unincarcerated can start with something as easy as pressing play. Its first narrative short film, [Lockdown](https://www.unincarcerated.org/lockdown), was written and directed by incarcerated students inside Washington State Penitentiary, and watching it helps fund the next one. Watching its films, listening to Concrete Mama, and sharing them with people you know helps these stories reach past prison walls. Donations go toward programs that teach participants their craft, along with skills that can open doors once they’re home. Organizations and creators who want to work together can also reach out about collaborating.",
     ],
   },
   {

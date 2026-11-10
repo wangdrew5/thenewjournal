@@ -1,4 +1,5 @@
 import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { verseLine } from "../../lib/verse";
 import type { PoemPiece } from "../../data/publications";
 import PieceHeader from "./PieceHeader";
 import EditorArt from "./EditorArt";
@@ -49,7 +50,7 @@ export default function PoemView({ piece, animateLines = true }: Props) {
               }
               className="transition-colors duration-300 hover:text-white"
             >
-              {line || "\u00a0"}
+              {verseLine(line)}
             </motion.p>
           ))}
         </div>

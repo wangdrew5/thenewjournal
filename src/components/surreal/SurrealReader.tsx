@@ -27,6 +27,7 @@ import { SCENE_COUNT } from "./scenes";
 import { SceneClockContext, createSceneClock } from "./sceneClock";
 import "./surreal.css";
 import { issueName } from "../../lib/issueLabel";
+import { verseLine } from "../../lib/verse";
 
 const FLIP_SECONDS = 0.95;
 const sceneFor = (index: number) => index % SCENE_COUNT;
@@ -45,7 +46,7 @@ function Lines({ lines, dropCap }: { lines: string[]; dropCap: boolean }) {
   return (
     <div className={`sr-poem ${dropCap ? "has-dropcap" : ""}`}>
       {lines.map((line, i) => (
-        <p key={i}>{line || "\u00a0"}</p>
+        <p key={i}>{verseLine(line)}</p>
       ))}
     </div>
   );
@@ -107,6 +108,28 @@ function CoverFace({ publication, frozenAhead }: { publication: Publication; fro
   );
 }
 
+function PartnerTab({
+  live,
+  to,
+  label,
+  className,
+  children,
+}: {
+  live: boolean;
+  to: string;
+  label: string;
+  className: string;
+  children: ReactNode;
+}) {
+  return live ? (
+    <Link to={to} className={`${className} is-link`} aria-label={label} title="About our partners">
+      {children}
+    </Link>
+  ) : (
+    <div className={className}>{children}</div>
+  );
+}
+
 // `live` is false for the copies of a page drawn on the turning leaf: they show the same
 // song state but cannot be used, so the page at rest stays the only working player.
 function PlateFace({
@@ -142,12 +165,19 @@ function PlateFace({
       />
       <div className="sr-plate-shade" />
       {partner && (
-        <div className={`sr-plate-partner ${partner.logoOnDark ? "has-dark-version" : ""}`}>
-          <img className="for-light" src={partnerLogoUrl(partner)} alt={`With ${partner.name}`} decoding="async" />
+        // The logo opens this partner's write-up on Our partners. A copy on the turning leaf
+        // is drawn as a plain tab, so it can't be clicked or focused mid-turn.
+        <PartnerTab
+          live={live}
+          to={`/partners#${partner.id}`}
+          label={`${partner.name}: read about our partners`}
+          className={`sr-plate-partner ${partner.logoOnDark ? "has-dark-version" : ""}`}
+        >
+          <img className="for-light" src={partnerLogoUrl(partner)} alt={live ? "" : `With ${partner.name}`} decoding="async" />
           {partner.logoOnDark && (
-            <img className="for-dark" src={partnerLogoUrl(partner, true)} alt={`With ${partner.name}`} decoding="async" />
+            <img className="for-dark" src={partnerLogoUrl(partner, true)} alt={live ? "" : `With ${partner.name}`} decoding="async" />
           )}
-        </div>
+        </PartnerTab>
       )}
       {isArt ? (
         <figure className="sr-hung">

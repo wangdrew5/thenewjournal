@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { verseLine } from "../lib/verse";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useJournal } from "../lib/useJournal";
@@ -96,7 +97,7 @@ function Look({ piece }: { piece: Piece }) {
       {piece.type === "poem" && (
         <div className="gw-look-lines">
           {piece.lines.map((line, index) => (
-            <p key={index}>{line || "\u00a0"}</p>
+            <p key={index}>{verseLine(line)}</p>
           ))}
         </div>
       )}
@@ -133,7 +134,7 @@ function Look({ piece }: { piece: Piece }) {
           {piece.transcript.some((line) => line.trim()) && (
             <section className="gw-look-lines" aria-label={`Transcript of ${piece.title}`}>
               {piece.transcript.map((line, index) => (
-                <p key={index}>{line || "\u00a0"}</p>
+                <p key={index}>{verseLine(line)}</p>
               ))}
             </section>
           )}

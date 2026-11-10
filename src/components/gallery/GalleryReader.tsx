@@ -1,4 +1,5 @@
 import { useRef, useState, type CSSProperties } from "react";
+import { verseLine } from "../../lib/verse";
 import { Link } from "react-router-dom";
 import type { Publication } from "../../data/publications";
 import type { MagazinePage } from "../../lib/magazine";
@@ -56,7 +57,7 @@ function Verses({ lines }: { lines: string[] }) {
     <div className="gal-poem">
       {lines.map((line, i) => (
         <p key={i} style={{ "--l": Math.min(i, 18) } as CSSProperties}>
-          {line || "\u00a0"}
+          {verseLine(line)}
         </p>
       ))}
     </div>
