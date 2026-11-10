@@ -22,7 +22,7 @@ function spoken(seconds: number) {
 
 const messages = {
   error:
-    "This song could not play. Check that the link opens an audio file, such as an MP3, that allows playback from other sites.",
+    "This song could not play right now. Press play to try again.",
   blocked: "Your browser blocked playback. Press play to try again.",
 };
 

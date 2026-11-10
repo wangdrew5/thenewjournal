@@ -25,6 +25,9 @@ body {
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
+:where(a, button, summary) {
+  touch-action: manipulation;
+}
 
 h1,
 h2,
@@ -514,16 +517,25 @@ body:has(dialog[open]) {
   background: #080c09;
   color: white;
   box-shadow: 0 0 70px #22b25c12;
+  overflow-y: auto;
+  overscroll-behavior: contain;
 }
 .issue-dialog::backdrop {
   background: #000b;
   backdrop-filter: blur(5px);
 }
 .issue-dialog-heading {
+  position: sticky;
+  top: -26px;
+  z-index: 1;
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
+  margin-top: -26px;
+  margin-inline: -26px;
+  padding: 18px 26px 12px;
+  background: #080c09;
 }
 .issue-dialog-heading h2 {
   font-size: 26px;
@@ -1635,6 +1647,12 @@ body:has(.journal-home) .nav-link { font-size: 12px; letter-spacing: .02em; text
 }
 .song-level {
   width: 72px;
+}
+@media (pointer: coarse) {
+  .song-seek,
+  .song-level {
+    height: 44px;
+  }
 }
 .song-seek:disabled,
 .song-level:disabled {

@@ -358,7 +358,7 @@ export default function SurrealReader({ publication }: { publication: Publicatio
 function SurrealBook({ publication }: { publication: Publication }) {
   useFinishEnterOnMount();
   const reduced = useReducedMotion();
-  const { pages, index, page, goTo, goToPiece } = useIssueNav(publication);
+  const { pages, index, page, goTo, step, goToPiece } = useIssueNav(publication);
   useCurrentSong(page.piece);
   // The cover only uses italic Cormorant. Fetch the faces the pages use as soon as the reader
   // opens; otherwise they load during the first turn and the text swaps font (and rewraps)
@@ -434,7 +434,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
     const p = pages[i];
     if (!p) return <BlankFace />;
     if (!p.piece) return side === "L" ? null : <CoverFace publication={publication} frozenAhead={frozen(copy)} />;
-    if (side === "L") return <PlateFace page={p} index={i} live={!copy} frozenAhead={frozen(copy)} />;
+    if (side === "L") return <PlateFace page={p} index={i} live={!copy && i === index && !flip} frozenAhead={frozen(copy)} />;
     return (
       <TextFace
         key={p.id}
@@ -493,7 +493,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
     }
   }
 
-  const touch = useRef<{ x: number; y: number; at: number } | null>(null);
+  const touch = useRef<{ id: number; x: number; y: number; at: number } | null>(null);
   const skipTouchClick = useRef(false);
   function onClick(event: React.MouseEvent<HTMLDivElement>) {
     if (skipTouchClick.current) { skipTouchClick.current = false; return; }
@@ -509,7 +509,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
     const rect = event.currentTarget.getBoundingClientRect();
     const ratio = (event.clientX - rect.left) / rect.width;
     if (closed) return goTo(1);
-    goTo(index + (ratio < (spread ? 0.5 : 0.3) ? -1 : 1));
+    step(ratio < (spread ? 0.5 : 0.3) ? -1 : 1);
   }
 
   const piece = page.piece;
@@ -543,7 +543,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
         </div>
       </div>
 
-      <main className="sr-stage">
+      <main className="sr-stage" inert={flip !== null} aria-busy={flip !== null}>
         <motion.div
           className={`sr-book ${spread ? "is-spread" : "is-single"} ${closed ? "is-closed" : ""}`}
           initial={false}
@@ -552,17 +552,20 @@ function SurrealBook({ publication }: { publication: Publication }) {
           onClick={onClick}
           onPointerDown={(e) => {
             skipTouchClick.current = false;
+            if (!e.isPrimary) { touch.current = null; return; }
             if (e.pointerType === "touch" && !(e.target as HTMLElement).closest(CONTROLS))
-              touch.current = { x: e.clientX, y: e.clientY, at: e.timeStamp };
+              touch.current = { id: e.pointerId, x: e.clientX, y: e.clientY, at: e.timeStamp };
           }}
           onPointerUp={(e) => {
             const start = touch.current;
             touch.current = null;
-            if (!start || e.pointerType !== "touch") return;
+            if (!start || e.pointerId !== start.id || e.pointerType !== "touch") return;
             const dx = e.clientX - start.x;
-            if (Math.abs(dx) > 60 && Math.abs(e.clientY - start.y) < 50 && e.timeStamp - start.at < 700) {
+            const dy = e.clientY - start.y;
+            const threshold = Math.min(72, e.currentTarget.getBoundingClientRect().width * 0.18);
+            if (Math.abs(dx) >= threshold && Math.abs(dx) > Math.abs(dy) * 1.5 && e.timeStamp - start.at < 1200) {
               skipTouchClick.current = true;
-              goTo(index + (dx < 0 ? 1 : -1));
+              step(dx < 0 ? 1 : -1);
             }
           }}
           onPointerCancel={() => { touch.current = null; }}
@@ -610,7 +613,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
       </main>
 
       <nav className="sr-chrome sr-bottom" aria-label="Pages">
-        <button type="button" className="sr-round" aria-label="Previous page" disabled={index === 0} onClick={() => goTo(index - 1)}>
+        <button type="button" className="sr-round" aria-label="Previous page" disabled={index === 0} onClick={() => step(-1)}>
           ←
         </button>
         <div className="sr-progress">
@@ -625,7 +628,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
           </span>
           <span className="sr-now">{piece?.title ?? publication.caption}</span>
         </div>
-        <button type="button" className="sr-round" aria-label="Next page" disabled={index === last} onClick={() => goTo(index + 1)}>
+        <button type="button" className="sr-round" aria-label="Next page" disabled={index === last} onClick={() => step(1)}>
           →
         </button>
       </nav>

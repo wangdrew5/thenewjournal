@@ -375,3 +375,28 @@
     line-height: 1.6;
   }
 }
+@media (pointer: coarse) {
+  .gw-dialog {
+    padding: env(safe-area-inset-top) max(22px, env(safe-area-inset-right)) 0 max(22px, env(safe-area-inset-left));
+    overscroll-behavior-y: contain;
+  }
+  .gw-dialog-body {
+    flex: 1 0 auto;
+    padding-bottom: 24px;
+  }
+  .gw-dialog-nav {
+    position: sticky;
+    bottom: 0;
+    flex-shrink: 0;
+    gap: 12px;
+    margin-top: 0;
+    padding: 14px 0 max(14px, env(safe-area-inset-bottom));
+    border-top: 1px solid #efe6d626;
+    background: #0c0b09;
+  }
+  .gw-dialog-nav button {
+    flex: 1;
+    min-height: 48px;
+    padding-inline: 10px;
+  }
+}

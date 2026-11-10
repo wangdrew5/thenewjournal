@@ -176,7 +176,7 @@ function WallLabel({ page, publication }: { page: MagazinePage; publication: Pub
 
 export default function GalleryReader({ publication }: { publication: Publication }) {
   useFinishEnterOnMount();
-  const { pages, index, page, goTo, goToPiece } = useIssueNav(publication);
+  const { pages, index, page, goTo, step, goToPiece } = useIssueNav(publication);
   useCurrentSong(page.piece);
   const last = pages.length - 1;
   const [drag, setDrag] = useState(0);
@@ -185,6 +185,11 @@ export default function GalleryReader({ publication }: { publication: Publicatio
 
   function down(event: React.PointerEvent<HTMLDivElement>) {
     const target = event.target as HTMLElement;
+    if (!event.isPrimary) {
+      dragging.current = null;
+      setDrag(0);
+      return;
+    }
     // Mouse users can select text on the current work; touch can swipe anywhere.
     if (
       event.button !== 0 ||
@@ -215,7 +220,7 @@ export default function GalleryReader({ publication }: { publication: Publicatio
     const dx = event.clientX - d.x;
     setDrag(0);
     if (d.moved && Math.abs(dx) > Math.min(120, window.innerWidth * 0.12))
-      goTo(index + (dx < 0 ? 1 : -1));
+      step(dx < 0 ? 1 : -1);
   }
 
   const piece = page.piece;
@@ -299,7 +304,7 @@ export default function GalleryReader({ publication }: { publication: Publicatio
           className="gal-side gal-side-prev"
           aria-label="Previous work"
           disabled={index === 0}
-          onClick={() => goTo(index - 1)}
+          onClick={() => step(-1)}
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="M15 5 8 12l7 7" />
@@ -310,7 +315,7 @@ export default function GalleryReader({ publication }: { publication: Publicatio
           className="gal-side gal-side-next"
           aria-label="Next work"
           disabled={index === last}
-          onClick={() => goTo(index + 1)}
+          onClick={() => step(1)}
         >
           <svg viewBox="0 0 24 24" aria-hidden="true">
             <path d="m9 5 7 7-7 7" />
@@ -319,7 +324,7 @@ export default function GalleryReader({ publication }: { publication: Publicatio
       </main>
 
       <nav className="gal-bottom" aria-label="Exhibition">
-        <button type="button" className="gal-step" disabled={index === 0} onClick={() => goTo(index - 1)}>
+        <button type="button" className="gal-step" disabled={index === 0} onClick={() => step(-1)}>
           <span aria-hidden="true">←</span> <span className="gal-step-label">Previous</span>
         </button>
         <div className="gal-index">
@@ -342,7 +347,7 @@ export default function GalleryReader({ publication }: { publication: Publicatio
           )}
           <span className="gal-now">{piece ? `${piece.title} — ${piece.author}` : publication.caption}</span>
         </div>
-        <button type="button" className="gal-step" disabled={index === last} onClick={() => goTo(index + 1)}>
+        <button type="button" className="gal-step" disabled={index === last} onClick={() => step(1)}>
           <span className="gal-step-label">Next</span> <span aria-hidden="true">→</span>
         </button>
       </nav>

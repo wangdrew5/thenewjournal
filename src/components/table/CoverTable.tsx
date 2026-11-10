@@ -39,7 +39,9 @@ function OpenRow({ label }: { label: string }) {
   return (
     <div className="tc-open">
       <span>{label}</span>
-      <span aria-hidden="true">↗</span>
+      <svg width="14" height="14" viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true">
+        <path d="M4 16 16 4M5 4h11v11" />
+      </svg>
     </div>
   );
 }

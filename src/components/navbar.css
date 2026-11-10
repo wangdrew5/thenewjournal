@@ -67,6 +67,9 @@
     border-radius: 8px;
     background: #1d130c;
     box-shadow: 0 16px 32px #0005;
+    max-height: calc(100dvh - 76px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+    overflow-y: auto;
+    overscroll-behavior: contain;
   }
   .site-header .site-nav-links.is-open {
     display: flex;
@@ -95,5 +98,11 @@
   }
   .site-header .site-nav-links .nav-link:is(:hover, :focus-visible, .is-active) {
     background: #f6e8d012;
+  }
+}
+@media (pointer: coarse) and (orientation: landscape) {
+  .site-header nav {
+    padding-left: max(24px, env(safe-area-inset-left));
+    padding-right: max(24px, env(safe-area-inset-right));
   }
 }
