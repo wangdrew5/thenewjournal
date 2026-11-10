@@ -757,6 +757,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
+  isolation: isolate;
   background: #0c1f30;
   color: #fff8ec;
 }
@@ -764,6 +765,8 @@
   position: absolute;
   inset: 0;
   transform: scale(1.55);
+  z-index: 0;
+  pointer-events: none;
 }
 .crop-0 .sr-plate-art {
   transform-origin: 30% 40%;
@@ -780,6 +783,8 @@
 .sr-plate-shade {
   position: absolute;
   inset: 0;
+  z-index: 1;
+  pointer-events: none;
   background:
     linear-gradient(270deg, rgba(20, 10, 0, 0.35), transparent 10%),
     linear-gradient(180deg, transparent 40%, rgba(6, 8, 18, 0.78));
@@ -789,24 +794,13 @@
     linear-gradient(270deg, rgba(20, 10, 0, 0.35), transparent 10%),
     rgba(6, 8, 18, 0.45);
 }
-/* Keep the framed work above its animated SVG scenery, including on a 3D
-   turning copy. Each art plate owns one explicit, isolated paint order. */
-.sr-plate.is-art {
-  isolation: isolate;
-}
-.sr-plate.is-art .sr-plate-art {
-  z-index: 0;
-  pointer-events: none;
-}
-.sr-plate.is-art .sr-plate-shade {
-  z-index: 1;
-  pointer-events: none;
-}
-.sr-plate.is-art .sr-hung {
+/* Every kind of page keeps its work above the animated scenery, including
+   the copies on a turning leaf. Partner tabs have their own layer above it. */
+.sr-hung,
+.sr-plate-figure,
+.sr-plate-copy,
+.sr-filmstrip {
   z-index: 2;
-}
-.sr-plate.is-art .sr-plate-partner {
-  z-index: 3;
 }
 /* A partner organization's logo, on a tab tinted from the scenery behind it: a shade darker
    on dark pages, lighter on the one light scene, so the logo reads without the tab drawing
@@ -843,7 +837,7 @@
 }
 .sr-plate-partner {
   position: absolute;
-  z-index: 1;
+  z-index: 3;
   top: clamp(18px, 3.2vh, 30px);
   left: clamp(24px, 3vw, 44px);
   display: flex;
@@ -976,6 +970,7 @@
   position: absolute;
   inset: 0;
   overflow: hidden;
+  isolation: isolate;
   background: #0c1f30;
   color: #fff6e6;
 }
@@ -986,15 +981,20 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
+  z-index: 0;
+  pointer-events: none;
 }
 .sr-cover-shade {
   position: absolute;
   inset: 0;
+  z-index: 1;
+  pointer-events: none;
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.35), transparent 6%),
     linear-gradient(180deg, rgba(5, 10, 20, 0.6), transparent 26%, transparent 52%, rgba(5, 10, 20, 0.8));
 }
 .sr-cover-mast {
+  z-index: 2;
   position: absolute;
   top: clamp(20px, 3.4vh, 34px);
   right: clamp(22px, 3vw, 36px);
@@ -1015,6 +1015,7 @@
   text-transform: uppercase;
 }
 .sr-cover-title {
+  z-index: 2;
   position: absolute;
   right: clamp(22px, 3vw, 36px);
   bottom: clamp(70px, 11vh, 92px);
@@ -1027,6 +1028,7 @@
   text-wrap: balance;
 }
 .sr-cover-open {
+  z-index: 2;
   position: absolute;
   right: clamp(22px, 3vw, 36px);
   bottom: clamp(20px, 3vh, 30px);
