@@ -789,6 +789,25 @@
     linear-gradient(270deg, rgba(20, 10, 0, 0.35), transparent 10%),
     rgba(6, 8, 18, 0.45);
 }
+/* Keep the framed work above its animated SVG scenery, including on a 3D
+   turning copy. Each art plate owns one explicit, isolated paint order. */
+.sr-plate.is-art {
+  isolation: isolate;
+}
+.sr-plate.is-art .sr-plate-art {
+  z-index: 0;
+  pointer-events: none;
+}
+.sr-plate.is-art .sr-plate-shade {
+  z-index: 1;
+  pointer-events: none;
+}
+.sr-plate.is-art .sr-hung {
+  z-index: 2;
+}
+.sr-plate.is-art .sr-plate-partner {
+  z-index: 3;
+}
 /* A partner organization's logo, on a tab tinted from the scenery behind it: a shade darker
    on dark pages, lighter on the one light scene, so the logo reads without the tab drawing
    the eye. The colours were sampled from each scene where the tab sits (`--tab` is r g b). */
@@ -902,8 +921,12 @@
   justify-content: center;
   gap: 16px;
 }
+.sr-book.is-spread .sr-plate.is-art:has(.sr-plate-partner) .sr-hung {
+  top: calc(clamp(18px, 3.2vh, 30px) + clamp(40px, 5.5vh, 52px) * var(--logo-scale, 1) + 16px);
+}
 .sr-hung img,
 .sr-hung-empty {
+  min-height: 0;
   max-width: 100%;
   max-height: calc(100% - 40px);
   padding: 14px;
