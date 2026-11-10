@@ -402,6 +402,11 @@
   width: var(--pw);
   height: min(calc(var(--pw) * 1.75), calc(100dvh - 200px));
 }
+.sr-book.is-spread {
+  /* A gentle perspective keeps the leaf from ballooning beyond the book while
+     preserving the hinge and depth of the original page turn at every size. */
+  perspective: calc(var(--pw) * 16);
+}
 .sr-half {
   position: relative;
   width: var(--pw);
