@@ -1648,6 +1648,9 @@ body:has(.journal-home) .nav-link { font-size: 12px; letter-spacing: .02em; text
 .song-level {
   width: 72px;
 }
+.song-seek {
+  touch-action: none;
+}
 @media (pointer: coarse) {
   .song-seek,
   .song-level {
