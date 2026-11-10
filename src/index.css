@@ -1546,6 +1546,7 @@ body:has(.journal-home) .nav-link { font-size: 12px; letter-spacing: .02em; text
 /* Song player: one shared audio element, drawn wherever a song's page appears.
    Dark tone sits on the book's illustrated plate; light tone on the gallery wall. */
 .song-player {
+  container: song-player / inline-size;
   --sp-ink: #fff8ec;
   --sp-mute: rgba(255, 248, 236, 0.68);
   --sp-line: rgba(255, 248, 236, 0.28);
@@ -1633,6 +1634,14 @@ body:has(.journal-home) .nav-link { font-size: 12px; letter-spacing: .02em; text
   display: flex;
   align-items: center;
   gap: 4px;
+}
+@container song-player (max-width: 280px) {
+  .song-controls {
+    gap: 8px;
+  }
+  .song-level {
+    display: none;
+  }
 }
 .song-seek,
 .song-level {

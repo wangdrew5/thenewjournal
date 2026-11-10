@@ -4,7 +4,6 @@ import {
   animate,
   motion,
   useMotionValue,
-  useReducedMotion,
   useTransform,
 } from "framer-motion";
 import type { Publication, SongPiece } from "../../data/publications";
@@ -357,7 +356,7 @@ export default function SurrealReader({ publication }: { publication: Publicatio
 
 function SurrealBook({ publication }: { publication: Publication }) {
   useFinishEnterOnMount();
-  const reduced = useReducedMotion();
+  const reduced = useMediaQuery("(prefers-reduced-motion: reduce)");
   const { pages, index, page, goTo, step, goToPiece } = useIssueNav(publication);
   useCurrentSong(page.piece);
   // The cover only uses italic Cormorant. Fetch the faces the pages use as soon as the reader
@@ -384,17 +383,29 @@ function SurrealBook({ publication }: { publication: Publication }) {
   // runs to completion untouched; whatever was asked for meanwhile is simply the newest
   // `index`, so any number of quick requests collapse into one follow-up flip. Replacing a
   // flip mid-turn made the leaf jump, and the faster you paged the worse it got.
-  const [view, setView] = useState<{ shown: number; flip: Flip | null; n: number }>(
-    { shown: index, flip: null, n: 0 },
+  const [view, setView] = useState<{ shown: number; flip: Flip | null; n: number; spread: boolean }>(
+    { shown: index, flip: null, n: 0, spread },
   );
-  if (!view.flip && view.shown !== index) {
+  // A leaf cannot keep its geometry when a spread becomes a single page. Finish
+  // on the latest request rather than restarting that turn in the other layout.
+  if (view.spread !== spread || (reduced && view.flip)) {
+    setView({ shown: index, flip: null, n: view.n, spread });
+  } else if (!view.flip && view.shown !== index) {
     setView(
       reduced
-        ? { shown: index, flip: null, n: view.n }
-        : { shown: view.shown, flip: { id: view.n + 1, from: view.shown, to: index }, n: view.n + 1 },
+        ? { shown: index, flip: null, n: view.n, spread }
+        : { shown: view.shown, flip: { id: view.n + 1, from: view.shown, to: index }, n: view.n + 1, spread },
     );
   }
   const { shown, flip } = view;
+
+  useLayoutEffect(() => {
+    function finishForResize() {
+      setView((v) => v.flip ? { ...v, shown: index, flip: null } : v);
+    }
+    window.addEventListener("resize", finishForResize);
+    return () => window.removeEventListener("resize", finishForResize);
+  }, [index]);
 
   const [scrolls] = useState(() => new Map<string, number>());
   const rot = useMotionValue(0);
@@ -434,7 +445,9 @@ function SurrealBook({ publication }: { publication: Publication }) {
     const p = pages[i];
     if (!p) return <BlankFace />;
     if (!p.piece) return side === "L" ? null : <CoverFace publication={publication} frozenAhead={frozen(copy)} />;
-    if (side === "L") return <PlateFace page={p} index={i} live={!copy && i === index && !flip} frozenAhead={frozen(copy)} />;
+    // A new page needs its own scene mount: reusing the previous plate also
+    // reused its birth time, making the incoming artwork jump ahead on landing.
+    if (side === "L") return <PlateFace key={p.id} page={p} index={i} live={!copy && i === index && !flip} frozenAhead={frozen(copy)} />;
     return (
       <TextFace
         key={p.id}
