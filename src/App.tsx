@@ -17,7 +17,6 @@ import Partners from "./pages/Partners";
 import PublicationViewer from "./pages/PublicationViewer";
 import { JournalProvider } from "./lib/JournalContext";
 import EnterOverlay from "./components/EnterOverlay";
-import PhoneNotice from "./components/PhoneNotice";
 
 // The editor is a developer tool: it is only bundled and routed under `npm run dev`.
 const Preview = import.meta.env.DEV ? lazy(() => import("./pages/Preview")) : null;
@@ -82,7 +81,6 @@ export default function App() {
           <NavBar />
           <AnimatedRoutes />
           <EnterOverlay />
-          <PhoneNotice />
         </BrowserRouter>
       </JournalProvider>
     </MotionConfig>
