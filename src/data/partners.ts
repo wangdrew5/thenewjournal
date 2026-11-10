@@ -10,6 +10,11 @@ export interface Partner {
    * Logos with their own background or outline read anywhere and need none.
    */
   logoOnDark?: string;
+  /**
+   * How much taller this logo's tab is on an issue page than the standard one. A compact
+   * logo with small lettering reads too small at the height that suits a long wordmark.
+   */
+  logoScale?: number;
   /** `[words](https://…)` in a paragraph becomes a link that opens in a new tab. */
   paragraphs: string[];
 }
@@ -23,6 +28,7 @@ export const partners: Partner[] = [
     url: "https://pongopoetryproject.org/",
     logo: "pongo-poetry-project.webp",
     logoOnDark: "pongo-poetry-project-light.webp",
+    logoScale: 1.4,
     paragraphs: [
       "The Pongo Poetry Project is a Seattle-based nonprofit that helps incarcerated and trauma-impacted youth express themselves through poetry. Through writing workshops in juvenile detention centers, psychiatric hospitals, and other facilities, Pongo gives young people a space to process their experiences and share their stories. The organization also publishes collections of poetry written by participants, allowing their voices to reach people outside these facilities.",
       "Through writing workshops, participants explore their emotions, reflect on their lives, and put their stories into words. Their poetry gives readers a chance to hear perspectives that are often overlooked and better understand the people behind them.",
@@ -34,6 +40,7 @@ export const partners: Partner[] = [
     name: "SHARE Screenwriting",
     url: "https://sharescreenwriting.com/",
     logo: "share-screenwriting.webp",
+    logoScale: 1.4,
     paragraphs: [
       "SHARE Screenwriting gives incarcerated women and youth the opportunity to tell their stories through filmmaking. Participants work on screenplays and short films that reflect their experiences, challenges, and perspectives. Their work encourages audiences to see incarcerated individuals beyond their circumstances and recognize the people and stories behind each film.",
       "Founded in 2019, the Washington-based program offers screenwriting workshops where participants learn to write scripts, develop stories, and collaborate on film projects. SHARE has worked with facilities such as Echo Glen Children’s Center and Green Hill School, as well as other creative organizations, to turn participants’ writing into short films. Through its films, SHARE hopes to help audiences better understand the experiences of incarcerated individuals.",

@@ -9,3 +9,9 @@ export function verseLine(line: string): ReactNode {
   if (italic) return <em>{italic[1]}</em>;
   return line || "\u00a0";
 }
+
+/**
+ * A song's credit as it is printed after "produced by". Credits typed with the words
+ * already in them ("produced by …") lose them, so the reader never says them twice.
+ */
+export const songCredit = (author: string) => author.replace(/^\s*produced by\s+/i, "").trim();

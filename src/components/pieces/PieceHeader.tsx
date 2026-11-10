@@ -7,9 +7,11 @@ interface Props {
   title: string;
   author: string;
   glow: GlowColor;
+  /** The words before the credit: "By" unless a piece says otherwise. */
+  byline?: string;
 }
 
-export default function PieceHeader({ label, title, author, glow }: Props) {
+export default function PieceHeader({ label, title, author, glow, byline = "By" }: Props) {
   return (
     <div className="piece-header mb-10">
       <motion.h1
@@ -26,7 +28,7 @@ export default function PieceHeader({ label, title, author, glow }: Props) {
         transition={{ duration: 0.5, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
         className="piece-byline mt-2 text-sm tracking-wide text-white/50 italic"
       >
-        By {author}
+        {byline} {author}
       </motion.p>
     </div>
   );

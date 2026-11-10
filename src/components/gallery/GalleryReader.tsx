@@ -1,5 +1,5 @@
 import { useRef, useState, type CSSProperties } from "react";
-import { verseLine } from "../../lib/verse";
+import { songCredit, verseLine } from "../../lib/verse";
 import { Link } from "react-router-dom";
 import type { Publication } from "../../data/publications";
 import type { MagazinePage } from "../../lib/magazine";
@@ -108,7 +108,7 @@ function PieceWork({ page, index, live }: { page: MagazinePage; index: number; l
         <div className="gal-song-main">
           <div className="gal-song-head">
             <h2>{piece.title}</h2>
-            <p className="gal-text-author">{piece.author}</p>
+            <p className="gal-text-author">produced by {songCredit(piece.author)}</p>
           </div>
           <SongPlayer song={piece} live={live} tone="light" />
           <div

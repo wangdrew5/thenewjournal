@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { SongPiece } from "../../data/publications";
 import PieceHeader from "./PieceHeader";
+import { songCredit } from "../../lib/verse";
 
 interface Props {
   piece: SongPiece;
@@ -12,7 +13,7 @@ export default function SongView({ piece }: Props) {
   const [failed, setFailed] = useState(false);
   return (
     <div>
-      <PieceHeader label="Song" title={piece.title} author={piece.author} glow={piece.glow} />
+      <PieceHeader label="Song" title={piece.title} author={songCredit(piece.author)} byline="Produced by" glow={piece.glow} />
       <div className="song-view mx-auto max-w-3xl">
         {piece.audioSrc ? (
           <audio

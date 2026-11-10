@@ -540,7 +540,7 @@ export default function Preview() {
                 {piece.type === "art"
                   ? "Artist"
                   : piece.type === "song"
-                    ? "Artist or performer"
+                    ? "Produced by"
                     : "Author"}
                 <input
                   maxLength={120}

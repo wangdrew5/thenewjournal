@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import {
   animate,
@@ -27,7 +27,7 @@ import { SCENE_COUNT } from "./scenes";
 import { SceneClockContext, createSceneClock } from "./sceneClock";
 import "./surreal.css";
 import { issueName } from "../../lib/issueLabel";
-import { verseLine } from "../../lib/verse";
+import { songCredit, verseLine } from "../../lib/verse";
 
 const FLIP_SECONDS = 0.95;
 const sceneFor = (index: number) => index % SCENE_COUNT;
@@ -150,7 +150,10 @@ function PlateFace({
   const partner = partnerById(piece.partner);
   const scene = (sceneFor(index) + 2) % SCENE_COUNT;
   return (
-    <div className={`sr-plate is-${piece.type} scene-${scene} crop-${index % 4}`}>
+    <div
+      className={`sr-plate is-${piece.type} scene-${scene} crop-${index % 4}`}
+      style={partner?.logoScale ? ({ "--logo-scale": partner.logoScale } as CSSProperties) : undefined}
+    >
       <DreamScene
         scene={scene}
         className="sr-plate-art"
@@ -193,7 +196,7 @@ function PlateFace({
           )}
           <div className="sr-plate-copy">
             <h2>{piece.title}</h2>
-            <p>by {piece.author}</p>
+            <p>{piece.type === "song" ? `produced by ${songCredit(piece.author)}` : `by ${piece.author}`}</p>
             {piece.type === "song" && <SongPlayer song={piece} live={live} tone="dark" />}
           </div>
         </>
