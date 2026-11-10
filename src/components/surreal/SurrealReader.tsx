@@ -52,12 +52,6 @@ function Lines({ lines, dropCap }: { lines: string[]; dropCap: boolean }) {
   );
 }
 
-// Longer writing says how long it takes, at a relaxed 180 words a minute.
-function readMinutes(lines: string[]) {
-  const words = lines.join(" ").split(/\s+/).filter(Boolean).length;
-  return Math.max(1, Math.round(words / 180));
-}
-
 function Transcript({ song }: { song: SongPiece }) {
   return (
     <div className="sr-transcript">
@@ -255,11 +249,6 @@ function TextFace({
         aria-label={piece.type === "song" ? `Transcript of ${piece.title}, scroll to read` : `${piece.title}, scroll to read`}
         onScroll={(event) => scrolls.set(page.id, event.currentTarget.scrollTop)}
       >
-        {piece.type === "poem" && readMinutes(piece.lines) >= 2 && (
-          <p className="sr-kicker">
-            <span className="sr-readtime">{readMinutes(piece.lines)} min read</span>
-          </p>
-        )}
         <h1 className="sr-title">{piece.title}</h1>
         {piece.type === "poem" && <Lines lines={piece.lines} dropCap />}
         {piece.type === "song" && <Transcript song={piece} />}

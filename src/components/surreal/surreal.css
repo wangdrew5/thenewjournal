@@ -1327,11 +1327,6 @@ html[data-read-size="3"] .sr-reader { --read-scale: 1.32; }
   padding-right: 4px;
   font-weight: 500;
 }
-.sr-readtime {
-  letter-spacing: 0.16em;
-  font-weight: 500;
-  opacity: 0.75;
-}
 
 /* The settings panel */
 .sr-read {
