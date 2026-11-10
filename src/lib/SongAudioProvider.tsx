@@ -10,6 +10,7 @@ const IDLE: SongLive = { id: null, playing: false, pending: false, time: 0, dura
 export function SongAudioProvider({ children }: { children: ReactNode }) {
   const audio = useRef<HTMLAudioElement>(null);
   const current = useRef<{ id: string; src?: string } | null>(null);
+  const allowedSong = useRef<string | null>(null);
   // A saved position waiting for the new source's metadata before it can be applied.
   const pendingSeek = useRef<number | null>(null);
   const [positions] = useState(() => new Map<string, number>());
@@ -71,6 +72,7 @@ export function SongAudioProvider({ children }: { children: ReactNode }) {
       // Forget the selection with the source, so a remount (React's development
       // double-mount included) loads the song again instead of keeping an empty player.
       current.current = null;
+      allowedSong.current = null;
       pendingSeek.current = null;
       setLive(IDLE);
     };
@@ -78,6 +80,7 @@ export function SongAudioProvider({ children }: { children: ReactNode }) {
 
   const select = useCallback(
     (song: SongPiece | null) => {
+      allowedSong.current = song?.id ?? null;
       const el = audio.current;
       if (!el) return;
       const cur = current.current;
@@ -113,7 +116,7 @@ export function SongAudioProvider({ children }: { children: ReactNode }) {
   const toggle = useCallback(
     (song: SongPiece) => {
       const el = audio.current;
-      if (!el || !song.audioSrc) return;
+      if (!el || !song.audioSrc || allowedSong.current !== song.id) return;
       select(song);
       if (!el.paused) {
         el.pause();

@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect } from "react";
+import { createContext, useContext, useLayoutEffect } from "react";
 import type { Piece, SongPiece } from "../data/publications";
 
 export type SongStatus = "idle" | "loading" | "ready" | "error" | "blocked";
@@ -61,7 +61,7 @@ export function useSong(song: SongPiece) {
 export function useCurrentSong(piece: Piece | undefined) {
   const select = useContext(SongAudioContext)?.select;
   const song = piece?.type === "song" ? piece : null;
-  useEffect(() => {
+  useLayoutEffect(() => {
     select?.(song);
   }, [select, song]);
 }

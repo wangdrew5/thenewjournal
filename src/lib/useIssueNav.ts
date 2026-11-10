@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useMemo, useSyncExternalStore } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSyncExternalStore } from "react";
+import { useLocation, useNavigationType, useSearchParams } from "react-router-dom";
 import type { PieceType, Publication } from "../data/publications";
 import { magazinePages, pageFromQuery } from "./magazine";
 import { rememberReadingPosition } from "./readingPosition";
@@ -10,6 +10,15 @@ export function useIssueNav(publication: Publication) {
   const [query, setQuery] = useSearchParams();
   const pages = useMemo(() => magazinePages(publication), [publication]);
   const index = pageFromQuery(pages, query.get("piece"));
+  const requested = useRef(index);
+  const location = useLocation();
+  const navigationType = useNavigationType();
+  // Repeated taps may arrive before a route render commits. Keep the latest
+  // request until it lands; browser Back/Forward and link navigation still win.
+  useLayoutEffect(() => {
+    if (navigationType !== "REPLACE" || index === requested.current)
+      requested.current = index;
+  }, [index, navigationType, location.key]);
   useEffect(() => {
     const page = pages[index];
     if (!page.piece) return;
@@ -18,12 +27,14 @@ export function useIssueNav(publication: Publication) {
   const goTo = useCallback(
     (target: number) => {
       const next = Math.min(pages.length - 1, Math.max(0, target));
-      if (next === index) return;
+      if (next === requested.current) return;
+      requested.current = next;
       const page = pages[next];
       setQuery(page.piece ? { piece: page.piece.id } : {}, { replace: true });
     },
-    [pages, index, setQuery],
+    [pages, setQuery],
   );
+  const step = useCallback((offset: number) => goTo(requested.current + offset), [goTo]);
   const goToPiece = useCallback(
     (pieceIndex: number) =>
       goTo(
@@ -47,7 +58,7 @@ export function useIssueNav(publication: Publication) {
         return;
       if (event.key === "ArrowRight" || event.key === "ArrowLeft") {
         event.preventDefault();
-        goTo(index + (event.key === "ArrowRight" ? 1 : -1));
+        step(event.key === "ArrowRight" ? 1 : -1);
       } else if (event.key === "Home") {
         event.preventDefault();
         goTo(0);
@@ -58,8 +69,8 @@ export function useIssueNav(publication: Publication) {
     }
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [goTo, index, pages.length]);
-  return { pages, index, page: pages[index], goTo, goToPiece };
+  }, [goTo, step, pages.length]);
+  return { pages, index, page: pages[index], goTo, step, goToPiece };
 }
 
 export function useMediaQuery(query: string) {

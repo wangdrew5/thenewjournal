@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, PointerEvent } from "react";
 import type { SongPiece } from "../../data/publications";
 import { useSong } from "../../lib/useSongAudio";
 
@@ -22,7 +22,7 @@ function spoken(seconds: number) {
 
 const messages = {
   error:
-    "This song could not play. Check that the link opens an audio file, such as an MP3, that allows playback from other sites.",
+    "This song could not play right now. Press play to try again.",
   blocked: "Your browser blocked playback. Press play to try again.",
 };
 
@@ -44,6 +44,12 @@ export default function SongPlayer({
   const time = known ? Math.min(s.time, s.duration) : s.time;
   const usable = live && !!song.audioSrc;
   const message = s.status === "error" || s.status === "blocked" ? messages[s.status] : "";
+  function seekFromTouch(event: PointerEvent<HTMLInputElement>) {
+    const track = event.currentTarget.getBoundingClientRect();
+    // The native thumb is inset by half its 14px width at each end of the track.
+    const fraction = Math.max(0, Math.min(1, (event.clientX - track.left - 7) / Math.max(1, track.width - 14)));
+    s.seek(fraction * s.duration);
+  }
   return (
     <div
       className={`song-player is-${tone}`}
@@ -79,6 +85,25 @@ export default function SongPlayer({
                 aria-valuetext={`${spoken(time)} of ${known ? spoken(s.duration) : "unknown length"}`}
                 style={{ "--progress": `${known ? (time / s.duration) * 100 : 0}%` } as CSSProperties}
                 onChange={(event) => s.seek(Number(event.currentTarget.value))}
+                onPointerDown={(event) => {
+                  if (event.pointerType !== "touch" || !event.isPrimary || !usable || !known) return;
+                  event.preventDefault();
+                  event.currentTarget.setPointerCapture(event.pointerId);
+                  seekFromTouch(event);
+                }}
+                onPointerMove={(event) => {
+                  if (event.pointerType === "touch" && event.isPrimary && usable && known && event.currentTarget.hasPointerCapture(event.pointerId))
+                    seekFromTouch(event);
+                }}
+                onPointerUp={(event) => {
+                  if (event.pointerType !== "touch" || !event.isPrimary || !usable || !known || !event.currentTarget.hasPointerCapture(event.pointerId)) return;
+                  seekFromTouch(event);
+                  event.currentTarget.releasePointerCapture(event.pointerId);
+                }}
+                onPointerCancel={(event) => {
+                  if (event.currentTarget.hasPointerCapture(event.pointerId))
+                    event.currentTarget.releasePointerCapture(event.pointerId);
+                }}
               />
               <div className="song-times" aria-hidden="true">
                 <span>{clock(time)}</span>
