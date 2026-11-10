@@ -21,6 +21,7 @@ import { partnerById, partnerLogoUrl } from "../../data/partners";
 import IssueContents from "../pieces/IssueContents";
 import SongPlayer from "../pieces/SongPlayer";
 import ReadingControls from "./ReadingControls";
+import ShareButton from "../pieces/ShareButton";
 import { useCurrentSong } from "../../lib/useSongAudio";
 import DreamScape, { DreamScene } from "./DreamScape";
 import { SCENE_COUNT } from "./scenes";
@@ -498,7 +499,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
     if (skipTouchClick.current) { skipTouchClick.current = false; return; }
     if (
       // Element, not HTMLElement: a click on an icon inside a control targets the SVG.
-      (event.target instanceof Element && event.target.closest(CONTROLS)) ||
+      (event.target instanceof Element && event.target.closest(`${CONTROLS}, .sr-body`)) ||
       window.getSelection()?.toString()
     )
       return;
@@ -538,6 +539,7 @@ function SurrealBook({ publication }: { publication: Publication }) {
             onSelect={goToPiece}
             onCover={() => goTo(0)}
           />
+          <ShareButton key={piece?.id ?? publication.id} publication={publication} piece={piece} />
         </div>
       </div>
 

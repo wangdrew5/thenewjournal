@@ -1453,6 +1453,16 @@ html[data-read-tone="night"] .sr-body::-webkit-scrollbar-thumb {
 .sr-position {
   display: none;
 }
+@media (max-width: 380px) {
+  .sr-actions .contents-trigger:has(.contents-label) {
+    width: 44px;
+    padding: 0;
+    justify-content: center;
+  }
+  .sr-actions .contents-label {
+    display: none;
+  }
+}
 @media (max-width: 899px) {
   .sr-top {
     padding-top: calc(8px + env(safe-area-inset-top));

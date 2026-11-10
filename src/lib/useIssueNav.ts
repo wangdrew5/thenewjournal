@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useSyncExternalStore } from "react";
 import { useSearchParams } from "react-router-dom";
 import type { PieceType, Publication } from "../data/publications";
 import { magazinePages, pageFromQuery } from "./magazine";
-import { READING_KEY } from "./readingPosition";
+import { rememberReadingPosition } from "./readingPosition";
 
 // Shared page state for both reader engines: the URL query is the source of
 // truth so direct links, reloads, and the contents dialog all agree.
@@ -13,9 +13,7 @@ export function useIssueNav(publication: Publication) {
   useEffect(() => {
     const page = pages[index];
     if (!page.piece) return;
-    try {
-      localStorage.setItem(READING_KEY, JSON.stringify({ version: 1, publicationId: publication.id, pieceId: page.piece.id }));
-    } catch { /* Reading remains available when browser storage is disabled. */ }
+    rememberReadingPosition(publication.id, page.piece.id);
   }, [pages, index, publication.id]);
   const goTo = useCallback(
     (target: number) => {

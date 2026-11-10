@@ -7,6 +7,7 @@ import { CONTROLS, pad, pieceKind, useIssueNav } from "../../lib/useIssueNav";
 import { useFinishEnterOnMount } from "../../lib/enterTransition";
 import { PREVIEW_ID } from "../../lib/preview";
 import IssueContents from "../pieces/IssueContents";
+import ShareButton from "../pieces/ShareButton";
 import SongPlayer from "../pieces/SongPlayer";
 import { useCurrentSong } from "../../lib/useSongAudio";
 import IssueArtwork from "../magazine/IssueArtwork";
@@ -248,6 +249,7 @@ export default function GalleryReader({ publication }: { publication: Publicatio
             onSelect={goToPiece}
             onCover={() => goTo(0)}
           />
+          <ShareButton key={piece?.id ?? publication.id} publication={publication} piece={piece} />
         </div>
       </header>
 

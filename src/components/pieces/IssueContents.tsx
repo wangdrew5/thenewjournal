@@ -27,6 +27,7 @@ export default function IssueContents({
         className="contents-trigger micro-button"
         type="button"
         aria-haspopup="dialog"
+        aria-label="Contents"
         aria-expanded={open}
         onClick={show}
       >
@@ -39,7 +40,7 @@ export default function IssueContents({
         >
           <path d="M8 6h12M8 12h12M8 18h12M3 6h1M3 12h1M3 18h1" />
         </svg>
-        Contents
+        <span className="contents-label">Contents</span>
       </button>
       <dialog
         ref={dialog}

@@ -7,6 +7,8 @@ import { matchesPublished } from "../data/publishedIssues";
 import { PREVIEW_ID } from "../lib/preview";
 import { issueName } from "../lib/issueLabel";
 import type { Piece, Publication } from "../data/publications";
+import ShareButton from "../components/pieces/ShareButton";
+import { rememberReadingPosition } from "../lib/readingPosition";
 import "../components/gallerywall/gallerywall.css";
 
 interface Work {
@@ -159,6 +161,9 @@ function WorkDialog({
   const dialog = useRef<HTMLDialogElement>(null);
   const close = useRef<HTMLButtonElement>(null);
   const { piece, publication } = works[index];
+  useEffect(() => {
+    rememberReadingPosition(publication.id, piece.id);
+  }, [publication.id, piece.id]);
   function dismiss() {
     dialog.current?.close();
     onClose();
@@ -206,6 +211,7 @@ function WorkDialog({
           <span>
             {index + 1} of {works.length}
           </span>
+          <ShareButton key={piece.id} publication={publication} piece={piece} />
           <button ref={close} type="button" onClick={dismiss}>
             Close
           </button>

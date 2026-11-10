@@ -1,0 +1,71 @@
+.reading-bookmark {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  width: 100%;
+  max-width: 490px;
+  margin: -24px auto 36px;
+  padding: 16px 20px;
+  border-left: 2px solid #d0ac79;
+  color: #f6e8d0;
+  background: #f6e8d00a;
+  text-align: left;
+  transition: background 180ms;
+}
+.reading-bookmark:hover {
+  background: #f6e8d014;
+}
+.reading-bookmark-mark {
+  flex: 0 0 24px;
+  width: 24px;
+  height: 28px;
+  color: #d0ac79;
+}
+.reading-bookmark-copy {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+}
+.reading-bookmark-copy > span {
+  font-size: 13px;
+  color: #e6cda8;
+}
+.reading-bookmark-copy strong {
+  font: italic 500 26px/1.1 "Cormorant Garamond", Georgia, serif;
+}
+.reading-bookmark-copy small {
+  margin-top: 3px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: #e3d3bd;
+}
+.reading-bookmark-arrow {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+}
+:root[data-mode="light"] .reading-bookmark {
+  color: #2b1a0e;
+  background: #f6edddd9;
+  border-color: #8b4f3a;
+}
+:root[data-mode="light"] .reading-bookmark :is(.reading-bookmark-mark, .reading-bookmark-copy > span, .reading-bookmark-copy small) {
+  color: #69452e;
+}
+@media (max-width: 640px) {
+  .reading-bookmark {
+    margin: -6px auto 24px;
+    padding: 14px 16px;
+    gap: 12px;
+  }
+  .reading-bookmark-copy strong {
+    font-size: 25px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reading-bookmark {
+    transition: none;
+  }
+}
