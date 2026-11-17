@@ -17,7 +17,8 @@ import {
   useEnterState,
 } from "../../lib/enterTransition";
 import { issueMark, issueName } from "../../lib/issueLabel";
-import { emailSignupUrl, readerPath } from "../../lib/publicPages";
+import { TableSignup } from "../EmailSignup";
+import { readerPath } from "../../lib/publicPages";
 import { themeNames } from "../../lib/magazine";
 import { DreamScene } from "../surreal/DreamScape";
 import IssueArtwork from "../magazine/IssueArtwork";
@@ -288,9 +289,7 @@ export default function CoverTable({ publications }: { publications: Publication
           <p className="table-note">The first issue is on its way.</p>
         )}
       </div>
-      <a className="table-subscribe" href={emailSignupUrl}>
-        Get new issues by email <span aria-hidden="true">↗</span>
-      </a>
+      <TableSignup />
     </section>
   );
 }

@@ -1,3 +1,5 @@
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { buildShareCard } from "./share-card.mjs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -7,7 +9,8 @@ import { createServer } from "vite";
 const server = await createServer({ base: process.env.PAGES_BASE || "/", server: { middlewareMode: true, hmr: false }, appType: "custom" });
 try {
   const { publishedIssues } = await server.ssrLoadModule("/src/data/publishedIssues.ts");
-  const { siteOrigin, emailSignupUrl, publicPages, readerPath, medium } = await server.ssrLoadModule("/src/lib/publicPages.ts");
+  const { siteOrigin, publicPages, readerPath, medium } = await server.ssrLoadModule("/src/lib/publicPages.ts");
+  const { TableSignup } = await server.ssrLoadModule("/src/components/EmailSignup.tsx");
   const { partners } = await server.ssrLoadModule("/src/data/partners.ts");
   const { wallPreview } = await server.ssrLoadModule("/src/lib/wallPreview.ts");
   const pages = publicPages(publishedIssues);
@@ -39,7 +42,7 @@ try {
     if (page.path === "/gallery/") return publishedIssues.map(catalogue).join("");
     if (page.path === "/") {
       return list(publishedIssues, issue => link(readerPath(issue, issue.pieces[0]), issue.caption))
-        + `<a href="${escape(emailSignupUrl)}">Get new issues by email</a>`;
+        + renderToStaticMarkup(createElement(TableSignup, { native: true }));
     }
     return "";
   }

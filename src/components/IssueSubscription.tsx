@@ -1,5 +1,5 @@
 import { useId, useRef } from "react";
-import { emailSignupUrl } from "../lib/publicPages";
+import { EmailSignup } from "./EmailSignup";
 import "./issue-subscription.css";
 
 export default function IssueSubscription() {
@@ -11,11 +11,10 @@ export default function IssueSubscription() {
         Get the next issue
       </button>
       <dialog ref={dialog} className="issue-follow-dialog" aria-labelledby={heading}>
-        <form method="dialog"><button aria-label="Close subscription options">×</button></form>
+        <form className="issue-follow-close" method="dialog"><button aria-label="Close subscription options">×</button></form>
         <h2 id={heading}>The next issue</h2>
-        <p>Get an email when The New Journal publishes an issue, or follow along in your feed reader.</p>
-        <a className="follow-email" href={emailSignupUrl}>Subscribe by email</a>
-        <small>Email subscriptions are handled by Feedrabbit.</small>
+        <p>Get new issues by email.</p>
+        <EmailSignup />
         <a className="follow-feed" href={import.meta.env.BASE_URL + "issues.xml"}>Open the RSS feed</a>
       </dialog>
     </>

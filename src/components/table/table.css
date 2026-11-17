@@ -1028,7 +1028,10 @@ details[open] .contents-fold { transform: rotate(225deg); }
   text-decoration-thickness: 1px;
   text-underline-offset: .22em;
 }
-.table-subscribe span { font: 14px/1 "Inter", sans-serif; }
+.table-subscribe { list-style: none; cursor: pointer; }
+.table-subscribe::-webkit-details-marker { display: none; }
+.table-subscribe .contents-fold { width: .38em; height: .38em; margin: 0 0 .22em .12em; }
+.table-signup[open] .contents-fold { margin-bottom: -.12em; }
 .table-subscribe:is(:hover, :focus-visible) { text-decoration-color: currentColor; }
 .table-subscribe:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 @media (max-width: 850px) {
