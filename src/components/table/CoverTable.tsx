@@ -9,7 +9,7 @@ import {
 } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useReducedMotion } from "framer-motion";
-import type { PoemPiece, Publication } from "../../data/publications";
+import type { Publication } from "../../data/publications";
 import {
   finishReturn,
   setReturnTarget,
@@ -17,10 +17,8 @@ import {
   useEnterState,
 } from "../../lib/enterTransition";
 import { issueMark, issueName } from "../../lib/issueLabel";
-import { readerPath } from "../../lib/publicPages";
-import { verseLine } from "../../lib/verse";
+import { emailSignupUrl, readerPath } from "../../lib/publicPages";
 import { themeNames } from "../../lib/magazine";
-import { useMediaQuery } from "../../lib/useIssueNav";
 import { DreamScene } from "../surreal/DreamScape";
 import IssueArtwork from "../magazine/IssueArtwork";
 import "./table.css";
@@ -187,28 +185,6 @@ function Mug() {
 }
 
 // Things that stand for what is inside the issues: writing, art, and songs.
-function Letter() {
-  return (
-    <div className="table-letter" aria-hidden="true">
-      <svg viewBox="0 0 260 330" focusable="false">
-        <rect width="260" height="330" fill="#fbf7ee" />
-        <path d="M0 110h260M0 220h260" stroke="#d9cfbd" strokeWidth="1.5" />
-        <g fill="none" stroke="#2c3e66" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.82">
-          <path d="M28 40c6-8 10 6 16-2s9 4 14-1 8 3 12 0" />
-          <path d="M28 70c10-4 18 3 28-1s14 2 24-1 16 3 26 0 18 2 30-1 14 2 22 0 12 2 20 0 10 2 18 0" />
-          <path d="M28 92c12-3 20 2 30-1s16 3 28 0 14-2 24 1 18-2 28 0 12 2 22-1" />
-          <path d="M28 136c8-3 18 3 28 0s14 2 26-1 16 3 26 0 20 2 30-1 12 2 24 0 14 2 22 0" />
-          <path d="M28 158c10-2 16 3 26 0s20 2 28-1 14 3 26 0 16-2 26 1 10-2 20 0" />
-          <path d="M28 180c12-3 18 2 30 0s14 3 24 0 18 2 28-1" />
-          <path d="M28 246c10-3 16 2 26 0s18 3 28 0 12-2 24 1 16-2 26 0 14 2 24-1 14 2 20 0" />
-          <path d="M28 268c8-2 18 3 28 0s16 2 24-1 18 3 28 0 10 2 22 0" />
-          <path d="M150 300c6-6 12 4 18-2s8 6 14 0 10 4 16-1" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
 function Polaroid() {
   return (
     <div className="table-polaroid" aria-hidden="true">
@@ -251,25 +227,7 @@ function Pencil() {
   );
 }
 
-export interface FeaturedPoem {
-  publication: Publication;
-  poem: PoemPiece;
-}
-
-function PoemSheet({ publication, poem }: FeaturedPoem) {
-  return (
-    <Link className="poem-sheet" to={readerPath(publication, poem)} aria-label={`Read the poem ${poem.title} by ${poem.author}`}>
-      <span className="poem-source">From {publication.caption}</span>
-      <h2>{poem.title}</h2>
-      <blockquote>{poem.lines.slice(0, 2).map((line, index) => <span key={index}>{verseLine(line)}</span>)}</blockquote>
-      <span className="poem-byline">By {poem.author.trim()}</span>
-      <span className="poem-open">Read the poem <span aria-hidden="true">↗</span></span>
-    </Link>
-  );
-}
-
-export default function CoverTable({ publications, feature }: { publications: Publication[]; feature?: FeaturedPoem }) {
-  const finePointer = useMediaQuery("(hover: hover) and (pointer: fine)");
+export default function CoverTable({ publications }: { publications: Publication[] }) {
   const transition = useEnterState();
   const returning = transition?.kind === "return" ? transition.id : null;
 
@@ -303,12 +261,10 @@ export default function CoverTable({ publications, feature }: { publications: Pu
   }, []);
 
   const liftedAt = publications.findIndex((publication) => publication.id === lifted);
-  const featured = liftedAt >= 0 ? publications[liftedAt] : null;
   return (
     <section className="cover-table" aria-label="Issues">
-      <div className={`table-spread ${feature ? "with-poem" : ""} ${publications.length > 1 ? "many-issues" : ""}`}>
+      <div className={`table-spread ${publications.length > 1 ? "many-issues" : ""}`}>
         <Polaroid />
-        {!feature && <Letter />}
         <Mug />
         <Cassette />
         <Pencil />
@@ -331,21 +287,12 @@ export default function CoverTable({ publications, feature }: { publications: Pu
         ) : (
           <p className="table-note">The first issue is on its way.</p>
         )}
-        {feature && <PoemSheet {...feature} />}
+        <a className="subscription-postcard" href={emailSignupUrl}>
+          <span aria-hidden="true" className="postcard-stamp">tnj</span>
+          <h2>Get the next issue.</h2>
+          <span className="postcard-action">Subscribe by email <span aria-hidden="true">↗</span></span>
+        </a>
       </div>
-      {!feature && <p className="table-caption" aria-live="polite">
-        {featured ? (
-          <>
-            <strong>{featured.caption}</strong>
-            <span>
-              {featured.pieces.length} {featured.pieces.length === 1 ? "page" : "pages"},{" "}
-              {finePointer ? "click" : "tap"} to read!
-            </span>
-          </>
-        ) : publications.length ? (
-          <span>{finePointer ? "Pick up an issue to read it." : "Tap an issue to read it."}</span>
-        ) : null}
-      </p>}
     </section>
   );
 }

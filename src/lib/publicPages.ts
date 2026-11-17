@@ -1,6 +1,7 @@
 import type { Piece, Publication } from "../data/publications";
 
 export const siteOrigin = "https://thenewjournal.org";
+export const emailSignupUrl = "https://feedrabbit.com/subscriptions/new?url=" + encodeURIComponent(siteOrigin + "/issues.xml");
 export const mission = "An online publication by and for incarcerated youth and adults.";
 export const medium = { poem: "Poem", art: "Artwork", film: "Film", song: "Song" };
 

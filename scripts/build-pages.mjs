@@ -7,7 +7,7 @@ import { createServer } from "vite";
 const server = await createServer({ base: process.env.PAGES_BASE || "/", server: { middlewareMode: true, hmr: false }, appType: "custom" });
 try {
   const { publishedIssues } = await server.ssrLoadModule("/src/data/publishedIssues.ts");
-  const { siteOrigin, publicPages, readerPath, medium } = await server.ssrLoadModule("/src/lib/publicPages.ts");
+  const { siteOrigin, emailSignupUrl, publicPages, readerPath, medium } = await server.ssrLoadModule("/src/lib/publicPages.ts");
   const { partners } = await server.ssrLoadModule("/src/data/partners.ts");
   const { wallPreview } = await server.ssrLoadModule("/src/lib/wallPreview.ts");
   const pages = publicPages(publishedIssues);
@@ -38,11 +38,8 @@ try {
     if (page.path === "/partners/") return list(partners, partner => `<a id="${escape(partner.id)}" href="${escape(partner.url)}">${escape(partner.name)}</a><p>${escape(partner.paragraphs[0])}</p>`);
     if (page.path === "/gallery/") return publishedIssues.map(catalogue).join("");
     if (page.path === "/") {
-      const feature = publishedIssues.flatMap(issue => {
-        const poem = issue.pieces.find(piece => piece.type === "poem");
-        return poem ? [link(readerPath(issue, poem), "Read " + poem.title)] : [];
-      })[0];
-      return (feature ?? "") + list(publishedIssues, issue => link(readerPath(issue), issue.caption));
+      return list(publishedIssues, issue => link(readerPath(issue, issue.pieces[0]), issue.caption))
+        + `<a href="${escape(emailSignupUrl)}">Subscribe by email</a>`;
     }
     return "";
   }

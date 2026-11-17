@@ -5,7 +5,6 @@ import CoverTable from "../components/table/CoverTable";
 import { matchesPublished } from "../data/publishedIssues";
 import { PREVIEW_ID } from "../lib/preview";
 import { medium, mission, readerPath } from "../lib/publicPages";
-import IssueSubscription from "../components/IssueSubscription";
 import ContinueReading from "../components/ContinueReading";
 
 export default function Home() {
@@ -17,10 +16,6 @@ export default function Home() {
   );
   // Gallery-edition issues live in the Gallery, as individual works; the table holds magazines.
   const magazines = publications.filter((p) => p.theme !== "museum");
-  const feature = publications.flatMap(publication => {
-    const poem = publication.id !== PREVIEW_ID && publication.pieces.find(piece => piece.type === "poem");
-    return poem ? [{ publication, poem }] : [];
-  })[0];
   return (
     <main className="home-page journal-home mx-auto max-w-6xl px-6 pb-24 sm:px-10">
       <motion.header
@@ -33,7 +28,7 @@ export default function Home() {
         <p className="journal-mission">{mission}</p>
       </motion.header>
       <ContinueReading publications={publications} />
-      <CoverTable publications={magazines} feature={feature} />
+      <CoverTable publications={magazines} />
       {publications.length > 0 && (
         <section className="home-contents" aria-label="Issue contents">
           {publications.map(publication => (
@@ -44,10 +39,7 @@ export default function Home() {
               ))}</ol>
             </details>
           ))}
-          <div className="home-issue-links">
-            <Link className="home-gallery-link" to="/gallery/">Visit the gallery <span aria-hidden="true">→</span></Link>
-            <IssueSubscription />
-          </div>
+          <Link className="home-gallery-link" to="/gallery/">Visit the gallery <span aria-hidden="true">→</span></Link>
         </section>
       )}
       {import.meta.env.DEV && <motion.section className="journal-desk" aria-labelledby="try-heading" initial={{ opacity: reduced ? 1 : 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}>
