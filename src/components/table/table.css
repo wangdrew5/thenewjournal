@@ -1041,7 +1041,7 @@ details[open] .contents-fold { transform: rotate(225deg); }
 .poem-open { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #b7ad94; margin-top: 16px; padding-top: 10px; color: #713b2a; font-size: 14px; font-weight: 700; }
 .poem-open span { font: 20px/1 Georgia, serif; }
 .with-poem .poem-sheet:focus-visible { outline: 3px solid #b85a31; outline-offset: 5px; }
-@media (hover:hover) {
+@media (hover:hover) and (prefers-reduced-motion: no-preference) {
   .with-poem .poem-sheet:hover { transform: translateY(-5px) rotate(-2deg); box-shadow: 3px 5px 5px #160f0b40, 12px 20px 24px #160f0b52; }
 }
 .with-poem.many-issues .poem-sheet { position: relative; margin: 40px auto 0; left: auto; bottom: auto; }
@@ -1058,6 +1058,13 @@ details[open] .contents-fold { transform: rotate(225deg); }
   .journal-home .journal-masthead { margin-bottom: 10px; }
   .with-poem .table-covers .tc:first-child { width: min(72%, 265px); }
   .journal-mission { max-width: 36ch; }
+}
+.with-poem .poem-sheet:active .poem-open { color: #402219; text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 640px) and (max-height: 700px) {
+  .journal-home .journal-masthead h1 { margin-block: 8px 12px; }
+  .with-poem .table-covers .tc:first-child { width: min(62%, 220px); }
+  .table-spread.with-poem { padding-top: 12px; }
+  .with-poem .poem-sheet { margin-top: 19px; }
 }
 @media (prefers-reduced-motion: reduce) {
   .with-poem .poem-sheet { transition: none; animation: none; }

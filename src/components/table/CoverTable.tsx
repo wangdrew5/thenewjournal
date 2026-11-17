@@ -107,7 +107,7 @@ function TableCover({
   const navigate = useNavigate();
   const theme = publication.theme ?? "surreal";
   const cover = useRef<HTMLDivElement>(null);
-  const to = readerPath(publication);
+  const to = readerPath(publication, publication.pieces[0]);
   const lie = LIE[index % LIE.length];
 
   // The table measures this cover when a reader comes back to it.
