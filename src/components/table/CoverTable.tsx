@@ -263,7 +263,7 @@ export default function CoverTable({ publications }: { publications: Publication
   const liftedAt = publications.findIndex((publication) => publication.id === lifted);
   return (
     <section className="cover-table" aria-label="Issues">
-      <div className={`table-spread ${publications.length > 1 ? "many-issues" : ""}`}>
+      <div className="table-spread">
         <Polaroid />
         <Mug />
         <Cassette />
@@ -287,12 +287,10 @@ export default function CoverTable({ publications }: { publications: Publication
         ) : (
           <p className="table-note">The first issue is on its way.</p>
         )}
-        <a className="subscription-postcard" href={emailSignupUrl}>
-          <span aria-hidden="true" className="postcard-stamp">tnj</span>
-          <h2>Get the next issue.</h2>
-          <span className="postcard-action">Subscribe by email <span aria-hidden="true">↗</span></span>
-        </a>
       </div>
+      <a className="table-subscribe" href={emailSignupUrl}>
+        Get new issues by email <span aria-hidden="true">↗</span>
+      </a>
     </section>
   );
 }

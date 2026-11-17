@@ -39,7 +39,7 @@ try {
     if (page.path === "/gallery/") return publishedIssues.map(catalogue).join("");
     if (page.path === "/") {
       return list(publishedIssues, issue => link(readerPath(issue, issue.pieces[0]), issue.caption))
-        + `<a href="${escape(emailSignupUrl)}">Subscribe by email</a>`;
+        + `<a href="${escape(emailSignupUrl)}">Get new issues by email</a>`;
     }
     return "";
   }

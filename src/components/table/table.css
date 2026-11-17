@@ -1013,54 +1013,25 @@ details[open] .contents-fold { transform: rotate(225deg); }
   max-width: 49ch;
   font: 400 clamp(15px, 1.25vw, 18px)/1.5 Georgia, serif;
 }
-/* A subscription postcard on the magazine table. */
-.subscription-postcard {
-  position: absolute;
-  z-index: 2;
-  left: 1%;
-  bottom: 13%;
-  display: block;
-  width: clamp(218px, 22vw, 285px);
-  padding: 43px 23px 19px;
-  color: #322c24;
-  background: linear-gradient(162deg, #fff9e7, #f0e6cd);
-  box-shadow: 1px 2px 2px #160f0b55, 7px 10px 15px #160f0b50;
-  transform: rotate(-5deg);
-  text-decoration: none;
-  transition: transform 200ms ease-out, box-shadow 200ms ease-out;
+.table-subscribe {
+  display: flex;
+  align-items: center;
+  gap: .45em;
+  width: fit-content;
+  min-height: 44px;
+  margin-inline: auto;
+  padding-inline: 8px;
+  color: inherit;
+  font: italic 500 21px/1.2 "Cormorant Garamond", Georgia, serif;
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, currentColor 50%, transparent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: .22em;
 }
-.subscription-postcard::before {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 4px;
-  background: repeating-linear-gradient(125deg, #994b3d 0 9px, transparent 9px 18px, #4a656a 18px 27px, transparent 27px 36px);
-}
-.postcard-stamp {
-  position: absolute;
-  right: 13px;
-  top: 13px;
-  padding: 2px 6px 4px;
-  border: 2px dotted #af8164;
-  color: #844d39;
-  transform: rotate(5deg);
-  font: italic 18px/1 Georgia, serif;
-}
-.subscription-postcard h2 {
-  margin: 0 0 16px;
-  font: 600 clamp(30px, 2.8vw, 40px)/1.05 "Cormorant Garamond", Georgia, serif;
-  letter-spacing: -.04em;
-}
-.postcard-action { display: flex; align-items: center; justify-content: space-between; padding-top: 9px; border-top: 1px solid #baad91; color: #733e2c; font: 700 14px/1.35 "Lato", sans-serif; }
-.postcard-action span { font: 19px/1 Georgia, serif; }
-.subscription-postcard:focus-visible { outline: 3px solid #bd643f; outline-offset: 4px; }
-.subscription-postcard:is(:hover, :focus-visible, :active) .postcard-action { text-decoration: underline; text-underline-offset: 3px; }
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .subscription-postcard:hover { transform: translateY(-4px) rotate(-2deg); box-shadow: 3px 5px 5px #160f0b40, 10px 16px 20px #160f0b52; }
-}
-.many-issues .subscription-postcard { position: relative; margin: 40px auto 0; left: auto; bottom: auto; }
+.table-subscribe span { font: 14px/1 "Inter", sans-serif; }
+.table-subscribe:is(:hover, :focus-visible) { text-decoration-color: currentColor; }
+.table-subscribe:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 @media (max-width: 850px) {
-  .table-spread .subscription-postcard { position: relative; inset: auto; width: min(100% - 12px, 340px); margin: 30px auto 0; padding: 32px 20px 15px; transform: rotate(-1.4deg); }
   .table-spread { padding-bottom: 12px; }
   .table-spread .table-pencil { bottom: -8px; left: auto; right: -45px; z-index: 1; width: 115px; }
   .table-spread .table-cassette { display: none; }
@@ -1074,8 +1045,4 @@ details[open] .contents-fold { transform: rotate(225deg); }
   .journal-home .journal-masthead h1 { margin-block: 8px 12px; }
   .table-covers .tc:first-child { width: min(62%, 220px); }
   .table-spread { padding-top: 12px; }
-  .table-spread .subscription-postcard { margin-top: 19px; }
-}
-@media (prefers-reduced-motion: reduce) {
-  .table-spread .subscription-postcard { transition: none; animation: none; }
 }
