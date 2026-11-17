@@ -9,7 +9,7 @@ import {
 } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useReducedMotion } from "framer-motion";
-import type { Publication } from "../../data/publications";
+import type { PoemPiece, Publication } from "../../data/publications";
 import {
   finishReturn,
   setReturnTarget,
@@ -17,6 +17,8 @@ import {
   useEnterState,
 } from "../../lib/enterTransition";
 import { issueMark, issueName } from "../../lib/issueLabel";
+import { readerPath } from "../../lib/publicPages";
+import { verseLine } from "../../lib/verse";
 import { themeNames } from "../../lib/magazine";
 import { useMediaQuery } from "../../lib/useIssueNav";
 import { DreamScene } from "../surreal/DreamScape";
@@ -105,7 +107,7 @@ function TableCover({
   const navigate = useNavigate();
   const theme = publication.theme ?? "surreal";
   const cover = useRef<HTMLDivElement>(null);
-  const to = `/publication/${publication.id}`;
+  const to = readerPath(publication);
   const lie = LIE[index % LIE.length];
 
   // The table measures this cover when a reader comes back to it.
@@ -249,7 +251,24 @@ function Pencil() {
   );
 }
 
-export default function CoverTable({ publications }: { publications: Publication[] }) {
+export interface FeaturedPoem {
+  publication: Publication;
+  poem: PoemPiece;
+}
+
+function PoemSheet({ publication, poem }: FeaturedPoem) {
+  return (
+    <Link className="poem-sheet" to={readerPath(publication, poem)} aria-label={`Read the poem ${poem.title} by ${poem.author}`}>
+      <span className="poem-source">From {publication.caption}</span>
+      <h2>{poem.title}</h2>
+      <blockquote>{poem.lines.slice(0, 2).map((line, index) => <span key={index}>{verseLine(line)}</span>)}</blockquote>
+      <span className="poem-byline">By {poem.author.trim()}</span>
+      <span className="poem-open">Read the poem <span aria-hidden="true">↗</span></span>
+    </Link>
+  );
+}
+
+export default function CoverTable({ publications, feature }: { publications: Publication[]; feature?: FeaturedPoem }) {
   const finePointer = useMediaQuery("(hover: hover) and (pointer: fine)");
   const transition = useEnterState();
   const returning = transition?.kind === "return" ? transition.id : null;
@@ -287,9 +306,9 @@ export default function CoverTable({ publications }: { publications: Publication
   const featured = liftedAt >= 0 ? publications[liftedAt] : null;
   return (
     <section className="cover-table" aria-label="Issues">
-      <div className="table-spread">
+      <div className={`table-spread ${feature ? "with-poem" : ""} ${publications.length > 1 ? "many-issues" : ""}`}>
         <Polaroid />
-        <Letter />
+        {!feature && <Letter />}
         <Mug />
         <Cassette />
         <Pencil />
@@ -312,8 +331,9 @@ export default function CoverTable({ publications }: { publications: Publication
         ) : (
           <p className="table-note">The first issue is on its way.</p>
         )}
+        {feature && <PoemSheet {...feature} />}
       </div>
-      <p className="table-caption" aria-live="polite">
+      {!feature && <p className="table-caption" aria-live="polite">
         {featured ? (
           <>
             <strong>{featured.caption}</strong>
@@ -325,7 +345,7 @@ export default function CoverTable({ publications }: { publications: Publication
         ) : publications.length ? (
           <span>{finePointer ? "Pick up an issue to read it." : "Tap an issue to read it."}</span>
         ) : null}
-      </p>
+      </p>}
     </section>
   );
 }

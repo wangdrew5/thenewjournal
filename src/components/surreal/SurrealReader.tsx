@@ -1,3 +1,4 @@
+import IssueSubscription from "../IssueSubscription";
 import { useEffect, useLayoutEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import {
@@ -641,9 +642,11 @@ function SurrealBook({ publication }: { publication: Publication }) {
           </span>
           <span className="sr-now">{piece?.title ?? publication.caption}</span>
         </div>
+        {piece && index === last && publication.id !== PREVIEW_ID ? <IssueSubscription /> : (
         <button type="button" className="sr-round" aria-label="Next page" disabled={index === last} onClick={() => step(1)}>
           →
         </button>
+        )}
       </nav>
     </div>
   );

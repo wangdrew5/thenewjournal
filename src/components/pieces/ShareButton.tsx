@@ -1,16 +1,18 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { Piece, Publication } from "../../data/publications";
+import { readerPath } from "../../lib/publicPages";
 import "./share.css";
 
-export default function ShareButton({ publication, piece }: { publication: Publication; piece?: Piece }) {
+export default function ShareButton({ publication, piece, gallery = false }: { publication: Publication; piece?: Piece; gallery?: boolean }) {
   const [copied, setCopied] = useState(false);
   const dialog = useRef<HTMLDialogElement>(null);
   const input = useRef<HTMLInputElement>(null);
   const headingId = useId();
   const label = piece?.title ?? publication.caption;
   const origin = typeof window === "undefined" ? "https://thenewjournal.org" : window.location.origin;
-  const url = new URL(`${import.meta.env.BASE_URL}publication/${encodeURIComponent(publication.id)}`, origin);
-  if (piece) url.searchParams.set("piece", piece.id);
+  const url = new URL(import.meta.env.BASE_URL + readerPath(publication, piece).slice(1), origin);
+
+  if (gallery) url.searchParams.set("view", "gallery");
 
   useEffect(() => {
     if (!copied) return;

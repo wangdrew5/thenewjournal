@@ -238,8 +238,15 @@ try {
   const position = JSON.stringify({ version: 1, publicationId: comedyPublication.id, pieceId: pages[1].piece.id });
   const restored = readingPosition(position, [comedyPublication]);
   assert.equal(restored.index, 1);
-  const query = new URLSearchParams(restored.to.split("?")[1]);
-  assert.equal(pageFromQuery(pages, query.get("piece")), 1, "Continue reading restores the piece");
+  const { readerPath } = await server.ssrLoadModule("/src/lib/publicPages.ts");
+  const poemPath = readerPath(comedyPublication, pages[1].piece);
+  assert.equal(restored.to, poemPath, "Existing bookmarks restore the work at its public address");
+  assert.equal(pageFromQuery(pages, pages[1].piece.id), 1, "Legacy piece links still resolve");
+  const galleryPosition = JSON.stringify({ ...JSON.parse(position), gallery: true });
+  assert.equal(readingPosition(galleryPosition, [comedyPublication]).to, poemPath + "?view=gallery");
+  const sameTitle = { ...pages[1].piece, id: "preview-other" };
+  const twins = { ...comedyPublication, pieces: [pages[1].piece, sameTitle] };
+  assert.notEqual(readerPath(twins, twins.pieces[0]), readerPath(twins, sameTitle));
   for (const raw of ["{", "null", JSON.stringify({ version: 1, publicationId: "gone", pieceId: "gone" })])
     assert.equal(readingPosition(raw, [comedyPublication]), null, "Invalid reading positions are ignored");
   const { JournalContext } = await server.ssrLoadModule(

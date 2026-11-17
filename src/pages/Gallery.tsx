@@ -1,3 +1,4 @@
+import { readerPath } from "../lib/publicPages";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { verseLine } from "../lib/verse";
 import { Link } from "react-router-dom";
@@ -221,7 +222,7 @@ function WorkDialog({
         <Look key={piece.id} piece={piece} />
         <Link
           className="gw-source"
-          to={`/publication/${publication.id}?piece=${encodeURIComponent(piece.id)}`}
+          to={readerPath(publication, piece)}
         >
           {sourceVerb[piece.type]} it in {publication.caption}, {issueName(publication)}
         </Link>

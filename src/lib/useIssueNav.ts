@@ -1,15 +1,18 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useSyncExternalStore } from "react";
-import { useLocation, useNavigationType, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useNavigationType, useParams, useSearchParams } from "react-router-dom";
 import type { PieceType, Publication } from "../data/publications";
 import { magazinePages, pageFromQuery } from "./magazine";
 import { rememberReadingPosition } from "./readingPosition";
+import { readerPath, workSlug } from "./publicPages";
 
-// Shared page state for both reader engines: the URL query is the source of
-// truth so direct links, reloads, and the contents dialog all agree.
 export function useIssueNav(publication: Publication) {
-  const [query, setQuery] = useSearchParams();
+  const [query] = useSearchParams();
+  const navigate = useNavigate();
+  const { slug } = useParams();
+  const view = query.get("view") === "gallery" ? "?view=gallery" : "";
   const pages = useMemo(() => magazinePages(publication), [publication]);
-  const index = pageFromQuery(pages, query.get("piece"));
+  const pieceId = slug ? publication.pieces.find(p => workSlug(publication, p) === slug)?.id : query.get("piece");
+  const index = pageFromQuery(pages, pieceId ?? null);
   const requested = useRef(index);
   const location = useLocation();
   const navigationType = useNavigationType();
@@ -22,17 +25,17 @@ export function useIssueNav(publication: Publication) {
   useEffect(() => {
     const page = pages[index];
     if (!page.piece) return;
-    rememberReadingPosition(publication.id, page.piece.id);
-  }, [pages, index, publication.id]);
+    rememberReadingPosition(publication.id, page.piece.id, Boolean(view));
+  }, [pages, index, publication.id, view]);
   const goTo = useCallback(
     (target: number) => {
       const next = Math.min(pages.length - 1, Math.max(0, target));
       if (next === requested.current) return;
       requested.current = next;
       const page = pages[next];
-      setQuery(page.piece ? { piece: page.piece.id } : {}, { replace: true });
+      navigate(readerPath(publication, page.piece) + view, { replace: true });
     },
-    [pages, setQuery],
+    [pages, publication, navigate, view],
   );
   const step = useCallback((offset: number) => goTo(requested.current + offset), [goTo]);
   const goToPiece = useCallback(

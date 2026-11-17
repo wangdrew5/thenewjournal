@@ -27,8 +27,6 @@ jobs:
       # Served from the root of thenewjournal.org (set as the Pages custom domain), so the
       # build keeps the default base path of /.
       - run: npm run build
-      # Single-page app: serve the app for deep links like /publication/pub-1.
-      - run: cp dist/index.html dist/404.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

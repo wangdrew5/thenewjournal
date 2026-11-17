@@ -1845,3 +1845,11 @@ body:has(.journal-home) .nav-link { font-size: 12px; letter-spacing: .02em; text
     font-size: 14px;
   }
 }
+
+
+.plain-reader { max-width: 48rem; min-height: 100vh; margin: auto; padding: 3rem clamp(1.25rem, 5vw, 4rem); color: #efe7d7; background: #171715; }
+.plain-reader nav { font-size: .9rem; }
+.plain-reader a { text-decoration: underline; text-underline-offset: .2em; }
+.plain-reader h1 { margin: 2rem 0 1rem; font: 500 clamp(2.4rem, 6vw, 4.5rem)/1.1 Georgia, serif; }
+.plain-reader li, .plain-reader p { margin-block: 1rem; line-height: 1.65; white-space: pre-line; overflow-wrap: anywhere; }
+.plain-reader :is(video,img,audio) { max-width: 100%; }

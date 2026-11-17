@@ -983,3 +983,82 @@ body {
     font-size: 17px;
   }
 }
+
+.home-contents {
+  width: min(100%, 38rem);
+  margin: clamp(24px, 5vw, 65px) auto 0;
+}
+.home-contents details { border-block-start: 1px solid currentColor; }
+.home-contents summary, .home-contents li a, .home-gallery-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 12px 3px;
+  min-height: 44px;
+}
+.home-contents summary { cursor: pointer; list-style: none; font: 500 25px/1.2 "Cormorant Garamond", Georgia, serif; }
+.home-contents summary::-webkit-details-marker { display: none; }
+.contents-fold { width: 9px; height: 9px; border: solid currentColor; border-width: 0 1px 1px 0; transform: rotate(45deg); margin-right: 5px; }
+details[open] .contents-fold { transform: rotate(225deg); }
+.home-contents li a { border-top: 1px solid color-mix(in srgb, currentColor 20%, transparent); font-size: 16px; }
+.home-contents li small { font-size: 12px; }
+.home-gallery-link { width: fit-content; font-size: 14px; }
+.home-issue-links { display: flex; flex-wrap: wrap; gap: 12px 22px; align-items: center; justify-content: space-between; }
+.home-issue-links .issue-follow { border: none; text-decoration: underline; text-underline-offset: .28em; padding-inline: 3px; }
+.home-contents a:hover { text-decoration: underline; text-underline-offset: .25em; }
+
+.journal-mission {
+  position: relative;
+  text-wrap: pretty;
+  margin-top: 12px;
+  max-width: 49ch;
+  font: 400 clamp(15px, 1.25vw, 18px)/1.5 Georgia, serif;
+}
+.with-poem .poem-sheet {
+  position: absolute;
+  z-index: 2;
+  left: 1%;
+  bottom: 10%;
+  display: grid;
+  width: clamp(218px, 22vw, 278px);
+  padding: 20px 23px 16px;
+  color: #292619;
+  background: linear-gradient(174deg, #fffae9, #eee7d4 71%, #f9f2df);
+  font-family: Georgia, serif;
+  text-align: left;
+  text-decoration: none;
+  transform: rotate(-5deg);
+  box-shadow: 2px 3px 3px #160f0b48, 9px 13px 18px #160f0b50;
+  transition: transform 220ms ease-out, box-shadow 220ms ease-out;
+}
+.poem-source, .poem-byline, .poem-open { font-family: "Lato", Arial, sans-serif; }
+.poem-source { font-size: 12px; color: #665b49; }
+.poem-sheet h2 { margin: 12px 0; font: 600 clamp(30px, 3vw, 41px)/.99 "Cormorant Garamond", Georgia, serif; letter-spacing: -.035em; }
+.poem-sheet blockquote { border-left: 2px solid #9f563e; padding-left: 11px; margin: 4px 0 12px; font: italic 18px/1.38 Georgia, serif; }
+.poem-sheet blockquote span { display: block; }
+.poem-byline { font-size: 12px; line-height: 1.5; color: #51483e; }
+.poem-open { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #b7ad94; margin-top: 16px; padding-top: 10px; color: #713b2a; font-size: 14px; font-weight: 700; }
+.poem-open span { font: 20px/1 Georgia, serif; }
+.with-poem .poem-sheet:focus-visible { outline: 3px solid #b85a31; outline-offset: 5px; }
+@media (hover:hover) {
+  .with-poem .poem-sheet:hover { transform: translateY(-5px) rotate(-2deg); box-shadow: 3px 5px 5px #160f0b40, 12px 20px 24px #160f0b52; }
+}
+.with-poem.many-issues .poem-sheet { position: relative; margin: 40px auto 0; left: auto; bottom: auto; }
+@media (max-width: 850px) {
+  .with-poem .poem-sheet { position: relative; left: auto; bottom: auto; margin: 30px auto 0; width: min(100% - 12px, 360px); padding: 17px 23px 13px; transform: rotate(-1.4deg); }
+  .table-spread.with-poem { padding-bottom: 12px; }
+  .with-poem .table-pencil { bottom: -8px; left: auto; right: -45px; z-index: 1; width: 115px; }
+  .with-poem .table-cassette { display: none; }
+  .poem-sheet h2 { margin-block: 5px 8px; }
+  .poem-sheet blockquote { margin-block: 2px 9px; }
+  .poem-open { margin-top: 10px; }
+}
+@media (max-width: 640px) {
+  .journal-home .journal-masthead { margin-bottom: 10px; }
+  .with-poem .table-covers .tc:first-child { width: min(72%, 265px); }
+  .journal-mission { max-width: 36ch; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .with-poem .poem-sheet { transition: none; animation: none; }
+}

@@ -1,11 +1,13 @@
 import type { Publication } from "../data/publications";
 import { magazinePages } from "./magazine";
 
+import { readerPath } from "./publicPages";
+
 export const READING_KEY = "tnj:reading:v1";
 
-export function rememberReadingPosition(publicationId: string, pieceId: string) {
+export function rememberReadingPosition(publicationId: string, pieceId: string, gallery = false) {
   try {
-    localStorage.setItem(READING_KEY, JSON.stringify({ version: 1, publicationId, pieceId }));
+    localStorage.setItem(READING_KEY, JSON.stringify({ version: 1, publicationId, pieceId, gallery }));
   } catch { /* Reading stays available when browser storage is disabled. */ }
 }
 
@@ -20,6 +22,6 @@ export function readingPosition(raw: string | null, publications: Publication[])
     if (index < 1) return null;
     const page = pages[index];
     return { publication, page, index, total: pages.length - 1,
-      to: `/publication/${publication.id}?${new URLSearchParams({ piece: page.piece!.id })}` };
+      to: readerPath(publication, page.piece) + (value.gallery === true ? "?view=gallery" : "") };
   } catch { return null; }
 }

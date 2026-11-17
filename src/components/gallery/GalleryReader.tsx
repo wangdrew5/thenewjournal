@@ -1,3 +1,4 @@
+import IssueSubscription from "../IssueSubscription";
 import { useRef, useState, type CSSProperties } from "react";
 import { songCredit, verseLine } from "../../lib/verse";
 import { Link } from "react-router-dom";
@@ -254,7 +255,7 @@ export default function GalleryReader({ publication }: { publication: Publicatio
             onSelect={goToPiece}
             onCover={() => goTo(0)}
           />
-          <ShareButton key={piece?.id ?? publication.id} publication={publication} piece={piece} />
+          <ShareButton key={piece?.id ?? publication.id} publication={publication} piece={piece} gallery={publication.theme !== "museum"} />
         </div>
       </header>
 
@@ -347,9 +348,11 @@ export default function GalleryReader({ publication }: { publication: Publicatio
           )}
           <span className="gal-now">{piece ? `${piece.title} — ${piece.author}` : publication.caption}</span>
         </div>
+        {piece && index === last && publication.id !== PREVIEW_ID ? <IssueSubscription /> : (
         <button type="button" className="gal-step" disabled={index === last} onClick={() => step(1)}>
           <span className="gal-step-label">Next</span> <span aria-hidden="true">→</span>
         </button>
+        )}
       </nav>
     </div>
   );
